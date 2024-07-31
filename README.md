@@ -1,2 +1,2 @@
-# datasight
- A capstone project for BizOps 
+# DATASIGHT
+ A capstone project for Group 3b  
