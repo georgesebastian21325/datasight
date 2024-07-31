@@ -3,7 +3,12 @@
 @tailwind utilities;
 
 :root {
-  --font-libre-franklin: 'Libre Franklin', sans-serif;
+  --font-libre-franklin: "Libre Franklin", sans-serif;
 }
 
-
+.gradient-text {
+  background: linear-gradient(to right, #f47820, #1050d2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding: 0.1em;
+}
