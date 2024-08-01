@@ -7,6 +7,8 @@ import { motion } from "framer-motion";
 import CompanyLogo from "../../assets/company-logo.jpg";
 import BackgroundImage from "../../assets/landing-page-bg.jpg";
 
+import { SignUpBtn, LoginBtn } from "../components/button";
+
 export default function Page() {
   return (
     <main
@@ -22,7 +24,7 @@ export default function Page() {
               <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: "easeOut", delay: 0.2 }} // Adjust delay as needed
+              transition={{ duration: 1, ease: "easeOut", delay: 0.2 }} 
               >
                 <Image src={CompanyLogo} alt="Company Logo" />
               </motion.div>
@@ -30,7 +32,7 @@ export default function Page() {
                 className="font-bold text-6xl tracking-tighter gradient-text"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, ease: "easeOut", delay: 0.4 }} // Adjust delay as needed
+                transition={{ duration: 1, ease: "easeOut", delay: 0.4 }} 
               >
                 Translating Data into Valuable Insights.
               </motion.h1>
@@ -50,18 +52,8 @@ export default function Page() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, ease: "easeOut", delay: 1 }} // Adjust delay as needed
               >
-                <Link
-                  href="/sign-up"
-                  className="bg-brand-blue px-5 rounded-md py-[0.5rem] flex hover:bg-blue-800"
-                >
-                  Sign Up
-                </Link>
-                <Link
-                  href="/login"
-                  className="bg-black px-7 rounded-md py-[0.5rem] hover:bg-gray-700"
-                >
-                  Login
-                </Link>
+              <SignUpBtn />
+              <LoginBtn />
               </motion.div>
             </div>
           </div>
