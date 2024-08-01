@@ -16,6 +16,8 @@
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@babel/helper-create-class-features-plugin": "^7.25.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
