@@ -13,7 +13,7 @@ export default function Page() {
 
   return (
     <div className="font-sans grid grid-cols-2 h-screen">
-      <div className="bg-brand-blue rounded-tr-2xl rounded-br-2xl" />
+      <div className="bg-gradient-to-br from-black to-brand-blue rounded-tr-2xl rounded-br-2xl" />
       <div className="flex items-center justify-center">
         <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-6">
           <div className="mb-4 text-center flex flex-col items-center">
