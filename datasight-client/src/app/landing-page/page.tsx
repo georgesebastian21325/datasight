@@ -47,7 +47,7 @@ export default function Page() {
                 and aiding your decisions.
               </motion.p>
               <motion.div
-                className="flex text-white gap-5 mt-5 font-bold"
+                className="flex text-white gap-5 mt-5 font-bold items-start justify-start"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, ease: "easeOut", delay: 1 }} // Adjust delay as needed

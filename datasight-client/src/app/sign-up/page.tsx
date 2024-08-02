@@ -5,7 +5,7 @@ import CompanyLogo from "../../assets/company-logo.jpg";
 import Image from "next/image";
 
 import { LoginBtn } from "../components/button";
-import { useRouter } from "next/router";
+
 
 export default function Page() {
   const [selectedRole, setSelectedRole] = useState("");
@@ -26,7 +26,10 @@ export default function Page() {
             Unlock powerful insights and make better decisions with our tool.
           </p>
 
-          <h1 className="text-white mt-12"> Already have an account? </h1>
+          <h1 className="text-white mt-12">
+            {" "}
+            Already have an account? Login in now.
+          </h1>
           <LoginBtn isSignUpPage={isSignUpPage} />
         </div>
       </div>
@@ -52,7 +55,7 @@ export default function Page() {
                   id="first-name"
                   placeholder="John"
                   required
-                  className="border-gray-300 rounded-md shadow-sm w-full border-2 p-1"
+                  className="border-gray-300 rounded-md shadow-sm w-full border-[0.09rem] p-1"
                 />
               </div>
               <div className="space-y-2">
@@ -65,7 +68,7 @@ export default function Page() {
                 <input
                   id="middle-name"
                   placeholder="Doe"
-                  className="border-gray-300 rounded-md shadow-sm w-full border-2 p-1"
+                  className="border-gray-300 rounded-md shadow-sm w-full border-[0.09rem] p-1"
                 />
               </div>
             </div>
@@ -80,7 +83,7 @@ export default function Page() {
                 id="last-name"
                 placeholder="Doe"
                 required
-                className="border-gray-300 rounded-md shadow-sm w-full border-2 p-1"
+                className="border-gray-300 rounded-md shadow-sm w-full border-[0.09rem] p-1"
               />
             </div>
             <div className="space-y-2">
@@ -94,7 +97,7 @@ export default function Page() {
                 id="role"
                 value={selectedRole}
                 onChange={handleRoleChange}
-                className="border-gray-300 rounded-md shadow-sm w-full border-2 p-2"
+                className="border-gray-300 rounded-md shadow-sm w-full border-[0.09rem] p-2"
               >
                 <option value="" disabled>
                   Select a role
@@ -117,7 +120,7 @@ export default function Page() {
                 type="email"
                 placeholder="m@example.com"
                 required
-                className="border-gray-300 rounded-md shadow-sm w-full border-2 p-2"
+                className="border-gray-300 rounded-md shadow-sm w-full border-[0.09rem] p-2"
               />
             </div>
             <div className="space-y-2">
@@ -131,7 +134,7 @@ export default function Page() {
                 id="password"
                 type="password"
                 required
-                className="border-gray-300 rounded-md shadow-sm w-full border-2 p-2"
+                className="border-gray-300 rounded-md shadow-sm w-full border-[0.09rem] p-2"
               />
             </div>
             <div className="space-y-2">
@@ -145,7 +148,7 @@ export default function Page() {
                 id="confirm-password"
                 type="password"
                 required
-                className="border-gray-300 rounded-md shadow-sm w-full border-2 p-2"
+                className="border-gray-300 rounded-md shadow-sm w-full border-[0.09rem] p-2"
               />
             </div>
           </div>
