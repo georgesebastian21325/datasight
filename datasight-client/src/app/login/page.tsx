@@ -7,7 +7,7 @@ import Link from "next/link";
 import { MdEmail, MdKey, MdVisibility, MdVisibilityOff } from "react-icons/md";
 
 import CompanyLogo from "../../assets/company-logo.jpg";
-import LoginAsset from "../../assets/login-asset.gif";
+import LoginAsset from "../../assets/login-asset.png";
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,9 +18,7 @@ function LoginPage() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen">
-      <div className="flex items-center justify-center ">
-        <Image src={LoginAsset} alt="loginasset" />
-      </div>
+      <div className="flex items-center justify-center shadow-md bg-gradient-to-br from-black to-brand-blue rounded-br-2xl rounded-tr-2xl "></div>
       <div className="flex items-center justify-center">
         <div className="rounded-lg border-2 bg-card text-card-foreground shadow-lg w-full max-w-md p-6">
           <div className="flex flex-col items-center justify-center py-6">
@@ -88,7 +86,7 @@ function LoginPage() {
               Don't have an account?{" "}
               <Link
                 href="/sign-up"
-                className="font-medium text-primary underline underline-offset-4 hover:text-primary-dark"
+                className="font-medium text-primary underline underline-offset-4 hover:text-primary-dark hover:text-gray-700 hover:scale-x-105"
               >
                 Sign up now
               </Link>

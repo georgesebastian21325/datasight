@@ -45,8 +45,7 @@ export default function Page() {
         <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-5 border-2">
           <div className="text-center flex flex-col items-center">
             <Image src={CompanyLogo} alt="Company Logo" height={50} />
-            <h2 className="text-lg font-bold mt-[-0.2rem]">Sign Up</h2>
-            <p className="text-gray-600 mt-[-0.4rem] text-sm">
+            <p className="gradient-text font-bold text-2xl">
               Create your account
             </p>
           </div>
