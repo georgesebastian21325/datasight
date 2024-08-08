@@ -42,7 +42,7 @@ export default function Page() {
         </div>
       </div>
       <div className="flex items-center justify-center">
-        <div className="w-full max-w-md bg-white shadow-lg rounded-md p-5 border-2">
+        <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-5 border-2">
           <div className="text-center flex flex-col items-center">
             <Image src={CompanyLogo} alt="Company Logo" height={50} />
             <h2 className="text-lg font-bold mt-[-0.2rem]">Sign Up</h2>

@@ -13,15 +13,15 @@ function SignUpBtn() {
   );
 }
 
-function LoginBtn({ isSignUpPage = false }) {
+function LoginBtn({ isSignUpPage = false, isLoginPage = false }) {
   return (
     <Link
       href="/login"
-      className={`rounded-md mt-2 hover:bg-gray-700  transform transition-transform duration-300 hover:scale-105  ${
+      className={`rounded-md mt-2 hover:bg-gray-700 transform transition-transform duration-300 hover:scale-105 ${
         isSignUpPage
-          ? "text-black bg-white font-semibold hover:bg-black px-5 py-2 hover:text-white transform transition-transform duration-300 hover:scale-105"
+          ? "text-black bg-white font-semibold hover:bg-black px-5 py-2 hover:text-white"
           : "px-5 bg-black text-white py-2 flex mt-[-0.1rem]"
-      }`}
+      } ${isLoginPage ? "hidden" : ""}`} 
     >
       Login
     </Link>
