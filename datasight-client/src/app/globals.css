@@ -59,6 +59,8 @@
   }
 }
 
+
+
 @layer base {
   * {
     @apply border-border;
@@ -66,4 +68,11 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.gradient-text {
+  background: linear-gradient(to right, #f47820, #1050d2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding: 0.1em;
 }
