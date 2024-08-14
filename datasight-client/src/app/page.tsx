@@ -12,13 +12,13 @@ import { SignUpBtn, LoginBtn } from "./components/button";
 export default function Home() {
   return (
     <main
-      className="font-sans bg-cover bg-center bg-no-repeat h-screen"
+      className="font-sans bg-cover bg-center bg-no-repeat h-screen flex items-center justify-center"
       style={{ backgroundImage: `url(${BackgroundImage.src})` }}
     >
       <div className="text-center flex flex-col items-center justify-center h-full">
         <section className="w-full mt-[8rem]">
           <div className="container px-4 md:px-6 flex flex-col items-center text-center space-y-6">
-            <div className="mt-[-17rem] flex flex-col items-center">
+            <div className="mt-[-17rem] flex flex-col items-center just">
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
