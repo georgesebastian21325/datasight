@@ -20,6 +20,6 @@ Amplify.configure(
 	{ ssr: true },
 );
 
-export default function ConfigureAmplifyClientSIde() {
+export default function ConfigureAmplifyClientSide() {
 	return null;
 }
