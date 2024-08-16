@@ -5,6 +5,7 @@ import {
 	signIn,
 	signOut,
 	resendSignUpCode,
+	fetchAuthSession,
 } from "aws-amplify/auth";
 import { getErrorMessage } from "@/utils/get-error-message";
 
@@ -81,6 +82,11 @@ export async function handleSignIn(
 			username: String(formData.get("email")),
 			password: String(formData.get("password")),
 		});
+
+		const session = await fetchAuthSession();
+		console.log("Session:", session);
+		console.log(isSignedIn, nextStep);
+
 		if (nextStep.signInStep === "CONFIRM_SIGN_UP") {
 			await resendSignUpCode({
 				username: String(formData.get("email")),
@@ -91,7 +97,7 @@ export async function handleSignIn(
 		return getErrorMessage(error);
 	}
 
-	redirect(redirectLink);
+	// redirect(redirectLink);
 }
 
 export async function handleSignOut() {
