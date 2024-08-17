@@ -111,7 +111,7 @@ export default function SignUpForm() {
 				<SignUpButton />
 				<div className="flex justify-center">
 					<Link
-						href="/auth/login"
+						href="/login"
 						className="mt-2 cursor-pointer text-blue-500"
 					>
 						Already have an account? Log in.
