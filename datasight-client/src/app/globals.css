@@ -82,7 +82,7 @@
   a,
   li,
   blockquote {
-    @apply bg-background text-foreground;
+
     font-family: 'Libre Franklin', sans-serif;
   }
 
