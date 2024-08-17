@@ -13,7 +13,7 @@ import {
 
 import CompanyLogo from "../../assets/company-logo.jpg";
 import LoginAsset from "../../assets/login-asset.png";
-import LoginForm from "../forms/login-form";
+import LoginForm from "../../forms/login-form";
 
 function LoginPage() {
 	const [showPassword, setShowPassword] = useState(false);

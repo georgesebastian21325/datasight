@@ -27,28 +27,54 @@ export default function SignUpForm() {
 			className="space-y-3"
 		>
 			<div className="flex-1 rounded-lg  px-6 pb-4 pt-8">
-				<div className='flex flex-col items-center mb-2'>
-					<Image src={CompanyLogo} alt="Company Logo" height={50} />
+				<div className="flex flex-col items-center mb-2">
+					<Image
+						src={CompanyLogo}
+						alt="Company Logo"
+						height={50}
+					/>
 				</div>
-				<h1 className={`gradient-text font-semibold mb-3 text-2xl text-center`}>
+				<h1
+					className={`gradient-text font-semibold mb-3 text-2xl text-center`}
+				>
 					Create Your Account
 				</h1>
 				<div className="w-full">
 					<div>
 						<label
 							className="mb-3 mt-5 block text-xs font-medium text-gray-900"
-							htmlFor="name"
+							htmlFor="given_name"
 						>
-							Name
+							First Name
 						</label>
 						<div className="relative">
 							<input
 								className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-								id="name"
+								id="given_name"
 								type="text"
-								name="name"
+								name="given_name"
 								minLength={4}
-								placeholder="Enter your name"
+								placeholder="Enter your first name"
+								required
+							/>
+							<UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+						</div>
+					</div>
+					<div>
+						<label
+							className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+							htmlFor="family_name"
+						>
+							Last Name
+						</label>
+						<div className="relative">
+							<input
+								className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+								id="family_name"
+								type="text"
+								name="family_name"
+								minLength={4}
+								placeholder="Enter your last name"
 								required
 							/>
 							<UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
@@ -97,7 +123,7 @@ export default function SignUpForm() {
 				<SignUpButton />
 				<div className="flex justify-center">
 					<Link
-						href="/auth/login"
+						href="./login"
 						className="mt-2 cursor-pointer text-blue-500"
 					>
 						Already have an account? Log in.
@@ -137,6 +163,5 @@ function SignUpButton() {
 				<ArrowRightIcon className="ml-2 h-5 w-5 text-gray-50" />
 			</span>
 		</Button>
-
 	);
 }

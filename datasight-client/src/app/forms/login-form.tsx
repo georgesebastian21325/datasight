@@ -21,7 +21,7 @@ export default function LoginForm() {
 			action={dispatch}
 			className="space-y-3"
 		>
-			<div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
+			<div className="flex-1 rounded-lg  px-6 pb-4 pt-8">
 				<h1 className={` mb-3 text-2xl`}>
 					Please log in to continue.
 				</h1>
@@ -69,7 +69,7 @@ export default function LoginForm() {
 				<LoginButton />
 				<div className="flex justify-center">
 					<Link
-						href="/sign-up"
+						href="./sign-up"
 						className="mt-2 cursor-pointer text-blue-500"
 					>
 						{"Don't have an account? "} Sign up.
