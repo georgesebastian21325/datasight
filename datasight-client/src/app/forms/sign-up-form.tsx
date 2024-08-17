@@ -13,6 +13,9 @@ import { handleSignUp } from "@/lib/cognitoActions";
 import Link from "next/link";
 import SendVerificationCode from "./send-verification-code-form";
 
+import CompanyLogo from "../../assets/company-logo.jpg";
+import Image from "next/image";
+
 export default function SignUpForm() {
 	const [errorMessage, dispatch] = useFormState(
 		handleSignUp,
@@ -23,9 +26,12 @@ export default function SignUpForm() {
 			action={dispatch}
 			className="space-y-3"
 		>
-			<div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
-				<h1 className={` mb-3 text-2xl`}>
-					Please create an account.
+			<div className="flex-1 rounded-lg  px-6 pb-4 pt-8">
+				<div className='flex flex-col items-center mb-2'>
+					<Image src={CompanyLogo} alt="Company Logo" height={50} />
+				</div>
+				<h1 className={`gradient-text font-semibold mb-3 text-2xl text-center`}>
+					Create Your Account
 				</h1>
 				<div className="w-full">
 					<div>
@@ -123,11 +129,14 @@ function SignUpButton() {
 
 	return (
 		<Button
-			className="mt-4 w-full"
+			className="mt-4 w-full flex justify-center items-center"
 			aria-disabled={pending}
 		>
-			Create account{" "}
-			<ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+			<span className="flex items-center">
+				Create account
+				<ArrowRightIcon className="ml-2 h-5 w-5 text-gray-50" />
+			</span>
 		</Button>
+
 	);
 }
