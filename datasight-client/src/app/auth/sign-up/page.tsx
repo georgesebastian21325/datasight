@@ -7,8 +7,8 @@ import {
 } from "react-icons/ai";
 import CompanyLogo from "../../assets/company-logo.jpg";
 import Image from "next/image";
-import { LoginBtn } from "../components/button";
-import SignUpForm from "../forms/sign-up-form";
+import { LoginBtn } from "../../components/button";
+import SignUpForm from "../../forms/sign-up-form";
 
 export default function Page() {
 	const [selectedRole, setSelectedRole] = useState("");

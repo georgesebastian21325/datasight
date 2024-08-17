@@ -33,7 +33,7 @@ export async function handleSignUp(
 	} catch (error) {
 		return getErrorMessage(error);
 	}
-	redirect("/confirm-signup");
+	redirect("./confirm-signup");
 }
 
 export async function handleSendEmailVerificationCode(
@@ -72,7 +72,7 @@ export async function handleConfirmSignUp(
 	} catch (error) {
 		return getErrorMessage(error);
 	}
-	redirect("/login");
+	redirect("./login");
 }
 
 export async function handleSignIn(

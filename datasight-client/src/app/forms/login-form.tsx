@@ -69,7 +69,7 @@ export default function LoginForm() {
 				<LoginButton />
 				<div className="flex justify-center">
 					<Link
-						href="/sign-up"
+						href="./sign-up"
 						className="mt-2 cursor-pointer text-blue-500"
 					>
 						{"Don't have an account? "} Sign up.

@@ -1,4 +1,4 @@
-import ConfirmSignUpForm from "../forms/confirm-sign-up-form";
+import ConfirmSignUpForm from "../../forms/confirm-sign-up-form";
 
 export default function ConfirmSignUpPage() {
 	return (
