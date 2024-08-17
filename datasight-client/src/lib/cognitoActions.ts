@@ -21,7 +21,10 @@ export async function handleSignUp(
 				options: {
 					userAttributes: {
 						email: String(formData.get("email")),
-						name: String(formData.get("name")),
+						given_name: String(formData.get("given_name")),
+						family_name: String(
+							formData.get("family_name"),
+						),
 					},
 					// optional
 					autoSignIn: true,
@@ -30,7 +33,7 @@ export async function handleSignUp(
 	} catch (error) {
 		return getErrorMessage(error);
 	}
-	redirect("/auth/confirm-signup");
+	redirect("/confirm-signup");
 }
 
 export async function handleSendEmailVerificationCode(
@@ -69,7 +72,7 @@ export async function handleConfirmSignUp(
 	} catch (error) {
 		return getErrorMessage(error);
 	}
-	redirect("/auth/login");
+	redirect("/login");
 }
 
 export async function handleSignIn(
