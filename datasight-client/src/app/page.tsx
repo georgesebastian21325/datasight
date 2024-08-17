@@ -12,7 +12,7 @@ import { SignUpBtn, LoginBtn } from "./components/button";
 export default function Home() {
   return (
     <main
-      className="font-sans bg-cover bg-center bg-no-repeat h-screen flex items-center justify-center"
+      className=" bg-cover bg-center bg-no-repeat h-screen flex items-center justify-center"
       style={{ backgroundImage: `url(${BackgroundImage.src})` }}
     >
       <div className="text-center flex flex-col items-center justify-center h-full">
