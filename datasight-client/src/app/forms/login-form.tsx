@@ -6,10 +6,13 @@ import {
 	ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
+import Link from "next/link";
+
 import { useFormState, useFormStatus } from "react-dom";
+
 import { Button } from "../components/button";
 import { handleSignIn } from "@/lib/cognitoActions";
-import Link from "next/link";
+
 
 export default function LoginForm() {
 	const [errorMessage, dispatch] = useFormState(
@@ -22,9 +25,12 @@ export default function LoginForm() {
 			className="space-y-3"
 		>
 			<div className="flex-1 rounded-lg  px-6 pb-4 pt-8">
-				<h1 className={` mb-3 text-2xl`}>
-					Please log in to continue.
+				<div className='text-center'>
+				<h1 className={`gradient-text mb-3 text-2xl`}>
+					Welcome back. 
 				</h1>
+				<p> Please log in to continue. </p>
+				</div>
 				<div className="w-full">
 					<div>
 						<label
