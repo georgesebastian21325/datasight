@@ -84,6 +84,16 @@ function SettingsBtn() {
 	)
 }
 
+function SignOutBtn() {
+	return (
+		<Link
+			href='./sign-out'
+			className=' text-brand-red text-sm px-[4rem] font-semibold py-3 rounded-md hover:bg-black hover:text-white transform transition-transform duration-300 hover:scale-105'>
+			SIGN OUT
+		</Link>
+	)
+}
+
 import clsx from "clsx";
 
 interface ButtonProps
@@ -109,4 +119,4 @@ export function Button({
 	);
 }
 
-export { LandingPageSignUpBtn, SignUpBtn, LoginBtn, UploadDataSetBtn, EnterpriseArchitectureBtn, SettingsBtn };
+export { LandingPageSignUpBtn, SignUpBtn, LoginBtn, UploadDataSetBtn, EnterpriseArchitectureBtn, SettingsBtn, SignOutBtn };
