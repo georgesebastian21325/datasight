@@ -25,8 +25,8 @@ function LoginBtn({
 		<Link
 			href="auth/login"
 			className={`rounded-md mt-2 hover:bg-gray-700 transform transition-transform duration-300 hover:scale-105 ${isSignUpPage
-					? "text-black bg-white font-bold hover:bg-black px-5 py-2 hover:text-white"
-					: "px-5 bg-black text-white  py-2 flex mt-[-0.1rem]"
+				? "text-black bg-white font-bold hover:bg-black px-5 py-2 hover:text-white"
+				: "px-5 bg-black text-white  py-2 flex mt-[-0.1rem]"
 				} ${isLoginPage ? "hidden" : ""}`}
 		>
 			Login
@@ -48,6 +48,40 @@ function SignUpBtn() {
 			</span>
 		</Button>
 	);
+}
+
+
+function UploadDataSetBtn() {
+	return (
+		<Link
+			href='./upload-dataset'
+			className='bg-white text-black text-sm px-12 font-semibold py-3 rounded-md'
+		>
+			UPLOAD DATASET
+		</Link>
+	)
+}
+
+function EnterpriseArchitectureBtn() {
+	return (
+		<Link
+			href='./enterprise-architecture'
+			className='bg-white text-black text-sm px-7 font-semibold py-3 rounded-md'
+		>
+			ENTERPRISE ARCHITECTURE
+		</Link>
+	)
+}
+
+function SettingsBtn() {
+	return (
+		<Link
+			href='./settings'
+			className='bg-white text-black text-sm px-[4rem] font-semibold py-3 rounded-md'
+		>
+			SETTINGS
+		</Link>
+	)
 }
 
 import clsx from "clsx";
@@ -75,4 +109,4 @@ export function Button({
 	);
 }
 
-export { LandingPageSignUpBtn, SignUpBtn, LoginBtn };
+export { LandingPageSignUpBtn, SignUpBtn, LoginBtn, UploadDataSetBtn, EnterpriseArchitectureBtn, SettingsBtn };
