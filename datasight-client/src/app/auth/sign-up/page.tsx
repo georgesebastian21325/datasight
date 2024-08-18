@@ -1,4 +1,3 @@
-import { LoginBtn } from "../../components/button";
 import SignUpForm from "../../forms/sign-up-form";
 
 export default function Page() {
@@ -16,11 +15,6 @@ export default function Page() {
 						Unlock powerful insights and make better
 						decisions with our tool.
 					</p>
-
-					<h1 className="text-white mt-12">
-						Already have an account? Login in now.
-					</h1>
-					<LoginBtn isSignUpPage={isSignUpPage} />
 				</div>
 			</div>
 			<div className="flex items-center justify-center">

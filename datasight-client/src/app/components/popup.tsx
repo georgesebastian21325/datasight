@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline'; // Adjust the import according to your setup
 
 export default function SignUpErrorPopUp({ errorMessage }) {
+    
   const [visible, setVisible] = useState(!!errorMessage);
 
   useEffect(() => {
