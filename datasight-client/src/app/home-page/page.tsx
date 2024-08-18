@@ -16,7 +16,7 @@ export default function HomePage() {
                         <h1 className='font-semibold text-xl mb-5'> Welcome John Doe, how can we help you today? </h1>
                         <p> Manage your enterprise architecture with ease. </p>
                     </div>
-                    <div className='flex gap-x-5 mt-10 text-black'>
+                    <div className='flex gap-x-12 mt-10 text-black'>
                         <UploadDataSetBtn />
                         <EnterpriseArchitectureBtn />
                         <SettingsBtn />

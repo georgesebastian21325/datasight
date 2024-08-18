@@ -55,7 +55,7 @@ function UploadDataSetBtn() {
 	return (
 		<Link
 			href='./upload-dataset'
-			className='bg-white text-black text-sm px-12 font-semibold py-3 rounded-md'
+			className='bg-white text-black text-sm px-12 font-semibold py-3 rounded-md hover:bg-black hover:text-white transform transition-transform duration-300 hover:scale-105'
 		>
 			UPLOAD DATASET
 		</Link>
@@ -66,7 +66,7 @@ function EnterpriseArchitectureBtn() {
 	return (
 		<Link
 			href='./enterprise-architecture'
-			className='bg-white text-black text-sm px-7 font-semibold py-3 rounded-md'
+			className='bg-white text-black text-sm px-7 font-semibold py-3 rounded-md hover:bg-black hover:text-white transform transition-transform duration-300 hover:scale-105'
 		>
 			ENTERPRISE ARCHITECTURE
 		</Link>
@@ -77,7 +77,7 @@ function SettingsBtn() {
 	return (
 		<Link
 			href='./settings'
-			className='bg-white text-black text-sm px-[4rem] font-semibold py-3 rounded-md'
+			className='bg-white text-black text-sm px-[4rem] font-semibold py-3 rounded-md hover:bg-black hover:text-white transform transition-transform duration-300 hover:scale-105'
 		>
 			SETTINGS
 		</Link>
