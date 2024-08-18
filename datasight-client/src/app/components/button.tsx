@@ -1,8 +1,12 @@
 // button.tsx
+"use client";
 
 import Link from "next/link";
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
 
-function SignUpBtn() {
+import { useFormState, useFormStatus } from "react-dom";
+
+function LandingPageSignUpBtn() {
 	return (
 		<Link
 			href="auth/sign-up"
@@ -19,7 +23,7 @@ function LoginBtn({
 }) {
 	return (
 		<Link
-			href="auth/login"
+			href="./login"
 			className={`rounded-md mt-2 hover:bg-gray-700 transform transition-transform duration-300 hover:scale-105 ${
 				isSignUpPage
 					? "text-black bg-white font-bold hover:bg-black px-5 py-2 hover:text-white"
@@ -30,6 +34,23 @@ function LoginBtn({
 		</Link>
 	);
 }
+
+function SignUpBtn() {
+	const { pending } = useFormStatus();
+
+	return (
+		<Button
+			className="mt-4 w-full flex justify-center items-center bg-brand-blue"
+			aria-disabled={pending}
+		>
+			<span className="flex items-center">
+				Create account
+				<ArrowRightIcon className="ml-2 h-5 w-5 text-gray-50" />
+			</span>
+		</Button>
+	);
+}
+
 
 import clsx from "clsx";
 
@@ -56,4 +77,4 @@ export function Button({
 	);
 }
 
-export { SignUpBtn, LoginBtn };
+export { LandingPageSignUpBtn, SignUpBtn, LoginBtn };

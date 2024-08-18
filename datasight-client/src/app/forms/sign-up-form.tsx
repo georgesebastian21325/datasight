@@ -3,18 +3,18 @@
 import {
 	AtSymbolIcon,
 	KeyIcon,
-	ExclamationCircleIcon,
 	UserCircleIcon,
 } from "@heroicons/react/24/outline";
-import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import { Button } from "../components/button";
-import { useFormState, useFormStatus } from "react-dom";
-import { handleSignUp } from "@/lib/cognitoActions";
-import Link from "next/link";
-import SendVerificationCode from "./send-verification-code-form";
-
 import CompanyLogo from "../../assets/company-logo.jpg";
 import Image from "next/image";
+import Link from "next/link";
+
+import { useFormState, useFormStatus } from "react-dom";
+import { handleSignUp } from "@/lib/cognitoActions";
+import SendVerificationCode from "./send-verification-code-form";
+
+import { SignUpBtn } from "../components/button";
+import { SignUpErrorPopUp } from "../components/popup"
 
 export default function SignUpForm() {
 	const [errorMessage, dispatch] = useFormState(
@@ -26,7 +26,7 @@ export default function SignUpForm() {
 			action={dispatch}
 			className="space-y-3"
 		>
-			<div className="flex-1 rounded-lg  px-6 pb-4 pt-8">
+			<div className="flex-1 rounded-lg  px-4 pb-4 pt-8">
 				<div className="flex flex-col items-center mb-2">
 					<Image
 						src={CompanyLogo}
@@ -34,11 +34,16 @@ export default function SignUpForm() {
 						height={50}
 					/>
 				</div>
-				<h1
-					className={`gradient-text font-semibold mb-3 text-2xl text-center`}
-				>
-					Create Your Account
+				<h1 className={`gradient-text font-bold mb-1 text-2xl text-center`}>
+					Get Started with Your Account
 				</h1>
+				<p className='text-center text-gray-500'>
+					Create your account in just a few steps.
+				</p>
+				{errorMessage && (
+					<SignUpErrorPopUp errorMessage={errorMessage} />
+				)}
+
 				<div className="w-full">
 					<div>
 						<label
@@ -120,48 +125,18 @@ export default function SignUpForm() {
 						</div>
 					</div>
 				</div>
-				<SignUpButton />
-				<div className="flex justify-center">
-					<Link
-						href="./login"
-						className="mt-2 cursor-pointer text-blue-500"
-					>
-						Already have an account? Log in.
-					</Link>
-				</div>
-				<div className="flex h-8 items-end space-x-1">
-					<div
-						className="flex h-8 items-end space-x-1"
-						aria-live="polite"
-						aria-atomic="true"
-					>
-						{errorMessage && (
-							<>
-								<ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-								<p className="text-sm text-red-500">
-									{errorMessage}
-								</p>
-							</>
-						)}
+				<div>
+					<div className="flex flex-col justify-center mt-5">
+						<SignUpBtn />
+						<Link
+							href="./login"
+							className="mt-2 cursor-pointer text-blue-500 text-center"
+						>
+							Already have an account? Log in.
+						</Link>
 					</div>
 				</div>
 			</div>
 		</form>
-	);
-}
-
-function SignUpButton() {
-	const { pending } = useFormStatus();
-
-	return (
-		<Button
-			className="mt-4 w-full flex justify-center items-center"
-			aria-disabled={pending}
-		>
-			<span className="flex items-center">
-				Create account
-				<ArrowRightIcon className="ml-2 h-5 w-5 text-gray-50" />
-			</span>
-		</Button>
 	);
 }
