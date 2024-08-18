@@ -1,8 +1,13 @@
-import { LoginBtn } from "../../components/button";
-import SignUpForm from "../../forms/sign-up-form";
+"use client";
+
+import React, { useState } from "react";
+
+import { LoginBtn } from "../components/button";
+import SignUpForm from "../forms/sign-up-form";
+
+
 
 export default function Page() {
-
 	const isSignUpPage = true;
 
 	return (

@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import CompanyLogo from "../assets/company-logo.jpg";
 import BackgroundImage from "../assets/landing-page-bg.jpg";
 
-import { SignUpBtn, LoginBtn } from "./components/button";
+import { LandingPageSignUpBtn, LoginBtn } from "./components/button";
 
 export default function Home() {
   return (
@@ -50,7 +50,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, ease: "easeOut", delay: 1 }} // Adjust delay as needed
               >
-                <SignUpBtn />
+                <LandingPageSignUpBtn />
                 <LoginBtn />
               </motion.div>
             </div>
