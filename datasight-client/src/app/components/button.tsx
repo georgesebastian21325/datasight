@@ -24,11 +24,10 @@ function LoginBtn({
 	return (
 		<Link
 			href="./login"
-			className={`rounded-md mt-2 hover:bg-gray-700 transform transition-transform duration-300 hover:scale-105 ${
-				isSignUpPage
+			className={`rounded-md mt-2 hover:bg-gray-700 transform transition-transform duration-300 hover:scale-105 ${isSignUpPage
 					? "text-black bg-white font-bold hover:bg-black px-5 py-2 hover:text-white"
 					: "px-5 bg-black text-white  py-2 flex mt-[-0.1rem]"
-			} ${isLoginPage ? "hidden" : ""}`}
+				} ${isLoginPage ? "hidden" : ""}`}
 		>
 			Login
 		</Link>
@@ -44,7 +43,7 @@ function SignUpBtn() {
 			aria-disabled={pending}
 		>
 			<span className="flex items-center">
-				Create account
+				Create Acount
 				<ArrowRightIcon className="ml-2 h-5 w-5 text-gray-50" />
 			</span>
 		</Button>

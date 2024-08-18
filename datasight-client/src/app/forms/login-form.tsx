@@ -2,8 +2,7 @@
 
 import {
 	AtSymbolIcon,
-	KeyIcon,
-	ExclamationCircleIcon,
+	KeyIcon
 } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 
@@ -41,7 +40,9 @@ export default function LoginForm() {
 							Enter your credentials to access your account
 						</p>
 					</div>
-					<AuthenticationErrorPopUp errorMessage={errorMessage} />
+					{errorMessage && (
+						<AuthenticationErrorPopUp errorMessage={errorMessage} />
+					)}
 				</div>
 				<div className="w-full">
 					<div>
@@ -108,7 +109,7 @@ function LoginButton() {
 			className="mt-4 w-full flex justify-center items-center bg-brand-blue"
 			aria-disabled={pending}
 		>
-			<span className="flex items-center">
+			<span className="flex items-center font-semibold">
 				Log In
 				<ArrowRightIcon className="ml-2 h-5 w-5 text-gray-50" />
 			</span>
