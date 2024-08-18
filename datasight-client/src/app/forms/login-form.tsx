@@ -17,6 +17,8 @@ import Image from "next/image";
 
 import CompanyLogo from '../../assets/company-logo.jpg'
 
+import { AuthenticationErrorPopUp } from "../components/popup";
+
 
 export default function LoginForm() {
 	const [errorMessage, dispatch] = useFormState(
@@ -30,12 +32,16 @@ export default function LoginForm() {
 		>
 			<div className="flex-1 rounded-lg  px-6 pb-4 pt-8">
 				<div className='flex flex-col items-center'>
-				<Image src={CompanyLogo} alt="company_logo" height={50} />
-				<div className='text-center'>
-				<h1 className={`gradient-text font-semibold mb-3 text-2xl`}>
-					Login To Your Account
-				</h1>
-				</div>
+					<Image src={CompanyLogo} alt="company_logo" height={50} />
+					<div className='text-center'>
+						<h1 className={`gradient-text font-semibold mb-3 text-2xl`}>
+							Login To Your Account
+						</h1>
+						<p className="text-gray-500">
+							Enter your credentials to access your account
+						</p>
+					</div>
+					<AuthenticationErrorPopUp errorMessage={errorMessage} />
 				</div>
 				<div className="w-full">
 					<div>
@@ -78,29 +84,15 @@ export default function LoginForm() {
 						</div>
 					</div>
 				</div>
-				<LoginButton />
-				<div className="flex justify-center">
-					<Link
-						href="./sign-up"
-						className="mt-2 cursor-pointer text-blue-500"
-					>
-						{"Don't have an account? "} Sign up.
-					</Link>
-				</div>
-				<div className="flex h-8 items-end space-x-1">
-					<div
-						className="flex h-8 items-end space-x-1"
-						aria-live="polite"
-						aria-atomic="true"
-					>
-						{errorMessage && (
-							<>
-								<ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-								<p className="text-sm text-red-500">
-									{errorMessage}
-								</p>
-							</>
-						)}
+				<div className='flex flex-col mt-5'>
+					<LoginButton />
+					<div className="flex justify-center">
+						<Link
+							href="./sign-up"
+							className="mt-2 cursor-pointer text-blue-500"
+						>
+							{"Don't have an account? "} Sign up.
+						</Link>
 					</div>
 				</div>
 			</div>
@@ -113,11 +105,13 @@ function LoginButton() {
 
 	return (
 		<Button
-			className="mt-4 w-full"
+			className="mt-4 w-full flex justify-center items-center bg-brand-blue"
 			aria-disabled={pending}
 		>
-			Log in{" "}
-			<ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+			<span className="flex items-center">
+				Log In
+				<ArrowRightIcon className="ml-2 h-5 w-5 text-gray-50" />
+			</span>
 		</Button>
 	);
 }

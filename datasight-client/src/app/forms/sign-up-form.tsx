@@ -14,7 +14,7 @@ import { handleSignUp } from "@/lib/cognitoActions";
 import SendVerificationCode from "./send-verification-code-form";
 
 import { SignUpBtn } from "../components/button";
-import { SignUpErrorPopUp } from "../components/popup"
+import { AuthenticationErrorPopUp } from "../components/popup"
 
 export default function SignUpForm() {
 	const [errorMessage, dispatch] = useFormState(
@@ -41,7 +41,7 @@ export default function SignUpForm() {
 					Create your account in just a few steps.
 				</p>
 				{errorMessage && (
-					<SignUpErrorPopUp errorMessage={errorMessage} />
+					<AuthenticationErrorPopUp errorMessage={errorMessage} />
 				)}
 
 				<div className="w-full">
