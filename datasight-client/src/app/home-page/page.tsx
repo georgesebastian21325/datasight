@@ -23,9 +23,9 @@ export default function HomePage() {
                             <p> Manage your enterprise architecture with ease. </p>
                         </div>
                         <div className='flex gap-x-12 mt-10 text-black'>
-                            <UploadDataSetBtn />
                             <EnterpriseArchitectureBtn />
                             <SettingsBtn />
+                            <SignOutBtn />
                         </div>
                     </div>
                 </div>

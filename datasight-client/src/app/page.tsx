@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+
 import { motion } from "framer-motion";
 import CompanyLogo from "../assets/company-logo.jpg";
 import BackgroundImage from "../assets/landing-page-bg.jpg";

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 
 import { useFormState, useFormStatus } from "react-dom";
+import { useState } from 'react'
 
 function LandingPageSignUpBtn() {
 	return (
@@ -88,11 +89,61 @@ function SignOutBtn() {
 	return (
 		<Link
 			href='./sign-out'
-			className=' text-brand-red text-sm px-[4rem] font-semibold py-3 rounded-md hover:bg-black hover:text-white transform transition-transform duration-300 hover:scale-105'>
+			className=' bg-white text-black text-sm px-12 font-semibold py-3 rounded-md hover:bg-brand-red hover:text-white transform transition-transform duration-300 hover:scale-105'>
 			SIGN OUT
 		</Link>
 	)
 }
+
+function OptimizeObsolenceBtn() {
+	const [isActive, setIsActive] = useState(false);
+
+	const handleClick = () => {
+		setIsActive(!isActive);
+	};
+
+	return (
+		<button
+			className={`text-white text-sm px-12 font-semibold py-3 rounded-md transform transition-transform duration-300 hover:scale-105 ${isActive ? 'bg-black hover:bg-black' : 'bg-brand-blue hover:bg-black'
+				}`}
+			onClick={handleClick}
+		>
+			Optimize For Obsolescence
+		</button>
+	);
+}
+
+function OptimizeRiskBtn() {
+	return (
+		<Link
+			href='./sign-out'
+			className=' bg-brand-blue text-white text-sm px-12 font-semibold py-3 rounded-md hover:bg-black hover:text-white transform transition-transform duration-300 hover:scale-105'>
+			Optimize For Risk
+		</Link>
+	)
+}
+
+function OptimizeCapacityBtn() {
+	return (
+		<Link
+			href='./sign-out'
+			className=' bg-brand-blue text-white text-sm px-12 font-semibold py-3 rounded-md hover:bg-black hover:text-white transform transition-transform duration-300 hover:scale-105'>
+			Optimize For Capacity
+		</Link>
+	)
+}
+
+function OptimizeFinanceBtn() {
+	return (
+		<Link
+			href='./sign-out'
+			className=' bg-brand-blue text-white text-sm px-12 font-semibold py-3 rounded-md hover:bg-black hover:text-white transform transition-transform duration-300 hover:scale-105'>
+			Optimize For Finance
+		</Link>
+	)
+}
+
+
 
 import clsx from "clsx";
 
@@ -119,4 +170,4 @@ export function Button({
 	);
 }
 
-export { LandingPageSignUpBtn, SignUpBtn, LoginBtn, UploadDataSetBtn, EnterpriseArchitectureBtn, SettingsBtn, SignOutBtn };
+export { LandingPageSignUpBtn, SignUpBtn, LoginBtn, UploadDataSetBtn, EnterpriseArchitectureBtn, SettingsBtn, SignOutBtn, OptimizeObsolenceBtn, OptimizeRiskBtn, OptimizeFinanceBtn, OptimizeCapacityBtn };
