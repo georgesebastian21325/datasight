@@ -2,7 +2,7 @@ import { ReactFlow, Controls, Background, MiniMap } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 import Header from '../components/global/header';
-import { OptimizeObsolenceBtn, OptimizeRiskBtn, OptimizeFinanceBtn, OptimizeCapacityBtn } from '../components/button'
+import { OptimizeObsolenceBtn, OptimizeRiskBtn, OptimizeFinanceBtn, OptimizeCapacityBtn, GenerateMapBtn } from '../components/button'
 
 
 
@@ -12,6 +12,13 @@ export default function EnterpriseArchitecture() {
             <Header />
             <main className="flex-grow p-6 ">
                 <div className="max-w-6xl mx-auto space-y-6">
+                    <div className='flex justify-end'>
+                        <GenerateMapBtn />
+                    </div>
+                    <div className=" w-full border-2 rounded-lg overflow-hidden items-center flex flex-col p-12 text-center justify-center">
+                        <h1 className='font-bold text-2xl gradient-text'> COMPANY ENTERPRISE ARCHITECTURE </h1>
+                        <p className='text-gray-500'> Explore and analyze your enterprise architecture. </p>
+                    </div>
                     <div className="aspect-[16/9] w-full border-2 rounded-lg overflow-hidden">
 
                     </div>

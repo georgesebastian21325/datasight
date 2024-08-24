@@ -114,33 +114,75 @@ function OptimizeObsolenceBtn() {
 }
 
 function OptimizeRiskBtn() {
+	const [isActive, setIsActive] = useState(false);
+
+	const handleClick = () => {
+		setIsActive(!isActive);
+	};
+
 	return (
-		<Link
-			href='./sign-out'
-			className=' bg-brand-blue text-white text-sm px-12 font-semibold py-3 rounded-md hover:bg-black hover:text-white transform transition-transform duration-300 hover:scale-105'>
+		<button
+			className={`text-white text-sm px-12 font-semibold py-3 rounded-md transform transition-transform duration-300 hover:scale-105 ${isActive ? 'bg-black hover:bg-black' : 'bg-brand-blue hover:bg-black'
+				}`}
+			onClick={handleClick}
+		>
 			Optimize For Risk
-		</Link>
-	)
+		</button>
+	);
 }
 
 function OptimizeCapacityBtn() {
+	const [isActive, setIsActive] = useState(false);
+
+	const handleClick = () => {
+		setIsActive(!isActive);
+	};
+
 	return (
-		<Link
-			href='./sign-out'
-			className=' bg-brand-blue text-white text-sm px-12 font-semibold py-3 rounded-md hover:bg-black hover:text-white transform transition-transform duration-300 hover:scale-105'>
+		<button
+			className={`text-white text-sm px-12 font-semibold py-3 rounded-md transform transition-transform duration-300 hover:scale-105 ${isActive ? 'bg-black hover:bg-black' : 'bg-brand-blue hover:bg-black'
+				}`}
+			onClick={handleClick}
+		>
 			Optimize For Capacity
-		</Link>
-	)
+		</button>
+	);
 }
 
 function OptimizeFinanceBtn() {
+	const [isActive, setIsActive] = useState(false);
+
+	const handleClick = () => {
+		setIsActive(!isActive);
+	};
+
 	return (
-		<Link
-			href='./sign-out'
-			className=' bg-brand-blue text-white text-sm px-12 font-semibold py-3 rounded-md hover:bg-black hover:text-white transform transition-transform duration-300 hover:scale-105'>
+		<button
+			className={`text-white text-sm px-12 font-semibold py-3 rounded-md transform transition-transform duration-300 hover:scale-105 ${isActive ? 'bg-black hover:bg-black' : 'bg-brand-blue hover:bg-black'
+				}`}
+			onClick={handleClick}
+		>
 			Optimize For Finance
-		</Link>
-	)
+		</button>
+	);
+}
+
+function GenerateMapBtn() {
+	const [isActive, setIsActive] = useState(false);
+
+	const handleClick = () => {
+		setIsActive(!isActive);
+	};
+
+	return (
+		<button
+			className={`text-white text-sm px-12 font-semibold py-3 rounded-md transform transition-transform duration-300 hover:scale-105 ${isActive ? 'bg-black hover:bg-black' : 'bg-green-900 hover:bg-black'
+				}`}
+			onClick={handleClick}
+		>
+			Generate Mapping
+		</button>
+	);
 }
 
 
@@ -170,4 +212,4 @@ export function Button({
 	);
 }
 
-export { LandingPageSignUpBtn, SignUpBtn, LoginBtn, UploadDataSetBtn, EnterpriseArchitectureBtn, SettingsBtn, SignOutBtn, OptimizeObsolenceBtn, OptimizeRiskBtn, OptimizeFinanceBtn, OptimizeCapacityBtn };
+export { LandingPageSignUpBtn, SignUpBtn, LoginBtn, UploadDataSetBtn, EnterpriseArchitectureBtn, SettingsBtn, SignOutBtn, OptimizeObsolenceBtn, OptimizeRiskBtn, OptimizeFinanceBtn, OptimizeCapacityBtn, GenerateMapBtn };
