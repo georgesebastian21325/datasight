@@ -30,7 +30,7 @@ function LoginBtn({
 				: "px-5 bg-black text-white  py-2 flex mt-[-0.1rem]"
 				} ${isLoginPage ? "hidden" : ""}`}
 		>
-			Login
+			Login To Your Account
 		</Link>
 	);
 }

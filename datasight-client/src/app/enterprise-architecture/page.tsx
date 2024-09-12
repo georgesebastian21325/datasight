@@ -30,7 +30,8 @@ const initialNodes = [
 ];
 
 const initialEdges = [
-    { id: 'e1-4', source: '1', target: '4', type: 'straight', animated: true },
+    { id: '1', source: '1', target: '4', type: 'straight', animated: true },
+    { id: '2', source: '1', target: '5', type: 'straight', animated: true },
     { id: 'e2-5', source: '2', target: '5', type: 'straight', animated: true },
     { id: 'e3-6', source: '3', target: '6', type: 'straight', animated: true },
     { id: 'e4-7', source: '4', target: '7', type: 'straight', animated: true },
@@ -125,10 +126,9 @@ export default function EnterpriseArchitecture() {
                             onEdgesChange={onEdgesChange}
                             onConnect={onConnect}
                             onNodeClick={onNodeClick}
-                            fitView
+
                         >
                             <Controls />
-                            <Background />
                         </ReactFlow>
                     </div>
                     <div className="flex gap-x-5 justify-center">
