@@ -2,6 +2,7 @@
 
 import { Amplify, type ResourcesConfig } from "aws-amplify";
 
+
 export const authConfig: ResourcesConfig["Auth"] = {
 	Cognito: {
 		userPoolId: String(

@@ -76,32 +76,38 @@ export async function handleConfirmSignUp(
 }
 
 export async function handleSignIn(
-	prevState: string | undefined,
-	formData: FormData,
+  prevState: string | undefined,
+  formData: FormData,
 ) {
-	let redirectLink = "/dashboard";
-	try {
-		const { isSignedIn, nextStep } = await signIn({
-			username: String(formData.get("email")),
-			password: String(formData.get("password")),
-		});
+  let redirectLink = "/home-page"; // Default redirect link after successful sign-in
 
-		const session = await fetchAuthSession();
-		console.log("Session:", session);
-		console.log(isSignedIn, nextStep);
+  try {
+    const { isSignedIn, nextStep } = await signIn({
+      username: String(formData.get("email")),
+      password: String(formData.get("password")),
+    });
 
-		if (nextStep.signInStep === "CONFIRM_SIGN_UP") {
-			await resendSignUpCode({
-				username: String(formData.get("email")),
-			});
-			redirectLink = "/auth/confirm-signup";
-		}
-	} catch (error) {
-		return getErrorMessage(error);
-	}
+    const session = await fetchAuthSession();
+    console.log("Session:", session);
+    console.log(isSignedIn, nextStep);
 
-	// redirect(redirectLink);
+    // Handle password reset requirement
+    if (nextStep.signInStep === "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED") {
+      // User needs to reset their password
+      sessionStorage.setItem('userChallenge', JSON.stringify(session));
+      redirectLink = "/auth/reset-password"; // Redirect to reset password page
+    } else if (isSignedIn) {
+      // If user is signed in without any additional steps
+      redirectLink = "/dashboard"; // Redirect to dashboard or any other default page
+    }
+  } catch (error) {
+    return getErrorMessage(error); // Handle any errors that occur during sign-in
+  }
+
+  // Perform the redirect after handling sign-in steps
+  window.location.href = redirectLink;
 }
+
 
 export async function handleSignOut() {
 	try {
