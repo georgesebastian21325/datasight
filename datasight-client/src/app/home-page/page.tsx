@@ -49,7 +49,7 @@ export default function HomePage() {
                     ].map(({ label, href }) => (
                         <Link key={label} href={href}>
                             <button
-                                className={`bg-[#000080] text-white font-semibold px-4 py-2 rounded-md w-[250px] transition-transform transform hover:scale-105 ${label === "Sign Out" ? "hover:bg-red-600" : "hover:bg-black"
+                                className={`bg-[#000080] text-white font-medium px-4 py-2 rounded-md w-[250px] transition-transform transform hover:scale-105 ${label === "Sign Out" ? "hover:bg-red-600" : "hover:bg-black"
                                     }`}
                             >
                                 {label}

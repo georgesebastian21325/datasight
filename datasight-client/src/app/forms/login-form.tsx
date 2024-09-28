@@ -27,18 +27,15 @@ export default function LoginForm() {
 	return (
 		<form
 			action={dispatch}
-			className="space-y-3 w-full"
+			className="space-y-3 w-[24rem]"
 		>
+
 			<div className="flex-1 rounded-lg  px-6 pb-4 pt-8">
 				<div className='flex flex-col items-center'>
-					<Image src={CompanyLogo} alt="company_logo" height={50} />
 					<div className='text-center'>
 						<h1 className={`gradient-text font-semibold mb-3 text-2xl`}>
-							Login To Your Account
+							Account Login
 						</h1>
-						<p className="text-gray-500">
-							Enter your credentials to access your account
-						</p>
 					</div>
 					{errorMessage && (
 						<AuthenticationErrorPopUp errorMessage={errorMessage} />
@@ -47,7 +44,7 @@ export default function LoginForm() {
 				<div className="w-full">
 					<div>
 						<label
-							className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+							className="mb-3 mt-5 block text-xs font-medium text-gray-900 "
 							htmlFor="email"
 						>
 							Email
@@ -87,14 +84,6 @@ export default function LoginForm() {
 				</div>
 				<div className='flex flex-col mt-5'>
 					<LoginButton />
-					<div className="flex justify-center">
-						<Link
-							href="./sign-up"
-							className="mt-2 cursor-pointer text-blue-500"
-						>
-							{"Don't have an account? "} Sign up.
-						</Link>
-					</div>
 				</div>
 			</div>
 		</form>
