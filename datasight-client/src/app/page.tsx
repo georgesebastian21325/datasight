@@ -5,7 +5,8 @@ import Image from "next/image";
 import LoginForm from "./forms/login-form";
 
 import CompanyLogo from '../assets/company-logo.jpg';
-import LoginAsset from '../assets/login-asset-2.png'
+import LoginAsset from '../assets/login-asset-2.png';
+
 
 const phrases = [
 	"Transform data into insights.",
