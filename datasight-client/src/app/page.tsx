@@ -68,7 +68,6 @@ function LoginPage() {
 					<Image src={LoginAsset} alt='login-asset' width={700} />
 				</div>
 			</div>
-
 		</div>
 	);
 }
