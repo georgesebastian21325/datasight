@@ -83,12 +83,6 @@ export async function handleSignIn(
       username: String(formData.get("email")),
       password: String(formData.get("password")),
     });
-    if (nextStep.signInStep === "CONFIRM_SIGN_UP") {
-      await resendSignUpCode({
-        username: String(formData.get("email")),
-      });
-      redirectLink = "/auth/confirm-signup";
-    }
   } catch (error) {
     return getErrorMessage(error);
   }
@@ -102,7 +96,7 @@ export async function handleSignOut() {
   } catch (error) {
     console.log(getErrorMessage(error));
   }
-  redirect("/auth/login");
+  redirect("/");
 }
 
 export async function handleResetPassword(

@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import Header from "../components/global/header";
 import Link from 'next/link';
 
+import { handleSignOut } from '@/lib/cognitoActions';
+
 export default function HomePage() {
     const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
@@ -25,7 +27,7 @@ export default function HomePage() {
     }
 
     return (
-        <div className="min-h-screen bg-white flex flex-col items-center justify-start p-4">
+         <div className="min-h-screen bg-white flex flex-col items-center justify-start p-4">
             <div className="w-full text-right mb-4">
                 {currentTime && (
                     <p className="text-xl font-semibold text-gray-700" aria-live="polite">
@@ -45,17 +47,24 @@ export default function HomePage() {
                     {[
                         { label: "Enterprise Architecture", href: "/enterprise-architecture" },
                         { label: "Settings", href: "/settings" },
-                        { label: "Sign Out", href: "/" },
                     ].map(({ label, href }) => (
                         <Link key={label} href={href}>
                             <button
-                                className={`bg-[#000080] text-white font-medium px-4 py-2 rounded-md w-[250px] transition-transform transform hover:scale-105 ${label === "Sign Out" ? "hover:bg-red-600" : "hover:bg-black"
-                                    }`}
+                                className={`bg-[#000080] text-white font-medium px-4 py-2 rounded-md w-[250px] transition-transform transform hover:scale-105 hover:bg-black`}
                             >
                                 {label}
                             </button>
                         </Link>
                     ))}
+
+                    {/* Sign Out button */}
+                    <form action={handleSignOut}>
+                        <button
+                            className="bg-[#000080] text-white font-medium px-4 py-2 rounded-md w-[250px] transition-transform transform hover:scale-105 hover:bg-red-600"
+                        >
+                            Sign Out
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
