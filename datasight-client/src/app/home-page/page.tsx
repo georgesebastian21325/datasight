@@ -1,13 +1,15 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 import Header from "../components/global/header";
 import Link from 'next/link';
+import SignOutModal from "../components/modal/SignOutModal"; // Import the SignOutModal component
 
 import { handleSignOut } from '@/lib/cognitoActions';
 
 export default function HomePage() {
     const [currentTime, setCurrentTime] = useState<Date | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false); // Manage modal visibility state
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -26,8 +28,9 @@ export default function HomePage() {
         });
     }
 
+
     return (
-         <div className="min-h-screen bg-white flex flex-col items-center justify-start p-4">
+        <div className="min-h-screen bg-white flex flex-col items-center justify-start p-4">
             <div className="w-full text-right mb-4">
                 {currentTime && (
                     <p className="text-xl font-semibold text-gray-700" aria-live="polite">
@@ -50,7 +53,7 @@ export default function HomePage() {
                     ].map(({ label, href }) => (
                         <Link key={label} href={href}>
                             <button
-                                className={`bg-[#000080] text-white font-medium px-4 py-2 rounded-md w-[250px] transition-transform transform hover:scale-105 hover:bg-black`}
+                                className="bg-[#000080] text-white font-medium px-4 py-2 rounded-md w-[250px] transition-transform transform hover:scale-105 hover:bg-black"
                             >
                                 {label}
                             </button>
@@ -58,15 +61,21 @@ export default function HomePage() {
                     ))}
 
                     {/* Sign Out button */}
-                    <form action={handleSignOut}>
-                        <button
-                            className="bg-[#000080] text-white font-medium px-4 py-2 rounded-md w-[250px] transition-transform transform hover:scale-105 hover:bg-red-600"
-                        >
-                            Sign Out
-                        </button>
-                    </form>
+                    <button
+                        onClick={() => setIsModalOpen(true)} // Open the modal on click
+                        className="bg-[#000080] text-white font-medium px-4 py-2 rounded-md w-[250px] transition-transform transform hover:scale-105 hover:bg-red-600"
+                    >
+                        Sign Out
+                    </button>
                 </div>
             </div>
+
+            {/* Sign Out Modal */}
+            <SignOutModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)} // Close modal on cancel
+                onSignOut={handleSignOut} // Handle sign-out logic
+            />
         </div>
-    )
+    );
 }

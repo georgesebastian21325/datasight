@@ -70,7 +70,7 @@ export async function handleConfirmSignUp(
   } catch (error) {
     return getErrorMessage(error);
   }
-  redirect("/auth/login");
+  redirect("/");
 }
 
 export async function handleSignIn(
@@ -96,7 +96,6 @@ export async function handleSignOut() {
   } catch (error) {
     console.log(getErrorMessage(error));
   }
-  redirect("/");
 }
 
 export async function handleResetPassword(

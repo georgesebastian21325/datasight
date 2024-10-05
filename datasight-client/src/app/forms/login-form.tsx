@@ -11,11 +11,6 @@ import { useFormState, useFormStatus } from "react-dom";
 import { Button } from "../components/button";
 import { handleSignIn } from "@/lib/cognitoActions";
 
-import Link from "next/link";
-import Image from "next/image";
-
-import CompanyLogo from '../../assets/company-logo.jpg'
-
 import { AuthenticationErrorPopUp } from "../components/popup";
 
 
