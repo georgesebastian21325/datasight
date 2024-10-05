@@ -6,6 +6,8 @@ import Link from 'next/link';
 import SignOutModal from "../components/modal/SignOutModal"; // Import the SignOutModal component
 
 import { handleSignOut } from '@/lib/cognitoActions';
+import { getCurrentUser } from 'aws-amplify/auth';
+
 
 export default function HomePage() {
     const [currentTime, setCurrentTime] = useState<Date | null>(null);
@@ -28,7 +30,6 @@ export default function HomePage() {
         });
     }
 
-
     return (
         <div className="min-h-screen bg-white flex flex-col items-center justify-start p-4">
             <div className="w-full text-right mb-4">
@@ -43,12 +44,12 @@ export default function HomePage() {
             </div>
 
             <div className="text-center mb-8 p-6 border-2 border-gray-300 rounded-lg shadow-md">
-                <h2 className="text-2xl font-semibold text-gray-700 mb-2">Welcome John Doe, how can we help you today?</h2>
+                <h2 className="text-2xl font-semibold text-gray-700 mb-2">Welcome George, how can we help you today?</h2>
                 <p className="text-gray-600 mb-6">Manage your enterprise architecture with ease.</p>
 
                 <div className="flex flex-wrap justify-center gap-4">
                     {[
-                        { label: "Enterprise Architecture", href: "/enterprise-architecture" },
+                        { label: "Enterprise Architecture", href: "/enterprise-architecture-view" },
                         { label: "Settings", href: "/settings" },
                     ].map(({ label, href }) => (
                         <Link key={label} href={href}>

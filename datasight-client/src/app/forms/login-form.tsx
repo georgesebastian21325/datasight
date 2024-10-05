@@ -5,6 +5,7 @@ import {
 	KeyIcon
 } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
 
 import { useFormState, useFormStatus } from "react-dom";
 
@@ -12,13 +13,21 @@ import { Button } from "../components/button";
 import { handleSignIn } from "@/lib/cognitoActions";
 
 import { AuthenticationErrorPopUp } from "../components/popup";
-
+import Link from "next/link";
+import { useState } from "react"; // Import useState for managing the password visibility
 
 export default function LoginForm() {
 	const [errorMessage, dispatch] = useFormState(
 		handleSignIn,
 		undefined,
 	);
+	// State to manage the visibility of the password
+	const [showPassword, setShowPassword] = useState(false);
+
+	const togglePasswordVisibility = () => {
+		setShowPassword((prevState) => !prevState);
+	};
+
 	return (
 		<form
 			action={dispatch}
@@ -65,15 +74,26 @@ export default function LoginForm() {
 						</label>
 						<div className="relative">
 							<input
-								className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+								className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 pr-10 text-sm outline-2 placeholder:text-gray-500"
 								id="password"
-								type="password"
+								type={showPassword ? "text" : "password"} // Switch between 'text' and 'password'
 								name="password"
 								placeholder="Enter password"
 								required
 								minLength={6}
 							/>
 							<KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+
+							{/* Add the Eye/EyeSlash Icon for password visibility toggle */}
+							<div
+								className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500"
+								onClick={togglePasswordVisibility}
+							>
+								{showPassword ? <FaEyeSlash /> : <FaEye />}
+							</div>
+						</div>
+						<div className='flex items-end justify-end mt-2'>
+							<Link href='/auth/reset-password/submit' className='text-sm text-blue-600 hover:underline font-medium'> Forget Password?</Link>
 						</div>
 					</div>
 				</div>
