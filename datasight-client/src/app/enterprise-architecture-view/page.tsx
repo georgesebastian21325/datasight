@@ -1,4 +1,5 @@
 import Header from "../components/global/header";
+import ServiceResourceMapping from "../data-mapping/page";
 import Link from "next/link";
 
 export default function page() {
@@ -45,7 +46,7 @@ export default function page() {
 
                 <div className="flex items-center justify-center h-[calc(100%-80px)] border-2 border-dashed border-gray-300 rounded-lg">
                     <p className="text-gray-500 text-center">
-                        Enterprise mapping visualization will be displayed here.
+                        
                     </p>
                 </div>
             </div>
