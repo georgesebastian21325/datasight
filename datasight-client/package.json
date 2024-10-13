@@ -17,6 +17,7 @@
     "@next/font": "^14.2.5",
     "@xyflow/react": "^12.1.1",
     "aws-amplify": "^6.6.2",
+    "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.3.19",
