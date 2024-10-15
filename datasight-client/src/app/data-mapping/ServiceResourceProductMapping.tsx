@@ -63,7 +63,7 @@ export default function ServiceResourceProductMapping({
         const finalStatus = status || getRandomStatus(); // Use provided status or assign random
         const statusColor = {
             green: "🟢", // Green color tag
-            orange: "🟠", // Orange color tag
+            orange: "🟡", // Orange color tag
             red: "🔴" // Red color tag
         }[finalStatus];
 
