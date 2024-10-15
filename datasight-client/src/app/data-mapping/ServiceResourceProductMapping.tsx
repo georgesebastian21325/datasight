@@ -11,6 +11,8 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 
+import DataMappingLoadingState from '../components/global/DataMappingLoadingState'
+
 // Define the type for the resource-service and product-service API responses
 interface ResourceServiceMappingData {
     mapping_id: string;
@@ -239,7 +241,7 @@ export default function ServiceResourceProductMapping() {
     };
 
     if (loading) {
-        return <p>Loading...</p>;
+        return <DataMappingLoadingState />;
     }
 
     if (error) {
@@ -249,17 +251,13 @@ export default function ServiceResourceProductMapping() {
     const { nodes, edges } = generateNodesAndEdges();
 
     return (
-        <div style={{ height: "100vh" }}>
-            <h1>Service, Resource, and Product Mapping</h1>
+        <div style={{ height: "77vh" }}>
             <ReactFlow
                 nodes={nodes}
                 edges={edges}
                 fitView
                 onNodeClick={handleNodeClick} // Add node click event handler
             >
-                <Background />
-                <Controls />
-                <MiniMap />
             </ReactFlow>
         </div>
     );

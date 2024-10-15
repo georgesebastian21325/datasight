@@ -1,0 +1,86 @@
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full screen height for demonstration */
+}
+
+.spinner {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  animation: rotate 2s linear infinite;
+}
+
+/* Styling for each node */
+.node {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: #4caf50; /* Green color for nodes */
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Lines connecting the nodes */
+.node::before {
+  content: '';
+  position: absolute;
+  width: 80px; /* Adjust this based on spinner size */
+  height: 2px;
+  background-color: #333; /* Line color */
+  top: 50%;
+  left: 50%;
+  transform-origin: 0% 50%;
+}
+
+/* Positioning the nodes in a circular layout */
+.node1 {
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.node1::before {
+  transform: rotate(45deg);
+}
+
+.node2 {
+  top: 50%;
+  right: 0;
+  transform: translate(50%, -50%);
+}
+
+.node2::before {
+  transform: rotate(135deg);
+}
+
+.node3 {
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 50%);
+}
+
+.node3::before {
+  transform: rotate(225deg);
+}
+
+.node4 {
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%);
+}
+
+.node4::before {
+  transform: rotate(-45deg);
+}
+
+/* Keyframes for spinning animation */
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

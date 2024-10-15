@@ -1,5 +1,5 @@
-import Header from "../components/global/header";
-import ServiceResourceMapping from "../data-mapping/page";
+import Header from "../components/global/Header";
+import ServiceResourceProductMapping from "../data-mapping/ServiceResourceProductMapping";
 import Link from "next/link";
 
 export default function page() {
@@ -12,7 +12,6 @@ export default function page() {
                 </button>
             </Link>
 
-
             {/* Left sidebar - Console */}
             <div className="w-full lg:w-1/5 h-full overflow-auto border-r border-gray-200 p-4 flex flex-col">
                 {/* Logo */}
@@ -22,20 +21,20 @@ export default function page() {
 
                 <h2 className="text-xl font-bold mb-4">Optimization Options</h2>
                 <div className="space-y-2 flex-grow">
-                    <button className="w-full text-left px-4 py-2  hover:bg-blue-800  rounded-md bg-brand-blue text-white transition-transform transform hover:scale-105">Obsolescences</button>
-                    <button className="w-full text-left px-4 py-2  hover:bg-blue-800 rounded-md bg-brand-blue text-white transition-transform transform hover:scale-105">Capacity</button>
-                    <button className="w-full text-left px-4 py-2  hover:bg-blue-800 rounded-md bg-brand-blue text-white transition-transform transform hover:scale-105">Finance</button>
-                    <button className="w-full text-left px-4 py-2  hover:bg-blue-800 rounded-md bg-brand-blue text-white transition-transform transform hover:scale-105">Risk</button>
+                    <button className="w-full text-left px-4 py-2 hover:bg-blue-800 rounded-md bg-brand-blue text-white transition-transform transform hover:scale-105">Obsolescences</button>
+                    <button className="w-full text-left px-4 py-2 hover:bg-blue-800 rounded-md bg-brand-blue text-white transition-transform transform hover:scale-105">Capacity</button>
+                    <button className="w-full text-left px-4 py-2 hover:bg-blue-800 rounded-md bg-brand-blue text-white transition-transform transform hover:scale-105">Finance</button>
+                    <button className="w-full text-left px-4 py-2 hover:bg-blue-800 rounded-md bg-brand-blue text-white transition-transform transform hover:scale-105">Risk</button>
                 </div>
 
                 <button className="mt-12 py-2 mb-12 lg:mt-auto lg:mb-4 lg:px-6 lg:py-2 bg-yellow-500 hover:bg-gray-900 text-white rounded">
                     Present With AI
                 </button>
-                
+
             </div>
 
-            {/* Right side - Enterprise Mapping Placeholder */}
-            <div className="w-full lg:w-3/3 h-full overflow-auto p-4 pt-16">
+            {/* Right side - Enterprise Mapping */}
+            <div className="w-full lg:w-4/5 h-full overflow-auto p-4 pt-16">
                 <h2 className="text-xl font-bold mb-1">Enterprise Architecture</h2>
                 <p className='mb-3 text-gray-500'> This is the current mapping of your enterprise architecture. </p>
 
@@ -44,12 +43,13 @@ export default function page() {
                     Generate Mapping
                 </button>
 
-                <div className="flex items-center justify-center h-[calc(100%-80px)] border-2 border-dashed border-gray-300 rounded-lg">
-                    <p className="text-gray-500 text-center">
-                        
-                    </p>
+                {/* Mapping visualization should fit this container */}
+                <div className="flex items-center justify-center w-full h-[calc(100%-80px)] border-2 border-dashed border-gray-300 rounded-lg ">
+                    <div className="w-full h-50 min-w-[1200px]"> {/* Ensure full width */}
+                        <ServiceResourceProductMapping />
+                    </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }
