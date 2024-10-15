@@ -11,6 +11,7 @@ interface ResourceServiceMappingData {
     service_id: string;
     resource_id: string;
     resource_type: string;
+    status?: "green" | "orange" | "red"; // Optional status here
 }
 
 interface ProductServiceMappingData {
@@ -19,12 +20,14 @@ interface ProductServiceMappingData {
     product_id: string;
     start_date: string;
     end_date: string;
+    status?: "green" | "orange" | "red"; // Optional status here
 }
 
 interface ProductOfferingMappingData {
     mapping_id: string;
     offering_id: string;
     product_id: string;
+    status?: "green" | "orange" | "red"; // Optional status here
 }
 
 // Define the props to pass fetched data from the parent component
@@ -47,6 +50,28 @@ export default function ServiceResourceProductMapping({
 
     const handleNodeClick = (event: any, node: Node) => {
         setSelectedNodeId(node.id);  // Set the clicked node as selected
+    };
+
+    // Helper function to generate a random status
+    const getRandomStatus = (): "green" | "orange" | "red" => {
+        const statuses: Array<"green" | "orange" | "red"> = ["green", "orange", "red"];
+        return statuses[Math.floor(Math.random() * statuses.length)];
+    };
+
+    // Helper function to generate label with status color
+    const generateLabelWithStatus = (label: string, status?: "green" | "orange" | "red") => {
+        const finalStatus = status || getRandomStatus(); // Use provided status or assign random
+        const statusColor = {
+            green: "🟢", // Green color tag
+            orange: "🟠", // Orange color tag
+            red: "🔴" // Red color tag
+        }[finalStatus];
+
+        return (
+            <span>
+                {statusColor} {label} {/* Display status tag before label */}
+            </span>
+        );
     };
 
     const generateNodesAndEdges = () => {
@@ -76,7 +101,7 @@ export default function ServiceResourceProductMapping({
             if (!nodes.find((n) => n.id === serviceNodeId)) {
                 nodes.push({
                     id: serviceNodeId,
-                    data: { label: `${mapping.service_id}` },
+                    data: { label: generateLabelWithStatus(`${mapping.service_id}`, mapping.status) },
                     position: { x: serviceXStart + index * xGap, y: yServicePosition },
                     style: { cursor: "pointer" },
                 });
@@ -89,7 +114,7 @@ export default function ServiceResourceProductMapping({
             if (!nodes.find((n) => n.id === resourceNodeId)) {
                 nodes.push({
                     id: resourceNodeId,
-                    data: { label: `${mapping.resource_id} (${mapping.resource_type})` },
+                    data: { label: generateLabelWithStatus(`${mapping.resource_id} (${mapping.resource_type})`, mapping.status) },
                     position: {
                         x: resourceXStart + columnIndex * xGap, // Place resources in columns
                         y: yServicePosition + yGap * (rowIndex + 2), // Space rows
@@ -120,7 +145,7 @@ export default function ServiceResourceProductMapping({
             if (!nodes.find((n) => n.id === productNodeId)) {
                 nodes.push({
                     id: productNodeId,
-                    data: { label: `${mapping.product_id}` },
+                    data: { label: generateLabelWithStatus(`${mapping.product_id}`, mapping.status) },
                     position: { x: productXStart + index * xGap, y: yProductPosition }, // Place services in a row
                     style: { cursor: "pointer" },
                 });
@@ -148,7 +173,7 @@ export default function ServiceResourceProductMapping({
             if (!nodes.find((n) => n.id === offeringNodeId)) {
                 nodes.push({
                     id: offeringNodeId,
-                    data: { label: `${mapping.offering_id}` },
+                    data: { label: generateLabelWithStatus(`${mapping.offering_id}`, mapping.status) },
                     position: { x: offeringXStart + index * xGap, y: yOfferingPosition }, // Place offerings in a row
                     style: { cursor: "pointer" },
                 });
