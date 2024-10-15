@@ -31,8 +31,8 @@ const SignOutModal: React.FC<SignOutModalProps> = ({ isOpen, onClose, onSignOut 
                     <Link href='/'>
                         <button
                             onClick={async () => {
-                                await handleSignOut(); // Call the sign-out function
-                                onSignOut(); // Close the modal after sign-out
+                                await handleSignOut(); 
+                                onSignOut(); 
                             }}
                             className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
                         >

@@ -15,7 +15,7 @@ const DataMappingLoadingState: React.FC = () => {
                 Please wait while the system generates your mapping...
             </motion.h3>
             <PropagateLoader
-                color="green" size={17} />
+                color="#08296C" size={17} />
         </div>
     );
 };

@@ -1,19 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import axios from "axios";
-import ReactFlow, {
-    Background,
-    Controls,
-    MiniMap,
-    Node,
-    Edge
-} from "reactflow";
+import ReactFlow, { Background, Controls, MiniMap, Node, Edge } from "reactflow";
 import "reactflow/dist/style.css";
+import DataMappingLoadingState from '../components/global/DataMappingLoadingState';
 
-import DataMappingLoadingState from '../components/global/DataMappingLoadingState'
-
-// Define the type for the resource-service and product-service API responses
+// Define the type for the resource-service and product-service data
 interface ResourceServiceMappingData {
     mapping_id: string;
     service_id: string;
@@ -29,102 +20,20 @@ interface ProductServiceMappingData {
     end_date: string;
 }
 
-export default function ServiceResourceProductMapping() {
-    const [resourceMappingData, setResourceMappingData] = useState<ResourceServiceMappingData[]>([]);
-    const [productMappingData, setProductMappingData] = useState<ProductServiceMappingData[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null); // Track selected node (service or resource/product)
+// Define the props to pass fetched data from the parent component
+interface ServiceResourceProductMappingProps {
+    resourceMappingData: ResourceServiceMappingData[];
+    productMappingData: ProductServiceMappingData[];
+    loading: boolean;
+    error: string | null;
+}
 
-    // Fetch resource-service mapping data
-    const fetchResourceServiceMapping = async () => {
-        try {
-            const response = await axios.get(
-                "https://t210ywcjr3.execute-api.ap-southeast-1.amazonaws.com/development/fetchResourceServiceMapping",
-                {
-                    params: {
-                        bucket: "datasight-capstone-3b",
-                        key: "data/service_resource_mapping/service_resource_mapping.csv",
-                    },
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            if (response.data && typeof response.data.body === "string") {
-                const parsedData = JSON.parse(response.data.body);
-
-                if (Array.isArray(parsedData)) {
-                    const castedData: ResourceServiceMappingData[] = parsedData.map((item: any) => ({
-                        mapping_id: String(item.mapping_id),
-                        service_id: String(item.service_id),
-                        resource_id: String(item.resource_id),
-                        resource_type: String(item.resource_type),
-                    }));
-
-                    setResourceMappingData(castedData);
-                } else {
-                    console.error("Unexpected response format:", parsedData);
-                    throw new Error("Data is not in expected array format");
-                }
-            } else {
-                throw new Error("Unexpected response format");
-            }
-        } catch (error) {
-            setError(error instanceof Error ? error.message : "Unknown error");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Fetch product-service mapping data
-    const fetchProductServiceMapping = async () => {
-        try {
-            const response = await axios.get(
-                "https://t210ywcjr3.execute-api.ap-southeast-1.amazonaws.com/development/fetchServiceResourceMapping",
-                {
-                    params: {
-                        bucket: "datasight-capstone-3b",
-                        key: "data/product_service_mapping/product_service_mapping.csv",
-                    },
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            if (response.data && typeof response.data.body === "string") {
-                const parsedData = JSON.parse(response.data.body);
-
-                if (Array.isArray(parsedData)) {
-                    const castedData: ProductServiceMappingData[] = parsedData.map((item: any) => ({
-                        mapping_id: String(item.mapping_id),
-                        service_id: String(item.service_id),
-                        product_id: String(item.product_id),
-                        start_date: String(item.start_date),
-                        end_date: String(item.end_date),
-                    }));
-
-                    setProductMappingData(castedData);
-                } else {
-                    console.error("Unexpected response format:", parsedData);
-                    throw new Error("Data is not in expected array format");
-                }
-            } else {
-                throw new Error("Unexpected response format");
-            }
-        } catch (error) {
-            setError(error instanceof Error ? error.message : "Unknown error");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchResourceServiceMapping();
-        fetchProductServiceMapping();
-    }, []);
+export default function ServiceResourceProductMapping({
+    resourceMappingData,
+    productMappingData,
+    loading,
+    error
+}: ServiceResourceProductMappingProps) {
 
     const generateNodesAndEdges = () => {
         const nodes: Node[] = [];
@@ -132,7 +41,8 @@ export default function ServiceResourceProductMapping() {
 
         const serviceXStart = 800; // Adjusted to center the services better
         const resourceXStart = 300; // Adjusted to match the services
-        const productXStart = 1300; // Adjusted to place products to the right of services
+        const productXStart = 800; // Adjusted to place products to the right of services
+        const yProductPosition = -30;
         const yServicePosition = 100; // y position for services
         const xGap = 200; // Horizontal gap between nodes
         const yGap = 150; // Vertical gap between rows of resources/products
@@ -150,8 +60,8 @@ export default function ServiceResourceProductMapping() {
                 nodes.push({
                     id: serviceNodeId,
                     data: { label: `${mapping.service_id}` },
-                    position: { x: serviceXStart + index * xGap, y: yServicePosition }, // Place services in a row
-                    style: { cursor: "pointer" }, // Add pointer cursor to indicate clickability
+                    position: { x: serviceXStart + index * xGap, y: yServicePosition },
+                    style: { cursor: "pointer" },
                 });
             }
 
@@ -178,16 +88,7 @@ export default function ServiceResourceProductMapping() {
                 source: serviceNodeId,
                 target: resourceNodeId,
                 type: "simplebezier",
-                style: {
-                    strokeWidth:
-                        selectedNodeId === serviceNodeId || selectedNodeId === resourceNodeId
-                            ? 3
-                            : 1,
-                    stroke:
-                        selectedNodeId === serviceNodeId || selectedNodeId === resourceNodeId
-                            ? "green"
-                            : "#000",
-                }, // Glow effect for selected service or resource
+                style: { stroke: "#000", strokeWidth: 1 }, // Default style
             });
         });
 
@@ -196,18 +97,11 @@ export default function ServiceResourceProductMapping() {
             const serviceNodeId = `${mapping.service_id}`;
             const productNodeId = `${mapping.product_id}`;
 
-            // Adjust product placement based on `currentProductRow` and `xGap`
-            const productRowIndex = Math.floor(currentProductRow / 5);  // Limit 5 products per row
-            const productColumnIndex = currentProductRow % 5;
-
             if (!nodes.find((n) => n.id === productNodeId)) {
                 nodes.push({
                     id: productNodeId,
                     data: { label: `${mapping.product_id}` },
-                    position: {
-                        x: 800 + productColumnIndex * xGap * 1, // Increase gap to avoid overlap
-                        y: -100, // Space rows more to avoid overlap
-                    },
+                    position: { x: productXStart + index * xGap, y: yProductPosition }, // Place services in a row
                     style: { cursor: "pointer" },
                 });
                 currentProductRow++; // Move to the next product position
@@ -216,28 +110,14 @@ export default function ServiceResourceProductMapping() {
             // Create edges between services and products
             edges.push({
                 id: `edge-${serviceNodeId}-${productNodeId}`,
-                source: serviceNodeId,
-                target: productNodeId,
+                source: productNodeId,
+                target: serviceNodeId,
                 type: "simplebezier",
-                style: {
-                    strokeWidth:
-                        selectedNodeId === serviceNodeId || selectedNodeId === productNodeId
-                            ? 3
-                            : 1,
-                    stroke:
-                        selectedNodeId === serviceNodeId || selectedNodeId === productNodeId
-                            ? "blue"
-                            : "#000",
-                }, // Glow effect for selected service or product
+                style: { stroke: "#000", strokeWidth: 1 }, // Default style
             });
         });
 
         return { nodes, edges };
-    };
-
-    const handleNodeClick = (event: any, node: Node) => {
-        // Set the clicked node (either service or resource/product) as selected
-        setSelectedNodeId(node.id);
     };
 
     if (loading) {
@@ -252,13 +132,7 @@ export default function ServiceResourceProductMapping() {
 
     return (
         <div style={{ height: "77vh" }}>
-            <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                fitView
-                onNodeClick={handleNodeClick} // Add node click event handler
-            >
-            </ReactFlow>
+            <ReactFlow nodes={nodes} edges={edges} fitView />
         </div>
     );
 }
