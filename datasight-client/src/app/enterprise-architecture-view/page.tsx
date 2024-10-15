@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState } from "react";
 import Header from "../components/global/Header";
@@ -12,6 +12,7 @@ export default function page() {
     const [error, setError] = useState<string | null>(null);
     const [resourceMappingData, setResourceMappingData] = useState([]);
     const [productMappingData, setProductMappingData] = useState([]);
+    const [offeringMappingData, setOfferingMappingData] = useState([]); // New state for product-offering mapping
 
     // Fetch resource-service mapping data
     const fetchResourceServiceMapping = async () => {
@@ -86,11 +87,47 @@ export default function page() {
         }
     };
 
-    // Handler to trigger both mappings
+    // Fetch product-offering mapping data (new function)
+    const fetchProductOfferingMapping = async () => {
+        try {
+            setLoading(true);
+            const response = await axios.get(
+                "https://t210ywcjr3.execute-api.ap-southeast-1.amazonaws.com/development/fetchProductOfferingMapping",
+                {
+                    params: {
+                        bucket: "datasight-capstone-3b",
+                        key: "data/offering_product_mapping/offering_product_mapping.csv",
+                    },
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (response.data && typeof response.data.body === "string") {
+                const parsedData = JSON.parse(response.data.body);
+                const castedData = parsedData.map((item: any) => ({
+                    mapping_id: String(item.mapping_id),
+                    offering_id: String(item.offering_id),
+                    product_id: String(item.product_id),
+                }));
+                setOfferingMappingData(castedData);
+            } else {
+                throw new Error("Unexpected response format");
+            }
+        } catch (error) {
+            setError(error instanceof Error ? error.message : "Unknown error");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Handler to trigger all mappings
     const handleGenerateMapping = () => {
         setError(null); // Clear previous errors
         fetchProductServiceMapping();
         fetchResourceServiceMapping();
+        fetchProductOfferingMapping(); // Fetch the product-offering mapping as well
     };
 
     return (
@@ -137,6 +174,7 @@ export default function page() {
                         <ServiceResourceProductMapping
                             resourceMappingData={resourceMappingData} // Pass fetched data as props
                             productMappingData={productMappingData}
+                            offeringMappingData={offeringMappingData}  // Pass offering data as props
                             loading={loading}
                             error={error}
                         />

@@ -1,10 +1,11 @@
 "use client";
 
+import React, { useState } from "react";
 import ReactFlow, { Background, Controls, MiniMap, Node, Edge } from "reactflow";
 import "reactflow/dist/style.css";
 import DataMappingLoadingState from '../components/global/DataMappingLoadingState';
 
-// Define the type for the resource-service and product-service data
+// Define the type for the resource-service, product-service, and product-offering data
 interface ResourceServiceMappingData {
     mapping_id: string;
     service_id: string;
@@ -20,10 +21,17 @@ interface ProductServiceMappingData {
     end_date: string;
 }
 
+interface ProductOfferingMappingData {
+    mapping_id: string;
+    offering_id: string;
+    product_id: string;
+}
+
 // Define the props to pass fetched data from the parent component
 interface ServiceResourceProductMappingProps {
     resourceMappingData: ResourceServiceMappingData[];
     productMappingData: ProductServiceMappingData[];
+    offeringMappingData: ProductOfferingMappingData[]; // New prop for product-offering data
     loading: boolean;
     error: string | null;
 }
@@ -31,9 +39,15 @@ interface ServiceResourceProductMappingProps {
 export default function ServiceResourceProductMapping({
     resourceMappingData,
     productMappingData,
+    offeringMappingData, // Receive offering data
     loading,
     error
 }: ServiceResourceProductMappingProps) {
+    const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null); // Track selected node (service or resource/product)
+
+    const handleNodeClick = (event: any, node: Node) => {
+        setSelectedNodeId(node.id);  // Set the clicked node as selected
+    };
 
     const generateNodesAndEdges = () => {
         const nodes: Node[] = [];
@@ -42,13 +56,16 @@ export default function ServiceResourceProductMapping({
         const serviceXStart = 800; // Adjusted to center the services better
         const resourceXStart = 300; // Adjusted to match the services
         const productXStart = 800; // Adjusted to place products to the right of services
+        const offeringXStart = 800; // Adjusted to place offerings to the right of products
         const yProductPosition = -30;
         const yServicePosition = 100; // y position for services
+        const yOfferingPosition = -200;
         const xGap = 200; // Horizontal gap between nodes
         const yGap = 150; // Vertical gap between rows of resources/products
 
         let currentResourceRow = 0;
         let currentProductRow = 0;
+        let currentOfferingRow = 0;
 
         // Map resource-service data
         resourceMappingData.forEach((mapping, index) => {
@@ -88,7 +105,10 @@ export default function ServiceResourceProductMapping({
                 source: serviceNodeId,
                 target: resourceNodeId,
                 type: "simplebezier",
-                style: { stroke: "#000", strokeWidth: 1 }, // Default style
+                style: {
+                    strokeWidth: selectedNodeId === serviceNodeId || selectedNodeId === resourceNodeId ? 3 : 1,
+                    stroke: selectedNodeId === serviceNodeId || selectedNodeId === resourceNodeId ? "green" : "#000",
+                }, // Highlight selected service or resource
             });
         });
 
@@ -113,7 +133,38 @@ export default function ServiceResourceProductMapping({
                 source: productNodeId,
                 target: serviceNodeId,
                 type: "simplebezier",
-                style: { stroke: "#000", strokeWidth: 1 }, // Default style
+                style: {
+                    strokeWidth: selectedNodeId === serviceNodeId || selectedNodeId === productNodeId ? 3 : 1,
+                    stroke: selectedNodeId === serviceNodeId || selectedNodeId === productNodeId ? "blue" : "#000",
+                }, // Highlight selected service or product
+            });
+        });
+
+        // Map product-offering data (new part)
+        offeringMappingData.forEach((mapping, index) => {
+            const offeringNodeId = `${mapping.offering_id}`;
+            const productNodeId = `${mapping.product_id}`;
+
+            if (!nodes.find((n) => n.id === offeringNodeId)) {
+                nodes.push({
+                    id: offeringNodeId,
+                    data: { label: `${mapping.offering_id}` },
+                    position: { x: offeringXStart + index * xGap, y: yOfferingPosition }, // Place offerings in a row
+                    style: { cursor: "pointer" },
+                });
+                currentOfferingRow++; // Move to the next offering position
+            }
+
+            // Create edges between products and offerings
+            edges.push({
+                id: `edge-${productNodeId}-${offeringNodeId}`,
+                source: offeringNodeId,
+                target: productNodeId,
+                type: "simplebezier",
+                style: {
+                    strokeWidth: selectedNodeId === productNodeId || selectedNodeId === offeringNodeId ? 3 : 1,
+                    stroke: selectedNodeId === productNodeId || selectedNodeId === offeringNodeId ? "purple" : "#000",
+                }, // Highlight selected product or offering
             });
         });
 
@@ -132,7 +183,13 @@ export default function ServiceResourceProductMapping({
 
     return (
         <div style={{ height: "77vh" }}>
-            <ReactFlow nodes={nodes} edges={edges} fitView />
+            <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                fitView
+                onNodeClick={handleNodeClick}  // Add click event for node selection
+            >
+            </ReactFlow>
         </div>
     );
 }
