@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Header from "../components/global/Header";
-import ServiceResourceProductMapping from "../data-mapping/ServiceResourceProductMapping";
+import OPSRMapping from "../data-mapping/OPSRMapping";
 import GenerateMappingBtn from "../components/button/GenerateMappingBtn";  // Import the new button component
 import Link from "next/link";
 import axios from "axios";
@@ -124,10 +124,10 @@ export default function page() {
 
     // Handler to trigger all mappings
     const handleGenerateMapping = () => {
-        setError(null); // Clear previous errors
+        setError(null); 
         fetchProductServiceMapping();
         fetchResourceServiceMapping();
-        fetchProductOfferingMapping(); // Fetch the product-offering mapping as well
+        fetchProductOfferingMapping(); 
     };
 
     return (
@@ -171,7 +171,7 @@ export default function page() {
                 {/* Mapping visualization should fit this container */}
                 <div className="flex items-center justify-center w-full h-[calc(100%-80px)] border-2 border-dashed border-gray-300 rounded-lg ">
                     <div className="w-full h-50 min-w-[1200px]"> {/* Ensure full width */}
-                        <ServiceResourceProductMapping
+                        <OPSRMapping
                             resourceMappingData={resourceMappingData} // Pass fetched data as props
                             productMappingData={productMappingData}
                             offeringMappingData={offeringMappingData}  // Pass offering data as props

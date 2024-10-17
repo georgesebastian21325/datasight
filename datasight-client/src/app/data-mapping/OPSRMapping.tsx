@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactFlow, { Background, Controls, MiniMap, Node, Edge } from "reactflow";
 import "reactflow/dist/style.css";
 import DataMappingLoadingState from '../components/global/DataMappingLoadingState';
@@ -11,7 +11,6 @@ interface ResourceServiceMappingData {
     service_id: string;
     resource_id: string;
     resource_type: string;
-    status?: "green" | "orange" | "red"; // Optional status here
 }
 
 interface ProductServiceMappingData {
@@ -20,14 +19,12 @@ interface ProductServiceMappingData {
     product_id: string;
     start_date: string;
     end_date: string;
-    status?: "green" | "orange" | "red"; // Optional status here
 }
 
 interface ProductOfferingMappingData {
     mapping_id: string;
     offering_id: string;
     product_id: string;
-    status?: "green" | "orange" | "red"; // Optional status here
 }
 
 // Define the props to pass fetched data from the parent component
@@ -39,7 +36,7 @@ interface ServiceResourceProductMappingProps {
     error: string | null;
 }
 
-export default function ServiceResourceProductMapping({
+export default function OPSRMapping({
     resourceMappingData,
     productMappingData,
     offeringMappingData, // Receive offering data
@@ -47,31 +44,36 @@ export default function ServiceResourceProductMapping({
     error
 }: ServiceResourceProductMappingProps) {
     const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null); // Track selected node (service or resource/product)
+    const [resourceHealthStatuses, setResourceHealthStatuses] = useState<{ [key: string]: "green" | "orange" | "red" }>({});
+
+    useEffect(() => {
+        // Fetch resource health metrics from the API
+        const fetchResourceHealthMetrics = async () => {
+            try {
+                const response = await fetch("https://t210ywcjr3.execute-api.ap-southeast-1.amazonaws.com/development/fetchResourceHealthMetrics?bucket=datasight-capstone-3b&key=data/resource_health_metrics.csv");
+                const data = await response.json();
+
+                // Parse the response body to get resource statuses
+                const body = JSON.parse(data.body);
+                const healthStatuses = body.resource_statuses;
+
+                // Map resource statuses by resource_id
+                const statuses: { [key: string]: "green" | "orange" | "red" } = {};
+                healthStatuses.forEach((item: { resource_id: string, status: "green" | "orange" | "red" }) => {
+                    statuses[item.resource_id] = item.status;
+                });
+
+                setResourceHealthStatuses(statuses);
+            } catch (error) {
+                console.error("Failed to fetch resource health metrics:", error);
+            }
+        };
+
+        fetchResourceHealthMetrics();
+    }, []);
 
     const handleNodeClick = (event: any, node: Node) => {
         setSelectedNodeId(node.id);  // Set the clicked node as selected
-    };
-
-    // Helper function to generate a random status
-    const getRandomStatus = (): "green" | "orange" | "red" => {
-        const statuses: Array<"green" | "orange" | "red"> = ["green", "orange", "red"];
-        return statuses[Math.floor(Math.random() * statuses.length)];
-    };
-
-    // Helper function to generate label with status color
-    const generateLabelWithStatus = (label: string, status?: "green" | "orange" | "red") => {
-        const finalStatus = status || getRandomStatus(); // Use provided status or assign random
-        const statusColor = {
-            green: "🟢", // Green color tag
-            orange: "🟡", // Orange color tag
-            red: "🔴" // Red color tag
-        }[finalStatus];
-
-        return (
-            <span>
-                {statusColor} {label} {/* Display status tag before label */}
-            </span>
-        );
     };
 
     const generateNodesAndEdges = () => {
@@ -96,12 +98,13 @@ export default function ServiceResourceProductMapping({
         resourceMappingData.forEach((mapping, index) => {
             const serviceNodeId = `${mapping.service_id}`;
             const resourceNodeId = `${mapping.resource_id}`;
+            const resourceStatus = resourceHealthStatuses[mapping.resource_id]; // Get the status for this resource
 
             // Create nodes for each service, aligned at the top
             if (!nodes.find((n) => n.id === serviceNodeId)) {
                 nodes.push({
                     id: serviceNodeId,
-                    data: { label: generateLabelWithStatus(`${mapping.service_id}`, mapping.status) },
+                    data: { label: `${mapping.service_id}` },
                     position: { x: serviceXStart + index * xGap, y: yServicePosition },
                     style: { cursor: "pointer" },
                 });
@@ -114,7 +117,26 @@ export default function ServiceResourceProductMapping({
             if (!nodes.find((n) => n.id === resourceNodeId)) {
                 nodes.push({
                     id: resourceNodeId,
-                    data: { label: generateLabelWithStatus(`${mapping.resource_id} (${mapping.resource_type})`, mapping.status) },
+                    data: {
+                        label: (
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <span
+                                    style={{
+                                        width: '10px',
+                                        height: '10px',
+                                        borderRadius: '50%',
+                                        backgroundColor:
+                                            resourceStatus === "green" ? "green" :
+                                                resourceStatus === "orange" ? "orange" :
+                                                    "red",
+                                        display: 'inline-block',
+                                        marginRight: '8px',
+                                    }}
+                                />
+                                <span>{mapping.resource_id}</span>
+                            </div>
+                        )
+                    },
                     position: {
                         x: resourceXStart + columnIndex * xGap, // Place resources in columns
                         y: yServicePosition + yGap * (rowIndex + 2), // Space rows
@@ -145,7 +167,7 @@ export default function ServiceResourceProductMapping({
             if (!nodes.find((n) => n.id === productNodeId)) {
                 nodes.push({
                     id: productNodeId,
-                    data: { label: generateLabelWithStatus(`${mapping.product_id}`, mapping.status) },
+                    data: { label: `${mapping.product_id}` },
                     position: { x: productXStart + index * xGap, y: yProductPosition }, // Place services in a row
                     style: { cursor: "pointer" },
                 });
@@ -173,7 +195,7 @@ export default function ServiceResourceProductMapping({
             if (!nodes.find((n) => n.id === offeringNodeId)) {
                 nodes.push({
                     id: offeringNodeId,
-                    data: { label: generateLabelWithStatus(`${mapping.offering_id}`, mapping.status) },
+                    data: { label: `${mapping.offering_id}` },
                     position: { x: offeringXStart + index * xGap, y: yOfferingPosition }, // Place offerings in a row
                     style: { cursor: "pointer" },
                 });
@@ -196,12 +218,13 @@ export default function ServiceResourceProductMapping({
         return { nodes, edges };
     };
 
+
     if (loading) {
         return <DataMappingLoadingState />;
     }
 
     if (error) {
-        return <p>Error: {error}</p>;
+        return <p>{error}</p>;
     }
 
     const { nodes, edges } = generateNodesAndEdges();
