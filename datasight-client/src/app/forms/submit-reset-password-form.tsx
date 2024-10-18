@@ -4,7 +4,9 @@ import {
     AtSymbolIcon,
     ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
-import { ArrowRightIcon } from "@heroicons/react/20/solid";
+import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/20/solid";
+import CompanyLogo from '../../assets/company-logo.jpg'
+import Image from "next/image";
 import { Button } from "../components/button";
 import { useFormState, useFormStatus } from "react-dom";
 import { handleResetPassword } from "@/lib/cognitoActions";
@@ -12,12 +14,14 @@ import { handleResetPassword } from "@/lib/cognitoActions";
 export default function SubmitResetPasswordFrom() {
     const [errorMessage, dispatch] = useFormState(handleResetPassword, undefined);
     return (
-        <form action={dispatch} className="space-y-3">
-            <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
-                <h1 className={`mb-3 text-2xl`}>
+        <form action={dispatch} className="flex flex-col items-center justify-center space-y-3 mt-[10rem]">
+            <div className="flex flex-col rounded-lg w-[30%] px-6 pb-4 pt-8 items-center border-2">
+                <Image src={CompanyLogo} alt='company_logo' width={200} height={50} />
+                <h1 className='font-semibold gradient-text '> RESET PASSWORD </h1>
+                <h1 className={`mb-3 text-sm text-gray-500`}>
                     Please enter your email to get confirmation code.
                 </h1>
-                <div className="w-full">
+                <div className="w-[70%]">
                     <div>
                         <label
                             className="mb-3 mt-5 block text-xs font-medium text-gray-900"
@@ -38,7 +42,10 @@ export default function SubmitResetPasswordFrom() {
                         </div>
                     </div>
                 </div>
-                <SendConfirmationCodeButton />
+                <div className='flex space-x-5 w-[70%]'>
+                    <BackBtn />
+                    <SendConfirmationCodeButton />
+                </div>
                 <div className="flex h-8 items-end space-x-1">
                     <div
                         className="flex h-8 items-end space-x-1"
@@ -62,8 +69,16 @@ function SendConfirmationCodeButton() {
     const { pending } = useFormStatus();
 
     return (
-        <Button className="mt-4 w-full" aria-disabled={pending}>
-            Send Code <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+        <Button className="flex mt-9 w-[50%] bg-brand-blue text-center items-center justify-center" aria-disabled={pending}>
+            <p> Send Code </p> <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+        </Button>
+    );
+}
+
+function BackBtn() {
+    return (
+        <Button className="flex mt-9 w-[50%] bg-black">
+            <ArrowLeftIcon className="ml-auto h-5 w-5 text-gray-50" /> <p> Go Back </p>
         </Button>
     );
 }
