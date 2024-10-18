@@ -77,8 +77,10 @@ function SendConfirmationCodeButton() {
 
 function BackBtn() {
     return (
-        <Button className="flex mt-9 w-[50%] bg-black">
-            <ArrowLeftIcon className="ml-auto h-5 w-5 text-gray-50" /> <p> Go Back </p>
+        <Button className="flex mt-9 w-[50%] bg-black justify-center">
+            <div className='flex gap-2 font-semibold'>
+                <ArrowLeftIcon className="ml-auto h-5 w-5 text-gray-50" /> <p> Go Back </p>
+            </div>
         </Button>
     );
 }
