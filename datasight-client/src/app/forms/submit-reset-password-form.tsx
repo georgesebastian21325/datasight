@@ -16,8 +16,8 @@ export default function SubmitResetPasswordFrom() {
     return (
         <form action={dispatch} className="flex flex-col items-center justify-center space-y-3 mt-[10rem]">
             <div className="flex flex-col rounded-lg w-[30%] px-6 pb-4 pt-8 items-center border-2">
-                <Image src={CompanyLogo} alt='company_logo' width={200} height={50} />
-                <h1 className='font-semibold gradient-text '> RESET PASSWORD </h1>
+                <Image src={CompanyLogo} alt='company_logo' width={170} height={50} />
+                <h1 className='font-bold gradient-text text-xl '> RESET PASSWORD </h1>
                 <h1 className={`mb-3 text-sm text-gray-500`}>
                     Please enter your email to get confirmation code.
                 </h1>
