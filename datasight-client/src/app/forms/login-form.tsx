@@ -5,22 +5,21 @@ import {
 	KeyIcon
 } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 import { useFormState, useFormStatus } from "react-dom";
-
 import { Button } from "../components/button";
 import { handleSignIn } from "@/lib/cognitoActions";
-
 import { AuthenticationErrorPopUp } from "../components/popup";
 import Link from "next/link";
-import { useState } from "react"; // Import useState for managing the password visibility
+import { useState } from "react";
 
 export default function LoginForm() {
 	const [errorMessage, dispatch] = useFormState(
 		handleSignIn,
 		undefined,
 	);
+
 	// State to manage the visibility of the password
 	const [showPassword, setShowPassword] = useState(false);
 
@@ -33,7 +32,6 @@ export default function LoginForm() {
 			action={dispatch}
 			className="space-y-3 w-[24rem]"
 		>
-
 			<div className="flex-1 rounded-lg  px-6 pb-4 pt-8">
 				<div className='flex flex-col items-center'>
 					<div className='text-center'>
@@ -105,18 +103,48 @@ export default function LoginForm() {
 	);
 }
 
+// LoginButton Component with loading spinner
 function LoginButton() {
-	const { pending } = useFormStatus();
+	const { pending } = useFormStatus(); // Get the form status to know if it's pending
 
 	return (
 		<Button
 			className="mt-4 w-full flex justify-center items-center bg-brand-blue"
-			aria-disabled={pending}
+			aria-disabled={pending} // Disable the button when pending
+			disabled={pending} // Also disable for accessibility
 		>
-			<span className="flex items-center font-semibold">
-				Log In
-				<ArrowRightIcon className="ml-2 h-5 w-5 text-gray-50" />
-			</span>
+			{pending ? (
+				// Show spinner while form is pending
+				<div className="flex items-center">
+					<svg
+						className="animate-spin h-5 w-5 mr-3 text-white"
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+					>
+						<circle
+							className="opacity-25"
+							cx="12"
+							cy="12"
+							r="10"
+							stroke="currentColor"
+							strokeWidth="4"
+						></circle>
+						<path
+							className="opacity-75"
+							fill="currentColor"
+							d="M4 12a8 8 0 018-8v8H4z"
+						></path>
+					</svg>
+					<span>Loading...</span>
+				</div>
+			) : (
+				// Default login text when not pending
+				<span className="flex items-center font-semibold">
+					Log In
+					<ArrowRightIcon className="ml-2 h-5 w-5 text-gray-50" />
+				</span>
+			)}
 		</Button>
 	);
 }
