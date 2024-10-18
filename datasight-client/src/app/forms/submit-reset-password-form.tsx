@@ -7,6 +7,7 @@ import {
 import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/20/solid";
 import CompanyLogo from '../../assets/company-logo.jpg'
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "../components/button";
 import { useFormState, useFormStatus } from "react-dom";
 import { handleResetPassword } from "@/lib/cognitoActions";
@@ -70,17 +71,19 @@ function SendConfirmationCodeButton() {
 
     return (
         <Button className="flex mt-9 w-[50%] bg-brand-blue text-center items-center justify-center" aria-disabled={pending}>
-            <p> Send Code </p> <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+            <p className='text-sm '> Send Code </p> <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
     );
 }
 
 function BackBtn() {
     return (
-        <Button className="flex mt-9 w-[50%] bg-black justify-center">
-            <div className='flex gap-2 font-semibold'>
-                <ArrowLeftIcon className="ml-auto h-5 w-5 text-gray-50" /> <p> Go Back </p>
-            </div>
-        </Button>
+        <Link href='/' className="flex mt-9 w-[50%] bg-black justify-center rounded-md items-center transition-transform transform hover:scale-105 hover:bg-gray-800">
+            <button>
+                <div className='flex gap-2 items-center'>
+                    <ArrowLeftIcon className="ml-auto h-5 w-5 text-gray-50" /> <p className='text-white text-sm   font-medium'> Go Back </p>
+                </div>
+            </button>
+        </Link>
     );
 }

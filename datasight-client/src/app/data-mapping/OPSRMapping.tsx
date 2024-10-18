@@ -90,6 +90,7 @@ export default function OPSRMapping() {
     const generateNodesAndEdges = () => {
         const nodes: Node[] = [];
         const edges: Edge[] = [];
+        const connectedNodeIds = new Set<string>(); // To track connected nodes
 
         const serviceXStart = 800;
         const resourceXStart = 300;
@@ -105,22 +106,22 @@ export default function OPSRMapping() {
         let currentProductRow = 0;
         let currentOfferingRow = 0;
 
-        // Map resource-service data
+        // Map resource-service data (Green)
         Object.values(resourceMappingData).forEach((mapping, index) => {
             const serviceNodeId = `${mapping.service_id}`;
             const resourceNodeId = `${mapping.resource_id}`;
 
-            // Create service nodes
+            // Create service nodes (green)
             if (!nodes.find((n) => n.id === serviceNodeId)) {
                 nodes.push({
                     id: serviceNodeId,
                     data: { label: `${mapping.service_id}` },
                     position: { x: serviceXStart + index * xGap, y: yServicePosition },
-                    style: { cursor: "pointer" },
+                    style: { cursor: "pointer", borderColor: "green" },
                 });
             }
 
-            // Create resource nodes
+            // Create resource nodes (green)
             const rowIndex = Math.floor(currentResourceRow / 10);
             const columnIndex = currentResourceRow % 10;
             if (!nodes.find((n) => n.id === resourceNodeId)) {
@@ -131,85 +132,124 @@ export default function OPSRMapping() {
                         x: resourceXStart + columnIndex * xGap,
                         y: yServicePosition + yGap * (rowIndex + 2),
                     },
-                    style: { cursor: "pointer" },
+                    style: { cursor: "pointer", borderColor: "green" },
                 });
                 currentResourceRow++;
             }
 
-            // Create edges between services and resources
+            // Create edges between services and resources (green)
             edges.push({
                 id: `edge-${serviceNodeId}-${resourceNodeId}`,
                 source: serviceNodeId,
                 target: resourceNodeId,
                 type: "simplebezier",
-                style: {
-                    strokeWidth: selectedNodeId === serviceNodeId || selectedNodeId === resourceNodeId ? 3 : 1,
-                    stroke: selectedNodeId === serviceNodeId || selectedNodeId === resourceNodeId ? "green" : "#000",
-                    boxShadow: selectedNodeId === serviceNodeId || selectedNodeId === resourceNodeId ? "0 0 10px #33ff33" : "none",
-                },
+                style: { stroke: "green" },
             });
+
+            // Track connected nodes
+            if (selectedNodeId === serviceNodeId || selectedNodeId === resourceNodeId) {
+                connectedNodeIds.add(serviceNodeId);
+                connectedNodeIds.add(resourceNodeId);
+            }
         });
 
-        // Map product-service data
+        // Map product-service data (Blue)
         Object.values(productMappingData).forEach((mapping, index) => {
             const serviceNodeId = `${mapping.service_id}`;
             const productNodeId = `${mapping.product_id}`;
 
+            // Create product nodes (blue)
             if (!nodes.find((n) => n.id === productNodeId)) {
                 nodes.push({
                     id: productNodeId,
                     data: { label: `${mapping.product_id}` },
                     position: { x: productXStart + index * xGap, y: yProductPosition },
-                    style: { cursor: "pointer" },
+                    style: { cursor: "pointer", borderColor: "blue" },
                 });
                 currentProductRow++;
             }
 
-            // Create edges between services and products
+            // Create edges between services and products (blue)
             edges.push({
                 id: `edge-${serviceNodeId}-${productNodeId}`,
                 source: productNodeId,
                 target: serviceNodeId,
                 type: "simplebezier",
-                style: {
-                    strokeWidth: selectedNodeId === serviceNodeId || selectedNodeId === productNodeId ? 3 : 1,
-                    stroke: selectedNodeId === serviceNodeId || selectedNodeId === productNodeId ? "blue" : "#000",
-                    boxShadow: selectedNodeId === serviceNodeId || selectedNodeId === productNodeId ? "0 0 10px #33ccff" : "none",
-                },
+                style: { stroke: "blue" },
             });
+
+            // Track connected nodes
+            if (selectedNodeId === serviceNodeId || selectedNodeId === productNodeId) {
+                connectedNodeIds.add(serviceNodeId);
+                connectedNodeIds.add(productNodeId);
+            }
         });
 
-        // Map product-offering data
+        // Map product-offering data (Purple)
         Object.values(offeringMappingData).forEach((mapping, index) => {
             const offeringNodeId = `${mapping.offering_id}`;
             const productNodeId = `${mapping.product_id}`;
 
+            // Create offering nodes (purple)
             if (!nodes.find((n) => n.id === offeringNodeId)) {
                 nodes.push({
                     id: offeringNodeId,
                     data: { label: `${mapping.offering_id}` },
                     position: { x: offeringXStart + index * xGap, y: yOfferingPosition },
-                    style: { cursor: "pointer" },
+                    style: { cursor: "pointer", borderColor: "purple" },
                 });
                 currentOfferingRow++;
             }
 
-            // Create edges between products and offerings
+            // Create edges between products and offerings (purple)
             edges.push({
                 id: `edge-${productNodeId}-${offeringNodeId}`,
                 source: offeringNodeId,
                 target: productNodeId,
                 type: "simplebezier",
-                style: {
-                    strokeWidth: selectedNodeId === productNodeId || selectedNodeId === offeringNodeId ? 3 : 1,
-                    stroke: selectedNodeId === productNodeId || selectedNodeId === offeringNodeId ? "purple" : "#000",
-                    boxShadow: selectedNodeId === productNodeId || selectedNodeId === offeringNodeId ? "0 0 10px #ff33ff" : "none",
-                },
+                style: { stroke: "purple" },
             });
+
+            // Track connected nodes
+            if (selectedNodeId === productNodeId || selectedNodeId === offeringNodeId) {
+                connectedNodeIds.add(offeringNodeId);
+                connectedNodeIds.add(productNodeId);
+            }
         });
 
-        return { nodes, edges };
+        // Apply styling to highlight selected nodes and their edges with glow
+        const styledEdges = edges.map((edge) => ({
+            ...edge,
+            style: {
+                strokeWidth:
+                    connectedNodeIds.has(edge.source) || connectedNodeIds.has(edge.target) ? 3 : 1,
+                stroke:
+                    connectedNodeIds.has(edge.source) || connectedNodeIds.has(edge.target)
+                        ? edge.style?.stroke
+                        : "#000", // Keep the original stroke color per layer
+                boxShadow:
+                    connectedNodeIds.has(edge.source) || connectedNodeIds.has(edge.target)
+                        ? `0 0 10px ${edge.style?.stroke}` // Glow in the stroke's color (green/blue/purple)
+                        : "none",
+            },
+        }));
+
+        const styledNodes = nodes.map((node) => ({
+            ...node,
+            style: {
+                ...node.style,
+                borderColor: connectedNodeIds.has(node.id) ? node.style?.borderColor : "#000",
+                boxShadow: connectedNodeIds.has(node.id)
+                    ? `0 0 10px ${node.style?.borderColor}` // Glow in the node's color (green/blue/purple)
+                    : "none",
+            },
+        }));
+
+        return { nodes: styledNodes, edges: styledEdges };
     };
+
+
+
 
 
     if (loading) {

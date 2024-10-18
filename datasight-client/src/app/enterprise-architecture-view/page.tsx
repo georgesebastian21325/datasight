@@ -56,7 +56,7 @@ export default function Page() {
 
             {/* Right side - Enterprise Mapping */}
             <div className="w-full lg:w-4/5 h-full overflow-auto p-4 pt-16">
-                <h2 className="text-xl font-bold mb-1">Enterprise Architecture</h2>
+                <h2 className="text-2xl font-bold mb-1 gradient-text">Enterprise Architecture</h2>
                 <p className='mb-3 text-gray-500'> This is the current mapping of your enterprise architecture. </p>
 
                 {/* Generate Mapping Button in separate component */}
