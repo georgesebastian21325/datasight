@@ -1,45 +1,50 @@
-"use client";
+"use client"
 
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-export default function page() {
-    const [data, setData] = useState<any>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+const Home = () => {
+    const [data, setData] = useState<any>(null); // State to store API response
+    const [error, setError] = useState<string | null>(null); // State to handle error
 
+    // Function to fetch data from API Gateway
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(
+                "https://t210ywcjr3.execute-api.ap-southeast-1.amazonaws.com/development/fetchResourceServiceMapping",
+                {
+                    params: {
+                        bucket: "datasight-capstone-3b",
+                        key: "data/service_resource_mapping/run-1729159626753-part-r-00000",
+                    },
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+            setData(response.data); // Save the API response data
+        } catch (err: any) {
+            console.error("Error fetching data:", err);
+            setError(err.message); // Save the error message
+        }
+    };
+
+    // Fetch data on component mount
     useEffect(() => {
-        // Fetch data from the API
-        const fetchData = async () => {
-            try {
-                const response = await fetch("https://t210ywcjr3.execute-api.ap-southeast-1.amazonaws.com/development/fetchResourceHealthMetrics?bucket=datasight-capstone-3b&key=data/resource_health_metrics.csv");
-                const result = await response.json();
-
-                // Parse the body to display the actual JSON object
-                const parsedData = JSON.parse(result.body);
-                setData(parsedData);
-                setLoading(false);
-            } catch (error) {
-                setError("Failed to fetch data from the API");
-                setLoading(false);
-            }
-        };
-
         fetchData();
-    }, []);
-
-    // Display loading, error, or JSON data
-    if (loading) {
-        return <p>Loading...</p>;
-    }
-
-    if (error) {
-        return <p>{error}</p>;
-    }
+    }, []); // Empty dependency array to run the effect once on component mount
 
     return (
         <div>
-            <h1>API Output</h1>
-            <pre>{JSON.stringify(data, null, 2)}</pre> {/* Display the JSON object in a readable format */}
+            <h1>Fetch Resource Service Mapping</h1>
+            {error && <p>Error: {error}</p>}
+            {data ? (
+                <pre>{JSON.stringify(data, null, 2)}</pre>
+            ) : (
+                <p>Loading data...</p>
+            )}
         </div>
     );
-}
+};
+
+export default Home;

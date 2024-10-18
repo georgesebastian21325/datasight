@@ -27,50 +27,61 @@ interface ProductOfferingMappingData {
     product_id: string;
 }
 
-// Define the props to pass fetched data from the parent component
-interface ServiceResourceProductMappingProps {
-    resourceMappingData: ResourceServiceMappingData[];
-    productMappingData: ProductServiceMappingData[];
-    offeringMappingData: ProductOfferingMappingData[]; // New prop for product-offering data
-    loading: boolean;
-    error: string | null;
-}
-
-export default function OPSRMapping({
-    resourceMappingData,
-    productMappingData,
-    offeringMappingData, // Receive offering data
-    loading,
-    error
-}: ServiceResourceProductMappingProps) {
-    const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null); // Track selected node (service or resource/product)
-    const [resourceHealthStatuses, setResourceHealthStatuses] = useState<{ [key: string]: "green" | "orange" | "red" }>({});
+// Main component to handle data fetching and display using ReactFlow
+export default function OPSRMapping() {
+    const [resourceMappingData, setResourceMappingData] = useState<ResourceServiceMappingData[]>([]);
+    const [productMappingData, setProductMappingData] = useState<ProductServiceMappingData[]>([]);
+    const [offeringMappingData, setOfferingMappingData] = useState<ProductOfferingMappingData[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null); // Track selected node
 
     useEffect(() => {
-        // Fetch resource health metrics from the API
-        const fetchResourceHealthMetrics = async () => {
+        const fetchResourceServiceMapping = async () => {
             try {
-                const response = await fetch("https://t210ywcjr3.execute-api.ap-southeast-1.amazonaws.com/development/fetchResourceHealthMetrics?bucket=datasight-capstone-3b&key=data/resource_health_metrics.csv");
+                const response = await fetch(
+                    "https://t210ywcjr3.execute-api.ap-southeast-1.amazonaws.com/development/fetchResourceServiceMapping?bucket=datasight-capstone-3b&key=data/service_resource_mapping/run-1729159626753-part-r-00000"
+                );
                 const data = await response.json();
-
-                // Parse the response body to get resource statuses
-                const body = JSON.parse(data.body);
-                const healthStatuses = body.resource_statuses;
-
-                // Map resource statuses by resource_id
-                const statuses: { [key: string]: "green" | "orange" | "red" } = {};
-                healthStatuses.forEach((item: { resource_id: string, status: "green" | "orange" | "red" }) => {
-                    statuses[item.resource_id] = item.status;
-                });
-
-                setResourceHealthStatuses(statuses);
-            } catch (error) {
-                console.error("Failed to fetch resource health metrics:", error);
+                console.log('Resource-Service Mapping Data:', data);  // Log the fetched data
+                setResourceMappingData(data);
+            } catch (err) {
+                setError("Error fetching resource-service mapping.");
             }
         };
 
-        fetchResourceHealthMetrics();
+        const fetchServiceProductMapping = async () => {
+            try {
+                const response = await fetch(
+                    "https://t210ywcjr3.execute-api.ap-southeast-1.amazonaws.com/development/fetchServiceProductMapping?bucket=datasight-capstone-3b&key=data/product_service_mapping/run-1729159594421-part-r-00000"
+                );
+                const data = await response.json();
+                console.log('Service-Product Mapping Data:', data);  // Log the fetched data
+                setProductMappingData(data);
+            } catch (err) {
+                setError("Error fetching product-service mapping.");
+            }
+        };
+
+        const fetchProductOfferingMapping = async () => {
+            try {
+                const response = await fetch(
+                    "https://t210ywcjr3.execute-api.ap-southeast-1.amazonaws.com/development/fetchProductOfferingMapping?bucket=datasight-capstone-3b&key=data/offering_product_mapping/run-1729159589993-part-r-00000"
+                );
+                const data = await response.json();
+                console.log('Product-Offering Mapping Data:', data);  // Log the fetched data
+                setOfferingMappingData(data);
+            } catch (err) {
+                setError("Error fetching product-offering mapping.");
+            }
+        };
+
+        // Call all fetch functions and manage loading state
+        Promise.all([fetchResourceServiceMapping(), fetchServiceProductMapping(), fetchProductOfferingMapping()])
+            .then(() => setLoading(false))
+            .catch(() => setLoading(false));
     }, []);
+
 
     const handleNodeClick = (event: any, node: Node) => {
         setSelectedNodeId(node.id);  // Set the clicked node as selected
@@ -80,27 +91,26 @@ export default function OPSRMapping({
         const nodes: Node[] = [];
         const edges: Edge[] = [];
 
-        const serviceXStart = 800; // Adjusted to center the services better
-        const resourceXStart = 300; // Adjusted to match the services
-        const productXStart = 800; // Adjusted to place products to the right of services
-        const offeringXStart = 800; // Adjusted to place offerings to the right of products
+        const serviceXStart = 800;
+        const resourceXStart = 300;
+        const productXStart = 800;
+        const offeringXStart = 800;
         const yProductPosition = -30;
-        const yServicePosition = 100; // y position for services
+        const yServicePosition = 100;
         const yOfferingPosition = -200;
-        const xGap = 200; // Horizontal gap between nodes
-        const yGap = 150; // Vertical gap between rows of resources/products
+        const xGap = 200;
+        const yGap = 150;
 
         let currentResourceRow = 0;
         let currentProductRow = 0;
         let currentOfferingRow = 0;
 
         // Map resource-service data
-        resourceMappingData.forEach((mapping, index) => {
+        Object.values(resourceMappingData).forEach((mapping, index) => {
             const serviceNodeId = `${mapping.service_id}`;
             const resourceNodeId = `${mapping.resource_id}`;
-            const resourceStatus = resourceHealthStatuses[mapping.resource_id]; // Get the status for this resource
 
-            // Create nodes for each service, aligned at the top
+            // Create service nodes
             if (!nodes.find((n) => n.id === serviceNodeId)) {
                 nodes.push({
                     id: serviceNodeId,
@@ -110,40 +120,20 @@ export default function OPSRMapping({
                 });
             }
 
-            // Arrange resources in rows of 10
+            // Create resource nodes
             const rowIndex = Math.floor(currentResourceRow / 10);
             const columnIndex = currentResourceRow % 10;
-
             if (!nodes.find((n) => n.id === resourceNodeId)) {
                 nodes.push({
                     id: resourceNodeId,
-                    data: {
-                        label: (
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <span
-                                    style={{
-                                        width: '10px',
-                                        height: '10px',
-                                        borderRadius: '50%',
-                                        backgroundColor:
-                                            resourceStatus === "green" ? "green" :
-                                                resourceStatus === "orange" ? "orange" :
-                                                    "red",
-                                        display: 'inline-block',
-                                        marginRight: '8px',
-                                    }}
-                                />
-                                <span>{mapping.resource_id}</span>
-                            </div>
-                        )
-                    },
+                    data: { label: `${mapping.resource_id}` },
                     position: {
-                        x: resourceXStart + columnIndex * xGap, // Place resources in columns
-                        y: yServicePosition + yGap * (rowIndex + 2), // Space rows
+                        x: resourceXStart + columnIndex * xGap,
+                        y: yServicePosition + yGap * (rowIndex + 2),
                     },
                     style: { cursor: "pointer" },
                 });
-                currentResourceRow++; // Move to the next resource position
+                currentResourceRow++;
             }
 
             // Create edges between services and resources
@@ -155,12 +145,13 @@ export default function OPSRMapping({
                 style: {
                     strokeWidth: selectedNodeId === serviceNodeId || selectedNodeId === resourceNodeId ? 3 : 1,
                     stroke: selectedNodeId === serviceNodeId || selectedNodeId === resourceNodeId ? "green" : "#000",
-                }, // Highlight selected service or resource
+                    boxShadow: selectedNodeId === serviceNodeId || selectedNodeId === resourceNodeId ? "0 0 10px #33ff33" : "none",
+                },
             });
         });
 
         // Map product-service data
-        productMappingData.forEach((mapping, index) => {
+        Object.values(productMappingData).forEach((mapping, index) => {
             const serviceNodeId = `${mapping.service_id}`;
             const productNodeId = `${mapping.product_id}`;
 
@@ -168,10 +159,10 @@ export default function OPSRMapping({
                 nodes.push({
                     id: productNodeId,
                     data: { label: `${mapping.product_id}` },
-                    position: { x: productXStart + index * xGap, y: yProductPosition }, // Place services in a row
+                    position: { x: productXStart + index * xGap, y: yProductPosition },
                     style: { cursor: "pointer" },
                 });
-                currentProductRow++; // Move to the next product position
+                currentProductRow++;
             }
 
             // Create edges between services and products
@@ -183,12 +174,13 @@ export default function OPSRMapping({
                 style: {
                     strokeWidth: selectedNodeId === serviceNodeId || selectedNodeId === productNodeId ? 3 : 1,
                     stroke: selectedNodeId === serviceNodeId || selectedNodeId === productNodeId ? "blue" : "#000",
-                }, // Highlight selected service or product
+                    boxShadow: selectedNodeId === serviceNodeId || selectedNodeId === productNodeId ? "0 0 10px #33ccff" : "none",
+                },
             });
         });
 
-        // Map product-offering data (new part)
-        offeringMappingData.forEach((mapping, index) => {
+        // Map product-offering data
+        Object.values(offeringMappingData).forEach((mapping, index) => {
             const offeringNodeId = `${mapping.offering_id}`;
             const productNodeId = `${mapping.product_id}`;
 
@@ -196,10 +188,10 @@ export default function OPSRMapping({
                 nodes.push({
                     id: offeringNodeId,
                     data: { label: `${mapping.offering_id}` },
-                    position: { x: offeringXStart + index * xGap, y: yOfferingPosition }, // Place offerings in a row
+                    position: { x: offeringXStart + index * xGap, y: yOfferingPosition },
                     style: { cursor: "pointer" },
                 });
-                currentOfferingRow++; // Move to the next offering position
+                currentOfferingRow++;
             }
 
             // Create edges between products and offerings
@@ -211,7 +203,8 @@ export default function OPSRMapping({
                 style: {
                     strokeWidth: selectedNodeId === productNodeId || selectedNodeId === offeringNodeId ? 3 : 1,
                     stroke: selectedNodeId === productNodeId || selectedNodeId === offeringNodeId ? "purple" : "#000",
-                }, // Highlight selected product or offering
+                    boxShadow: selectedNodeId === productNodeId || selectedNodeId === offeringNodeId ? "0 0 10px #ff33ff" : "none",
+                },
             });
         });
 
@@ -235,7 +228,7 @@ export default function OPSRMapping({
                 nodes={nodes}
                 edges={edges}
                 fitView
-                onNodeClick={handleNodeClick}  // Add click event for node selection
+                onNodeClick={handleNodeClick}
             >
             </ReactFlow>
         </div>

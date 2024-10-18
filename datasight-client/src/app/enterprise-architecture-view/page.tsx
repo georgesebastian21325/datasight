@@ -3,133 +3,27 @@
 import { useState } from "react";
 import Header from "../components/global/Header";
 import OPSRMapping from "../data-mapping/OPSRMapping";
-import GenerateMappingBtn from "../components/button/GenerateMappingBtn";  // Import the new button component
+import GenerateMappingBtn from "../components/button/GenerateMappingBtn"; // Import the new button component
+import DataMappingLoadingState from "../components/global/DataMappingLoadingState";
 import Link from "next/link";
 import axios from "axios";
 
-export default function page() {
+export default function Page() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [resourceMappingData, setResourceMappingData] = useState([]);
-    const [productMappingData, setProductMappingData] = useState([]);
-    const [offeringMappingData, setOfferingMappingData] = useState([]); // New state for product-offering mapping
+    const [showMapping, setShowMapping] = useState(false);
 
-    // Fetch resource-service mapping data
-    const fetchResourceServiceMapping = async () => {
-        try {
-            setLoading(true);
-            const response = await axios.get(
-                "https://t210ywcjr3.execute-api.ap-southeast-1.amazonaws.com/development/fetchResourceServiceMapping",
-                {
-                    params: {
-                        bucket: "datasight-capstone-3b",
-                        key: "data/service_resource_mapping/service_resource_mapping.csv",
-                    },
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            if (response.data && typeof response.data.body === "string") {
-                const parsedData = JSON.parse(response.data.body);
-                const castedData = parsedData.map((item: any) => ({
-                    mapping_id: String(item.mapping_id),
-                    service_id: String(item.service_id),
-                    resource_id: String(item.resource_id),
-                    resource_type: String(item.resource_type),
-                }));
-                setResourceMappingData(castedData);
-            } else {
-                throw new Error("Unexpected response format");
-            }
-        } catch (error) {
-            setError(error instanceof Error ? error.message : "Unknown error");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Fetch product-service mapping data
-    const fetchProductServiceMapping = async () => {
-        try {
-            setLoading(true);
-            const response = await axios.get(
-                "https://t210ywcjr3.execute-api.ap-southeast-1.amazonaws.com/development/fetchServiceProductMapping",
-                {
-                    params: {
-                        bucket: "datasight-capstone-3b",
-                        key: "data/product_service_mapping/product_service_mapping.csv",
-                    },
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            if (response.data && typeof response.data.body === "string") {
-                const parsedData = JSON.parse(response.data.body);
-                const castedData = parsedData.map((item: any) => ({
-                    mapping_id: String(item.mapping_id),
-                    service_id: String(item.service_id),
-                    product_id: String(item.product_id),
-                    start_date: String(item.start_date),
-                    end_date: String(item.end_date),
-                }));
-                setProductMappingData(castedData);
-            } else {
-                throw new Error("Unexpected response format");
-            }
-        } catch (error) {
-            setError(error instanceof Error ? error.message : "Unknown error");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Fetch product-offering mapping data (new function)
-    const fetchProductOfferingMapping = async () => {
-        try {
-            setLoading(true);
-            const response = await axios.get(
-                "https://t210ywcjr3.execute-api.ap-southeast-1.amazonaws.com/development/fetchProductOfferingMapping",
-                {
-                    params: {
-                        bucket: "datasight-capstone-3b",
-                        key: "data/offering_product_mapping/offering_product_mapping.csv",
-                    },
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            if (response.data && typeof response.data.body === "string") {
-                const parsedData = JSON.parse(response.data.body);
-                const castedData = parsedData.map((item: any) => ({
-                    mapping_id: String(item.mapping_id),
-                    offering_id: String(item.offering_id),
-                    product_id: String(item.product_id),
-                }));
-                setOfferingMappingData(castedData);
-            } else {
-                throw new Error("Unexpected response format");
-            }
-        } catch (error) {
-            setError(error instanceof Error ? error.message : "Unknown error");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Handler to trigger all mappings
     const handleGenerateMapping = () => {
-        setError(null); 
-        fetchProductServiceMapping();
-        fetchResourceServiceMapping();
-        fetchProductOfferingMapping(); 
+        setError(null);
+        setLoading(true);
+        setShowMapping(true);
+
+        setTimeout(() => {
+            setLoading(false); 
+        }, 2000); 
     };
 
+    
     return (
         <div className="flex flex-col lg:flex-row h-screen relative">
             {/* Back Button */}
@@ -168,16 +62,18 @@ export default function page() {
                 {/* Generate Mapping Button in separate component */}
                 <GenerateMappingBtn onGenerateMapping={handleGenerateMapping} />
 
-                {/* Mapping visualization should fit this container */}
+                {/* Always show the dashed container */}
                 <div className="flex items-center justify-center w-full h-[calc(100%-80px)] border-2 border-dashed border-gray-300 rounded-lg ">
                     <div className="w-full h-50 min-w-[1200px]"> {/* Ensure full width */}
-                        <OPSRMapping
-                            resourceMappingData={resourceMappingData} // Pass fetched data as props
-                            productMappingData={productMappingData}
-                            offeringMappingData={offeringMappingData}  // Pass offering data as props
-                            loading={loading}
-                            error={error}
-                        />
+                        {/* Conditionally render the mapping data or the loading state */}
+                        {loading ? (
+                            <DataMappingLoadingState />  // Show loading spinner
+                        ) : showMapping ? (
+                            <OPSRMapping
+                            />
+                        ) : (
+                            <p className="text-center text-gray-500">Click "Generate Mapping" to view the architecture mapping</p>
+                        )}
                     </div>
                 </div>
             </div>
