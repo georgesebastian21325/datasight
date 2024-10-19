@@ -3,10 +3,13 @@
 import { useState } from "react";
 import Header from "../components/global/Header";
 import OPSRMapping from "../data-mapping/OPSRMapping";
+
 import GenerateMappingBtn from "../components/button/GenerateMappingBtn"; // Import the new button component
 import DataMappingLoadingState from "../components/global/DataMappingLoadingState";
+import FileUploadModal from '../components/modal/FileUploadModal';
+import OpenFileUploadModalBtn from '../components/button/OpenFileUploadModalBtn'; 
+
 import Link from "next/link";
-import axios from "axios";
 
 export default function Page() {
     const [loading, setLoading] = useState(false);
@@ -22,6 +25,11 @@ export default function Page() {
             setLoading(false); 
         }, 2000); 
     };
+
+    const [isFileUploadModalOpen, setIsFileUploadModalOpen] = useState(false);
+
+    const openModal = () => setIsFileUploadModalOpen(true);
+    const closeModal = () => setIsFileUploadModalOpen(false);
 
     
     return (
@@ -60,7 +68,13 @@ export default function Page() {
                 <p className='mb-3 text-gray-500'> This is the current mapping of your enterprise architecture. </p>
 
                 {/* Generate Mapping Button in separate component */}
-                <GenerateMappingBtn onGenerateMapping={handleGenerateMapping} />
+                <div className='flex space-x-4 mb-4'>
+                    <GenerateMappingBtn onGenerateMapping={handleGenerateMapping} />
+                    <OpenFileUploadModalBtn openModal={openModal} />
+                    <div>
+                        <FileUploadModal isModalOpen={isFileUploadModalOpen} closeModal={closeModal} />
+                    </div>
+                </div>
 
                 {/* Always show the dashed container */}
                 <div className="flex items-center justify-center w-full h-[calc(100%-80px)] border-2 border-dashed border-gray-300 rounded-lg ">

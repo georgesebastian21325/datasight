@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import { FaCheckCircle } from 'react-icons/fa';
 
 function AuthenticationErrorPopUp({ errorMessage }) {
 
@@ -27,6 +28,20 @@ function AuthenticationErrorPopUp({ errorMessage }) {
 }
 
 
+function SuccessMessage() {
+    return (
+        <div className="mt-6 flex justify-center items-center">
+            <FaCheckCircle className="text-green-600 mr-2" size={24} />
+            <h4 className="text-green-600 text-lg font-medium">Files successfully uploaded!</h4>
+        </div>
+    );
+};
+
+
+
+
+
 export {
-    AuthenticationErrorPopUp
+    AuthenticationErrorPopUp,
+    SuccessMessage
 }
