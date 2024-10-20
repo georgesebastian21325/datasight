@@ -22,8 +22,8 @@ export async function middleware(request: NextRequest) {
 
     return response;
   }
-
-  // Protecting /enterprise-architecture and /settings routes
+  {
+    /* 
   if (isOnEnterpriseView || isOnSettings) {
     if (!user) {
       return NextResponse.redirect(new URL("/", request.nextUrl));
@@ -34,7 +34,11 @@ export async function middleware(request: NextRequest) {
   // If authenticated, redirect to the home page if trying to access the login page or other restricted areas
   if (user && (request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/login")) {
     return NextResponse.redirect(new URL("/home-page", request.nextUrl));
+  }    
+    */
   }
+  // Protecting /enterprise-architecture and /settings routes
+
 
   return response;
 }

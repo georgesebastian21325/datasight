@@ -10,7 +10,7 @@ const OpenFileUploadModalBtn: React.FC<OpenModalButtonProps> = ({ openModal }) =
             onClick={openModal}
             className="bg-black text-white px-4 rounded-md hover:bg-gray-800 transition-transform transform hover:scale-105"
         >
-            Open File Upload Modal
+            Upload Data Sets
         </button>
     );
 };
