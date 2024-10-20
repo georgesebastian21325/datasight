@@ -179,8 +179,8 @@ export default function OPSRMapping() {
                 position: { x: getXStart(offeringNodes.size) + index * xGap, y: yPositions.offering },
                 style: {
                     cursor: "pointer",
-                    borderColor: "purple",
-                    boxShadow: highlightedNodes.has(offeringNodeId) ? "0 0 15px 5px purple" : "none",
+                    borderColor: "black",
+                    boxShadow: highlightedNodes.has(offeringNodeId) ? "0 0 15px 5px #FFD700" : "none",
                 },
             });
         });
@@ -193,8 +193,8 @@ export default function OPSRMapping() {
                 position: { x: getXStart(productNodes.size) + index * xGap, y: yPositions.product },
                 style: {
                     cursor: "pointer",
-                    borderColor: "blue",
-                    boxShadow: highlightedNodes.has(productNodeId) ? "0 0 15px 5px blue" : "none",
+                    borderColor: "black",
+                    boxShadow: highlightedNodes.has(productNodeId) ? "0 0 15px 5px #4169E1" : "none",
                 },
             });
         });
@@ -229,8 +229,8 @@ export default function OPSRMapping() {
                 position: { x: getXStart(serviceNodes.size) + index * xGap, y: yPositions.service },
                 style: {
                     cursor: "pointer",
-                    borderColor: "green",
-                    boxShadow: highlightedNodes.has(serviceNodeId) ? "0 0 15px 5px green" : "none",
+                    borderColor: "black",
+                    boxShadow: highlightedNodes.has(serviceNodeId) ? "0 0 15px 5px #2E8B57" : "none",
                 },
             });
         });
@@ -271,8 +271,8 @@ export default function OPSRMapping() {
                 },
                 style: {
                     cursor: "pointer",
-                    borderColor: "red",
-                    boxShadow: highlightedNodes.has(resourceNodeId) ? "0 0 15px 5px red" : "none",
+                    borderColor: "black",
+                    boxShadow: highlightedNodes.has(resourceNodeId) ? "0 0 15px 5px #DC143C" : "none",
                 },
             });
         });
