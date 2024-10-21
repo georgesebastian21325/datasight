@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.675.0",
+    "@aws-sdk/credential-provider-node": "^3.675.0"
+  }
+}
