@@ -1,148 +1,156 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react';
+import React, { useState } from "react";
+import { X, Check, Trash2, Upload } from "lucide-react";
 
-const ResourceMappingPage = () => {
-    const [resourceServiceMapping, setResourceServiceMapping] = useState([]);
-    const [serviceProductMapping, setServiceProductMapping] = useState([]);
-    const [productOfferingMapping, setProductOfferingMapping] = useState([]);
+interface FileInfo {
+    name: string;
+    size: string;
+    status: "uploaded" | "uploading" | "error";
+}
 
-    useEffect(() => {
-        // Fetch Resource to Service Mapping
-        fetch('https://ps11pluldf.execute-api.ap-southeast-2.amazonaws.com/development/getResourceServiceMapping')
-            .then((response) => response.json())
-            .then((data) => {
-                console.log('Resource to Service Mapping Data:', data); // Debugging
-                const parsedData = JSON.parse(data.body); // Parse the stringified JSON
-                setResourceServiceMapping(parsedData);
-            })
-            .catch((error) => console.error('Error fetching resource-service mapping:', error));
+export default function Component() {
+    const [isOpen, setIsOpen] = useState(false);
+    const [files, setFiles] = useState<FileInfo[]>([]);
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
-        // Fetch Service to Product Mapping
-        fetch('https://ps11pluldf.execute-api.ap-southeast-2.amazonaws.com/development/getServiceProductMapping')
-            .then((response) => response.json())
-            .then((data) => {
-                console.log('Service to Product Mapping Data:', data); // Debugging
-                const parsedData = JSON.parse(data.body); // Parse the stringified JSON
-                setServiceProductMapping(parsedData);
-            })
-            .catch((error) => console.error('Error fetching service-product mapping:', error));
+    const removeFile = (fileName: string) => {
+        setFiles(files.filter((file) => file.name !== fileName));
+    };
 
-        // Fetch Product to Offering Mapping
-        fetch('https://ps11pluldf.execute-api.ap-southeast-2.amazonaws.com/development/getProductOfferingMapping')
-            .then((response) => response.json())
-            .then((data) => {
-                console.log('Product to Offering Mapping Data:', data); // Debugging
-                const parsedData = JSON.parse(data.body); // Parse the stringified JSON
-                setProductOfferingMapping(parsedData);
-            })
-            .catch((error) => console.error('Error fetching product-offering mapping:', error));
-    }, []);
+    const closeUploadBox = () => {
+        setIsOpen(false);
+    };
 
-    // Extract unique service, resource, product, and offering IDs
-    const uniqueServiceIds = [...new Set([...resourceServiceMapping.map(item => item.service_id), ...serviceProductMapping.map(item => item.service_id)])];
-    const uniqueResourceIds = [...new Set(resourceServiceMapping.map(item => item.resource_id))];
-    const uniqueProductIds = [...new Set([...serviceProductMapping.map(item => item.product_id), ...productOfferingMapping.map(item => item.product_id)])];
-    const uniqueOfferingIds = [...new Set(productOfferingMapping.map(item => item.offering_id))];
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newFiles = Array.from(event.target.files || []);
+        setSelectedFiles(newFiles);
+
+        const fileInfo = newFiles.map((file) => ({
+            name: file.name,
+            size: (file.size / 1024).toFixed(1) + "KB", // File size in KB
+            status: "uploading" as const,
+        }));
+
+        setFiles(fileInfo);
+    };
+
+    const uploadFiles = async () => {
+        if (!selectedFiles.length) {
+            alert("Please select files to upload.");
+            return;
+        }
+
+        const formData = new FormData();
+        selectedFiles.forEach((file) => {
+            formData.append("files", file);
+        });
+
+        try {
+            const response = await fetch("/api/upload", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (response.ok) {
+                alert("Files uploaded successfully.");
+                setFiles((prevFiles) =>
+                    prevFiles.map((file) => ({
+                        ...file,
+                        status: "uploaded",
+                    }))
+                );
+            } else {
+                alert("Failed to upload files.");
+            }
+        } catch (error) {
+            console.error("Error uploading files:", error);
+        }
+    };
 
     return (
-        <div>
-            <h1>Unique IDs</h1>
-            <h2>Unique Service IDs</h2>
-            <ul>
-                {uniqueServiceIds.map((id, index) => (
-                    <li key={index}>{id}</li>
-                ))}
-            </ul>
+        <div className="p-4">
+            <button
+                onClick={() => setIsOpen(true)}
+                className="px-4 py-2 bg-brand-blue text-white rounded "
+            >
+                Open Upload Box
+            </button>
 
-            <h2>Unique Resource IDs</h2>
-            <ul>
-                {uniqueResourceIds.map((id, index) => (
-                    <li key={index}>{id}</li>
-                ))}
-            </ul>
-
-            <h2>Unique Product IDs</h2>
-            <ul>
-                {uniqueProductIds.map((id, index) => (
-                    <li key={index}>{id}</li>
-                ))}
-            </ul>
-
-            <h2>Unique Offering IDs</h2>
-            <ul>
-                {uniqueOfferingIds.map((id, index) => (
-                    <li key={index}>{id}</li>
-                ))}
-            </ul>
-
-            <h1>Resource to Service Mapping</h1>
-            {resourceServiceMapping.length > 0 ? (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Service ID</th>
-                            <th>Resource ID</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {resourceServiceMapping.map((item, index) => (
-                            <tr key={index}>
-                                <td>{item.service_id}</td>
-                                <td>{item.resource_id}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            ) : (
-                <p>No data available for Resource to Service Mapping</p>
-            )}
-
-            <h1>Service to Product Mapping</h1>
-            {serviceProductMapping.length > 0 ? (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Service ID</th>
-                            <th>Product ID</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {serviceProductMapping.map((item, index) => (
-                            <tr key={index}>
-                                <td>{item.service_id}</td>
-                                <td>{item.product_id}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            ) : (
-                <p>No data available for Service to Product Mapping</p>
-            )}
-
-            <h1>Product to Offering Mapping</h1>
-            {productOfferingMapping.length > 0 ? (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Product ID</th>
-                            <th>Offering ID</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {productOfferingMapping.map((item, index) => (
-                            <tr key={index}>
-                                <td>{item.product_id}</td>
-                                <td>{item.offering_id}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            ) : (
-                <p>No data available for Product to Offering Mapping</p>
+            {isOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+                    <div className="w-full max-w-md bg-white shadow-lg rounded-md overflow-hidden">
+                        <div className="bg-brand-blue py-3 px-4 flex justify-between items-center">
+                            <h2 className="text-white text-lg font-semibold">Upload Box</h2>
+                            <button
+                                onClick={closeUploadBox}
+                                className="text-white hover:text-gray-200"
+                            >
+                                <X size={24} />
+                                <span className="sr-only">Close</span>
+                            </button>
+                        </div>
+                        <div className="p-4">
+                            <input
+                                type="file"
+                                accept=".csv"
+                                multiple
+                                onChange={handleFileChange}
+                                className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm "
+                            />
+                            <table className="w-full mt-4">
+                                <thead>
+                                    <tr className="border-b">
+                                        <th className="text-left pb-2 font-semibold text-gray-600">Name</th>
+                                        <th className="text-left pb-2 font-semibold text-gray-600">Size</th>
+                                        <th className="text-left pb-2 font-semibold text-gray-600">Status</th>
+                                        <th className="pb-2"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {files.map((file) => (
+                                        <tr key={file.name} className="border-b last:border-b-0">
+                                            <td className="py-2 text-gray-800">{file.name}</td>
+                                            <td className="py-2 text-gray-600">{file.size}</td>
+                                            <td className="py-2">
+                                                {file.status === "uploaded" && (
+                                                    <Check className="text-green-500" size={20} />
+                                                )}
+                                                {file.status === "uploading" && (
+                                                    <Upload className="text-blue-500" size={20} />
+                                                )}
+                                            </td>
+                                            <td className="py-2 text-right">
+                                                <button
+                                                    onClick={() => removeFile(file.name)}
+                                                    className="text-gray-500 hover:text-red-500"
+                                                >
+                                                    <Trash2 size={20} />
+                                                    <span className="sr-only">Remove {file.name}</span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            <div className="mt-4 flex justify-between">
+                                <button
+                                    onClick={closeUploadBox}
+                                    className="px-4 py-2 bg-black text-white rounded hover:bg-[#8FBC8F] focus:outline-none focus:ring-2 focus:ring-[#9ACD32] focus:ring-opacity-50"
+                                >
+                                    Close
+                                </button>
+                                <button
+                                    onClick={uploadFiles}
+                                    className="px-4 py-2 bg-green-900 text-white rounded-md "
+                                >
+                                    Upload
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );
-};
-
-export default ResourceMappingPage;
+}

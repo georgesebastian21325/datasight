@@ -1,28 +1,29 @@
 import { useState } from 'react';
-import FileList from '../file-upload/FileList';
-import ProgressBar from '../file-upload/ProgressBar';
-import { SuccessMessage } from '../popup';
-import { FaUpload } from 'react-icons/fa';
+import { FaUpload, FaCheckCircle, FaTrash, FaSpinner, FaTimesCircle } from 'react-icons/fa';
 
 interface FileUploadModalProps {
     isModalOpen: boolean;
     closeModal: () => void;
 }
 
+interface FileStatus {
+    file: File;
+    status: 'uploaded' | 'uploading' | 'error';
+    progress: number;
+}
+
 const FileUploadModal: React.FC<FileUploadModalProps> = ({ isModalOpen, closeModal }) => {
-    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-    const [uploadProgress, setUploadProgress] = useState(0);
-    const [filesReady, setFilesReady] = useState(false);
-    const [isUploadComplete, setIsUploadComplete] = useState(false);
+    const [selectedFiles, setSelectedFiles] = useState<FileStatus[]>([]);
+    const [isUploading, setIsUploading] = useState(false);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
-        setSelectedFiles(files);
-
-        // Reset states if selecting new files
-        setFilesReady(true);
-        setUploadProgress(0);
-        setIsUploadComplete(false);
+        const fileStatusArray = files.map((file) => ({
+            file,
+            status: 'uploading' as const,
+            progress: 0,
+        }));
+        setSelectedFiles(fileStatusArray);
     };
 
     const removeFile = (index: number) => {
@@ -30,25 +31,48 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({ isModalOpen, closeMod
         setSelectedFiles(updatedFiles);
     };
 
-    const handleUpload = () => {
-        if (selectedFiles.length === 0) {
-            return;
-        }
+    const simulateUpload = (fileStatus: FileStatus, index: number) => {
+        const isError = Math.random() > 0.8; // Simulate 20% chance of error
 
-        const totalFiles = selectedFiles.length;
-        let uploadedFiles = 0;
-
-        // Simulate the upload progress (this is just for demonstration)
         const interval = setInterval(() => {
-            uploadedFiles += 1;
-            const progress = (uploadedFiles / totalFiles) * 100;
-            setUploadProgress(progress);
+            setSelectedFiles((prevFiles) =>
+                prevFiles.map((f, i) =>
+                    i === index && f.progress < 100
+                        ? { ...f, progress: f.progress + 10 }
+                        : f
+                )
+            );
 
-            if (uploadedFiles === totalFiles) {
+            if (fileStatus.progress >= 100) {
                 clearInterval(interval);
-                setIsUploadComplete(true); // Set upload as complete
+                setSelectedFiles((prevFiles) =>
+                    prevFiles.map((f, i) =>
+                        i === index
+                            ? {
+                                ...f,
+                                status: isError ? 'error' : 'uploaded',
+                                progress: 100,
+                            }
+                            : f
+                    )
+                );
             }
-        }, 500);
+        }, 200); // Simulate upload speed
+    };
+
+    const handleUpload = () => {
+        if (selectedFiles.length === 0) return;
+
+        setIsUploading(true);
+
+        // Start upload simulation for each file
+        selectedFiles.forEach((fileStatus, index) => {
+            simulateUpload(fileStatus, index);
+        });
+
+        setTimeout(() => {
+            setIsUploading(false);
+        }, selectedFiles.length * 2000); // Simulate longer wait for more files
     };
 
     if (!isModalOpen) return null;
@@ -80,32 +104,73 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({ isModalOpen, closeMod
                     />
                 </label>
 
-                {/* File List */}
                 {selectedFiles.length > 0 && (
-                    <FileList selectedFiles={selectedFiles} removeFile={removeFile} />
+                    <>
+                        <div className="mb-2 text-gray-700">
+                            {selectedFiles.length} file{selectedFiles.length > 1 && 's'}
+                        </div>
+                        <table className="w-full border-collapse">
+                            <thead>
+                                <tr className="border-b">
+                                    <th className="text-left pb-2 font-semibold text-gray-600">Name</th>
+                                    <th className="text-left pb-2 font-semibold text-gray-600">Status</th>
+                                    <th className="text-left pb-2 font-semibold text-gray-600">Progress</th>
+                                    <th className="text-left pb-2 font-semibold text-gray-600">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {selectedFiles.map((fileStatus, index) => (
+                                    <tr key={index} className="border-b last:border-b-0">
+                                        <td className="py-2 text-gray-800">{fileStatus.file.name}</td>
+                                        <td className="py-2">
+                                            {fileStatus.status === 'uploading' && (
+                                                <FaSpinner className="animate-spin" size={20} />
+                                            )}
+                                            {fileStatus.status === 'uploaded' && (
+                                                <FaCheckCircle className="text-green-500" size={20} />
+                                            )}
+                                            {fileStatus.status === 'error' && (
+                                                <FaTimesCircle className="text-red-500" size={20} />
+                                            )}
+                                        </td>
+                                        <td className="py-2">
+                                            <div className="w-full bg-gray-200 rounded-full h-2.5">
+                                                <div
+                                                    className={`${fileStatus.status === 'error'
+                                                            ? 'bg-red-500'
+                                                            : 'bg-blue-500'
+                                                        } h-2.5 rounded-full`}
+                                                    style={{ width: `${fileStatus.progress}%` }}
+                                                ></div>
+                                            </div>
+                                        </td>
+                                        <td className="py-2 text-right">
+                                            <button
+                                                onClick={() => removeFile(index)}
+                                                className="text-gray-500 hover:text-red-500"
+                                            >
+                                                <FaTrash size={20} />
+                                                <span className="sr-only">Remove</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </>
                 )}
 
-                {/* Upload Button */}
-                {filesReady && !isUploadComplete && (
+                {selectedFiles.length > 0 && (
                     <div className="mt-4 flex justify-center">
                         <button
                             onClick={handleUpload}
                             className="bg-black text-white py-2 px-6 rounded-md hover:bg-gray-800 flex items-center space-x-2"
+                            disabled={isUploading}
                         >
                             <FaUpload />
                             <span>Upload Files</span>
                         </button>
                     </div>
-                )}
-
-                {/* Progress Bar */}
-                {uploadProgress > 0 && (
-                    <ProgressBar uploadProgress={uploadProgress} />
-                )}
-
-                {/* Success Message */}
-                {isUploadComplete && (
-                    <SuccessMessage />
                 )}
             </div>
         </div>

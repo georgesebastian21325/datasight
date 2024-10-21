@@ -1,26 +1,40 @@
-import { FaFileAlt, FaTimes } from 'react-icons/fa';
+import React from 'react';
+import { FaCheckCircle, FaSpinner, FaTimesCircle } from 'react-icons/fa';
 
 interface FileListProps {
-    selectedFiles: File[];
+    selectedFiles: { file: File; status: 'uploaded' | 'uploading' | 'error' }[];
     removeFile: (index: number) => void;
 }
 
 const FileList: React.FC<FileListProps> = ({ selectedFiles, removeFile }) => {
     return (
-        <div className="mt-4">
-            <h3 className="text-lg font-medium mb-2">Selected Files:</h3>
-            <div className="flex flex-wrap gap-2">
-                {selectedFiles.map((file, index) => (
-                    <div key={index} className="flex items-center bg-gray-100 border rounded-lg px-3 py-2 space-x-2">
-                        <FaFileAlt className="text-gray-600" />
-                        <span className="text-sm">{file.name}</span>
-                        <button onClick={() => removeFile(index)} className="text-gray-500 hover:text-red-600">
-                            <FaTimes />
-                        </button>
-                    </div>
-                ))}
-            </div>
-        </div>
+        <ul className="mt-4 space-y-2">
+            {selectedFiles.map((fileStatus, index) => (
+                <li
+                    key={index}
+                    className="flex justify-between items-center border border-gray-200 p-2 rounded"
+                >
+                    <span className="truncate">{fileStatus.file.name}</span>
+                    <span className="ml-4">
+                        {fileStatus.status === 'uploaded' && (
+                            <FaCheckCircle className="text-green-500" size={20} />
+                        )}
+                        {fileStatus.status === 'uploading' && (
+                            <FaSpinner className="text-blue-500 animate-spin" size={20} />
+                        )}
+                        {fileStatus.status === 'error' && (
+                            <FaTimesCircle className="text-red-500" size={20} />
+                        )}
+                    </span>
+                    <button
+                        onClick={() => removeFile(index)}
+                        className="ml-4 text-red-500 hover:text-red-700"
+                    >
+                        Remove
+                    </button>
+                </li>
+            ))}
+        </ul>
     );
 };
 

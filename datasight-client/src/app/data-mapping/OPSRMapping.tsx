@@ -180,7 +180,7 @@ export default function OPSRMapping() {
                 style: {
                     cursor: "pointer",
                     borderColor: "black",
-                    boxShadow: highlightedNodes.has(offeringNodeId) ? "0 0 15px 5px #FFD700" : "none",
+                    boxShadow: highlightedNodes.has(offeringNodeId) ? "0 0 15px 5px purple" : "none",
                 },
             });
         });
