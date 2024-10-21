@@ -1,65 +1,59 @@
 "use client";
+import { useState } from "react";
 
-import React, { useState } from "react";
+const UploadForm = () => {
+	const [files, setFiles] = useState([]);
+	const [uploading, setUploading] = useState(false);
 
-const UploadPage = () => {
-	const [selectedFiles, setSelectedFiles] =
-		useState<FileList | null>(null);
-
-	const handleFileChange = (
-		event: React.ChangeEvent<HTMLInputElement>,
-	) => {
-		setSelectedFiles(event.target.files);
+	const handleFileChange = (e: any) => {
+		setFiles(e.target.files);
 	};
 
-	const handleSubmit = async (event: React.FormEvent) => {
-		event.preventDefault();
+	const handleSubmit = async (e: any) => {
+		e.preventDefault();
+		if (!files || files.length == 0) return;
 
-		if (!selectedFiles) {
-			alert("Please select files to upload.");
-			return;
-		}
-
+		setUploading(true);
 		const formData = new FormData();
-
-		Array.from(selectedFiles).forEach((file) => {
-			formData.append("files", file);
+		Array.from(files).forEach((file) => {
+			formData.append("files", file); // Changed to append each file correctly
 		});
 
-		// Send files to the back-end API route
-		const response = await fetch("/api/upload", {
-			method: "POST",
-			body: formData,
-		});
+		try {
+			const response = await fetch("/api/upload", {
+				method: "POST",
+				body: formData,
+			});
 
-		if (response.ok) {
-			alert("Files uploaded successfully");
-		} else {
-			alert("Failed to upload files");
+			const data = await response.json();
+			console.log(data.status);
+			setUploading(false);
+		} catch (error) {
+			console.log(error);
+			setUploading(false);
 		}
 	};
 
 	return (
-		<div className="flex flex-col items-center">
-			<h1 className="mt-[2rem] font-bold text-xl">
-				Upload CSV Files
-			</h1>
+		<>
+			<h1>Upload Files to S3 Bucket</h1>
+
 			<form onSubmit={handleSubmit}>
 				<input
 					type="file"
 					multiple
-					accept=".csv"
+					accept="csv"
 					onChange={handleFileChange}
 				/>
 				<button
 					type="submit"
-					className="rounded-sm p-[10px] bg-blue-600"
+					disabled={!files || uploading}
 				>
-					Upload
+					{uploading ? "Uploading..." : "Upload"}
 				</button>
 			</form>
-		</div>
+		</>
 	);
 };
 
-export default UploadPage;
+export default UploadForm;
