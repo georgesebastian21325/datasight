@@ -1,6 +1,16 @@
 {
   "dependencies": {
+    "@aws-sdk/credential-provider-node": "^3.675.0",
+    "aws-sdk": "^2.1691.0",
+    "busboy": "^1.6.0",
+    "formidable": "^3.5.2",
+    "multer": "^1.4.5-lts.1",
+    "multer-s3": "^3.0.1",
+    "multiparty": "^4.2.3"
+  },
+  "devDependencies": {
     "@aws-sdk/client-s3": "^3.675.0",
-    "@aws-sdk/credential-provider-node": "^3.675.0"
+    "@types/busboy": "^1.5.4",
+    "@types/multer-s3": "^3.0.3"
   }
 }
