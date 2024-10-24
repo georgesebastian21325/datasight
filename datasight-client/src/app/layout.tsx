@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Libre_Franklin } from "next/font/google";
 import "./globals.css";
 import ConfigureAmplifyClientSide from "./amplify-cognito-config";
+import { GlobalStateProvider } from "./context/GlobalStateContext";
 
 const inter = Inter({ subsets: ["latin"] });
 const libreFranklin = Libre_Franklin({
@@ -24,8 +25,10 @@ export default function RootLayout({
 			<body
 				className={`${inter.className} ${libreFranklin.variable} antialiased`}
 			>
-				<ConfigureAmplifyClientSide />
-				{children}
+				<GlobalStateProvider>
+					<ConfigureAmplifyClientSide />
+					{children}
+				</GlobalStateProvider>
 			</body>
 		</html>
 	);
