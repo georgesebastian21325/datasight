@@ -10,7 +10,7 @@ interface HealthStatus {
     total_health: string;
 }
 
-const ComputerServerSDInfraHealth = () => {
+const HealthStatusDashboard = () => {
     const [healthData, setHealthData] = useState<HealthStatus[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -50,8 +50,58 @@ const ComputerServerSDInfraHealth = () => {
                 infraData = infraData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
                 const parsedInfraData: HealthStatus[] = JSON.parse(infraData); // Parse cleaned JSON
 
+                // Fetch network equipment health data
+                const networkResponse = await fetch(
+                    'https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getNetworkEquipmentHealthStatus'
+                );
+                let networkData: string = await networkResponse.text(); // Get the data as text
+                networkData = networkData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                const parsedNetworkData: HealthStatus[] = JSON.parse(networkData); // Parse cleaned JSON
+
+                // Fetch backup and recovery (BR) health data
+                const brResponse = await fetch(
+                    'https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getBRHealthStatus'
+                );
+                let brData: string = await brResponse.text(); // Get the data as text
+                brData = brData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                const parsedBRData: HealthStatus[] = JSON.parse(brData); // Parse cleaned JSON
+
+                // Fetch virtual infrastructure (VI) health data
+                const viResponse = await fetch(
+                    'https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getVIHealthStatus'
+                );
+                let viData: string = await viResponse.text(); // Get the data as text
+                viData = viData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                const parsedVIData: HealthStatus[] = JSON.parse(viData); // Parse cleaned JSON
+
+                // Fetch cloud infrastructure (CI) health data
+                const ciResponse = await fetch(
+                    'https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getCIHealthStatus'
+                );
+                let ciData: string = await ciResponse.text(); // Get the data as text
+                ciData = ciData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                const parsedCIData: HealthStatus[] = JSON.parse(ciData); // Parse cleaned JSON
+
+                // Fetch software health data
+                const softwareResponse = await fetch(
+                    'https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getSoftwareHealthStatus'
+                );
+                let softwareData: string = await softwareResponse.text(); // Get the data as text
+                softwareData = softwareData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                const parsedSoftwareData: HealthStatus[] = JSON.parse(softwareData); // Parse cleaned JSON
+
                 // Combine all health data
-                const combinedData = [...parsedComputerData, ...parsedServerData, ...parsedSDData, ...parsedInfraData];
+                const combinedData = [
+                    ...parsedComputerData,
+                    ...parsedServerData,
+                    ...parsedSDData,
+                    ...parsedInfraData,
+                    ...parsedNetworkData,
+                    ...parsedBRData,
+                    ...parsedVIData,
+                    ...parsedCIData,
+                    ...parsedSoftwareData, // Added software data
+                ];
 
                 // Set the parsed data to state
                 setHealthData(combinedData);
@@ -85,7 +135,7 @@ const ComputerServerSDInfraHealth = () => {
 
     return (
         <div>
-            <h1>Computer, Server, Storage Device, and Communication Infrastructure Health Status</h1>
+            <h1 className='font-bold'>Health Status Dashboard</h1>
             <ul>
                 {/* Use map to loop over health data */}
                 {healthData.map((item) => (
@@ -110,4 +160,4 @@ const ComputerServerSDInfraHealth = () => {
     );
 };
 
-export default ComputerServerSDInfraHealth;
+export default HealthStatusDashboard;
