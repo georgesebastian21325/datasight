@@ -10,7 +10,7 @@ interface HealthStatus {
     total_health: string;
 }
 
-const ComputerAndServerHealth = () => {
+const ComputerServerSDInfraHealth = () => {
     const [healthData, setHealthData] = useState<HealthStatus[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -23,7 +23,6 @@ const ComputerAndServerHealth = () => {
                     'https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getComputerHealthStatus'
                 );
                 let computerData: string = await computerResponse.text(); // Get the data as text
-                // Clean up JSON if necessary by removing escape characters and newlines
                 computerData = computerData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
                 const parsedComputerData: HealthStatus[] = JSON.parse(computerData); // Parse cleaned JSON
 
@@ -32,16 +31,27 @@ const ComputerAndServerHealth = () => {
                     'https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getServerHealthStatus'
                 );
                 let serverData: string = await serverResponse.text(); // Get the data as text
-                // Clean up JSON if necessary by removing escape characters and newlines
                 serverData = serverData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
                 const parsedServerData: HealthStatus[] = JSON.parse(serverData); // Parse cleaned JSON
 
-                const storageDeviceResponse = await fetch(
+                // Fetch storage device (SD) health data
+                const sdResponse = await fetch(
                     'https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getSDHealthStatus'
-                )
+                );
+                let sdData: string = await sdResponse.text(); // Get the data as text
+                sdData = sdData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                const parsedSDData: HealthStatus[] = JSON.parse(sdData); // Parse cleaned JSON
 
-                // Combine computer and server data
-                const combinedData = [...parsedComputerData, ...parsedServerData];
+                // Fetch communication infrastructure health data
+                const infraResponse = await fetch(
+                    'https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getCommunicationInfraHealthStatus'
+                );
+                let infraData: string = await infraResponse.text(); // Get the data as text
+                infraData = infraData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                const parsedInfraData: HealthStatus[] = JSON.parse(infraData); // Parse cleaned JSON
+
+                // Combine all health data
+                const combinedData = [...parsedComputerData, ...parsedServerData, ...parsedSDData, ...parsedInfraData];
 
                 // Set the parsed data to state
                 setHealthData(combinedData);
@@ -75,7 +85,7 @@ const ComputerAndServerHealth = () => {
 
     return (
         <div>
-            <h1>Resource Health Status</h1>
+            <h1>Computer, Server, Storage Device, and Communication Infrastructure Health Status</h1>
             <ul>
                 {/* Use map to loop over health data */}
                 {healthData.map((item) => (
@@ -90,7 +100,9 @@ const ComputerAndServerHealth = () => {
                                 marginRight: '10px',
                             }}
                         ></span>
-                        <span>{item.resource_id} ({item.resource_type}) - {item.total_health}</span>
+                        <span>
+                            {item.resource_id} ({item.resource_type}) - {item.total_health}
+                        </span>
                     </li>
                 ))}
             </ul>
@@ -98,4 +110,4 @@ const ComputerAndServerHealth = () => {
     );
 };
 
-export default ComputerAndServerHealth;
+export default ComputerServerSDInfraHealth;
