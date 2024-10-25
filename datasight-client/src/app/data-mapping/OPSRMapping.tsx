@@ -61,14 +61,16 @@ export default function OPSRMapping() {
         const fetchData = async () => {
             try {
                 // Fetch the health status data
-                const [computerHealthStatus, serverHealthStatus, storageHealthStatus, commInfraHealthStatus, networkEquipmentHealthStatus, backupRecHealthStatus, virtualInfraHealthStatus] = await Promise.all([
+                const [computerHealthStatus, serverHealthStatus, storageHealthStatus, commInfraHealthStatus, networkEquipmentHealthStatus, backupRecHealthStatus, virtualInfraHealthStatus, cloudInfraHealthStatus, softwareHealthStatus] = await Promise.all([
                     fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getComputerHealthStatus'),
                     fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getServerHealthStatus'),
                     fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getSDHealthStatus'),
                     fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getCommunicationInfraHealthStatus'),
                     fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getNetworkEquipmentHealthStatus'),
                     fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getBRHealthStatus'),
-                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getVIHealthStatus')
+                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getVIHealthStatus'),
+                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getCIHealthStatus'),
+                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getSoftwareHealthStatus')
                 ]);
 
                 // Process computer health data
@@ -101,9 +103,19 @@ export default function OPSRMapping() {
                 virtualInfraData = virtualInfraData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
                 const parsedVirtualInfraData: HealthStatus[] = JSON.parse(virtualInfraData)
 
+                let cloudInfradata: string = await cloudInfraHealthStatus.text();
+                cloudInfradata = cloudInfradata.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                const parsedCloudInfraData: HealthStatus[] = JSON.parse(cloudInfradata)
+
+                let softwareData: string = await softwareHealthStatus.text();
+                softwareData = softwareData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                const parsedSoftwareData: HealthStatus[] = JSON.parse(softwareData)
+
+                console.log(parsedSoftwareData)
+
 
                 // Combine both computer and server health data
-                const combinedHealthData: HealthStatus[] = [...parsedComputerData, ...parsedServerData, ...parsedStorageData, ...parsedCommInfraData, ...parsedNetworkEquipmentData, ...parsedBackupRecData, ...parsedVirtualInfraData];
+                const combinedHealthData: HealthStatus[] = [...parsedComputerData, ...parsedServerData, ...parsedStorageData, ...parsedCommInfraData, ...parsedNetworkEquipmentData, ...parsedBackupRecData, ...parsedVirtualInfraData, ...parsedCloudInfraData, ...parsedSoftwareData];
 
                 
                 const [resourceRes, productRes, offeringRes] = await Promise.all([
