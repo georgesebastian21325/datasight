@@ -61,12 +61,14 @@ export default function OPSRMapping() {
         const fetchData = async () => {
             try {
                 // Fetch the health status data
-                const [computerHealthStatus, serverHealthStatus, storageHealthStatus, commInfraHealthStatus, networkEquipmentHealthStatus] = await Promise.all([
+                const [computerHealthStatus, serverHealthStatus, storageHealthStatus, commInfraHealthStatus, networkEquipmentHealthStatus, backupRecHealthStatus, virtualInfraHealthStatus] = await Promise.all([
                     fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getComputerHealthStatus'),
                     fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getServerHealthStatus'),
                     fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getSDHealthStatus'),
                     fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getCommunicationInfraHealthStatus'),
-                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getNetworkEquipmentHealthStatus')
+                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getNetworkEquipmentHealthStatus'),
+                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getBRHealthStatus'),
+                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getVIHealthStatus')
                 ]);
 
                 // Process computer health data
@@ -91,9 +93,17 @@ export default function OPSRMapping() {
                 networkEquipmentData = networkEquipmentData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
                 const parsedNetworkEquipmentData: HealthStatus[] = JSON.parse(networkEquipmentData);
 
+                let backupRecoverData: string = await backupRecHealthStatus.text();
+                backupRecoverData = backupRecoverData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                const parsedBackupRecData: HealthStatus[] = JSON.parse(backupRecoverData)
+
+                let virtualInfraData: string = await virtualInfraHealthStatus.text();
+                virtualInfraData = virtualInfraData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                const parsedVirtualInfraData: HealthStatus[] = JSON.parse(virtualInfraData)
+
 
                 // Combine both computer and server health data
-                const combinedHealthData: HealthStatus[] = [...parsedComputerData, ...parsedServerData, ...parsedStorageData, ...parsedCommInfraData, ...parsedNetworkEquipmentData];
+                const combinedHealthData: HealthStatus[] = [...parsedComputerData, ...parsedServerData, ...parsedStorageData, ...parsedCommInfraData, ...parsedNetworkEquipmentData, ...parsedBackupRecData, ...parsedVirtualInfraData];
 
                 
                 const [resourceRes, productRes, offeringRes] = await Promise.all([
