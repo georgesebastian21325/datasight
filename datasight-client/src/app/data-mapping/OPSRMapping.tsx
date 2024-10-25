@@ -60,127 +60,75 @@ export default function OPSRMapping() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch the health status data
-                const [computerHealthStatus, serverHealthStatus, storageHealthStatus, commInfraHealthStatus, networkEquipmentHealthStatus, backupRecHealthStatus, virtualInfraHealthStatus, cloudInfraHealthStatus, softwareHealthStatus] = await Promise.all([
-                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getComputerHealthStatus'),
-                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getServerHealthStatus'),
-                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getSDHealthStatus'),
-                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getCommunicationInfraHealthStatus'),
-                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getNetworkEquipmentHealthStatus'),
-                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getBRHealthStatus'),
-                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getVIHealthStatus'),
-                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getCIHealthStatus'),
-                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getSoftwareHealthStatus')
-                ]);
+                // Fetch all health statuses
+                const healthEndpoints = [
+                    'getComputerHealthStatus',
+                    'getServerHealthStatus',
+                    'getSDHealthStatus',
+                    'getCommunicationInfraHealthStatus',
+                    'getNetworkEquipmentHealthStatus',
+                    'getBRHealthStatus',
+                    'getVIHealthStatus',
+                    'getCIHealthStatus',
+                    'getSoftwareHealthStatus'
+                ];
+                const healthFetches = healthEndpoints.map(endpoint =>
+                    fetch(`https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/${endpoint}`)
+                );
+                const healthResponses = await Promise.all(healthFetches);
 
-                // Process computer health data
-                let computerHealthData: string = await computerHealthStatus.text();
-                computerHealthData = computerHealthData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
-                const parsedComputerData: HealthStatus[] = JSON.parse(computerHealthData);
+                // Process each health status response
+                const healthData = await Promise.all(healthResponses.map(async (res) => {
+                    let textData = await res.text();
+                    textData = textData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                    return JSON.parse(textData);  // Convert to JSON
+                }));
 
-                // Process server health data
-                let serverHealthData: string = await serverHealthStatus.text();
-                serverHealthData = serverHealthData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
-                const parsedServerData: HealthStatus[] = JSON.parse(serverHealthData);
+                // Flatten health data and set state
+                const combinedHealthData = healthData.flat();
+                setHealthData(combinedHealthData);
 
-                let storageHealthData: string = await storageHealthStatus.text();
-                storageHealthData = storageHealthData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
-                const parsedStorageData: HealthStatus[] = JSON.parse(storageHealthData);
-                
-                let commInfraHealthData: string = await commInfraHealthStatus.text();
-                commInfraHealthData = commInfraHealthData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
-                const parsedCommInfraData: HealthStatus[] = JSON.parse(commInfraHealthData);
-
-                let networkEquipmentData: string = await networkEquipmentHealthStatus.text();
-                networkEquipmentData = networkEquipmentData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
-                const parsedNetworkEquipmentData: HealthStatus[] = JSON.parse(networkEquipmentData);
-
-                let backupRecoverData: string = await backupRecHealthStatus.text();
-                backupRecoverData = backupRecoverData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
-                const parsedBackupRecData: HealthStatus[] = JSON.parse(backupRecoverData)
-
-                let virtualInfraData: string = await virtualInfraHealthStatus.text();
-                virtualInfraData = virtualInfraData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
-                const parsedVirtualInfraData: HealthStatus[] = JSON.parse(virtualInfraData)
-
-                let cloudInfradata: string = await cloudInfraHealthStatus.text();
-                cloudInfradata = cloudInfradata.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
-                const parsedCloudInfraData: HealthStatus[] = JSON.parse(cloudInfradata)
-
-                let softwareData: string = await softwareHealthStatus.text();
-                softwareData = softwareData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
-                const parsedSoftwareData: HealthStatus[] = JSON.parse(softwareData)
-
-                console.log(parsedSoftwareData)
-
-
-                // Combine both computer and server health data
-                const combinedHealthData: HealthStatus[] = [...parsedComputerData, ...parsedServerData, ...parsedStorageData, ...parsedCommInfraData, ...parsedNetworkEquipmentData, ...parsedBackupRecData, ...parsedVirtualInfraData, ...parsedCloudInfraData, ...parsedSoftwareData];
-
-                
+                // Fetch mappings with enhanced error handling
                 const [resourceRes, productRes, offeringRes] = await Promise.all([
-                    fetch("https://ps11pluldf.execute-api.ap-southeast-2.amazonaws.com/development/getResourceServiceMapping", {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        }
-                    } ),
-                    fetch("https://ps11pluldf.execute-api.ap-southeast-2.amazonaws.com/development/getServiceProductMapping", {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        }
-                    }),
-                    fetch("https://ps11pluldf.execute-api.ap-southeast-2.amazonaws.com/development/getProductOfferingMapping", {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        }
-                    }),
+                    fetch("https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getResourceServiceMapping"),
+                    fetch("https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getServiceProductMapping"),
+                    fetch("https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getProductOfferingMapping")
                 ]);
 
+                // Ensure responses are OK before parsing JSON
+                if (!resourceRes.ok || !productRes.ok || !offeringRes.ok) {
+                    throw new Error("Failed to fetch one or more mappings.");
+                }
 
+                // Parse mapping data
                 const [resourceData, productData, offeringData] = await Promise.all([
                     resourceRes.json(),
                     productRes.json(),
-                    offeringRes.json(),
+                    offeringRes.json()
                 ]);
 
-                const parsedResourceData = resourceData.body
-                    ? JSON.parse(resourceData.body)
-                    : resourceData;
-                const parsedProductData = productData.body
-                    ? JSON.parse(productData.body)
-                    : productData;
-                const parsedOfferingData = offeringData.body
-                    ? JSON.parse(offeringData.body)
-                    : offeringData;
+                // Use fallback for JSON parsing to handle inconsistent structures
+                const parsedResourceData = Array.isArray(resourceData) ? resourceData : Object.values(resourceData);
+                const parsedProductData = Array.isArray(productData) ? productData : Object.values(productData);
+                const parsedOfferingData = Array.isArray(offeringData) ? offeringData : Object.values(offeringData);
 
-                setResourceMappingData(
-                    Array.isArray(parsedResourceData)
-                        ? parsedResourceData
-                        : Object.values(parsedResourceData)
-                );
-                setProductMappingData(
-                    Array.isArray(parsedProductData)
-                        ? parsedProductData
-                        : Object.values(parsedProductData)
-                );
-                setOfferingMappingData(
-                    Array.isArray(parsedOfferingData)
-                        ? parsedOfferingData
-                        : Object.values(parsedOfferingData)
-                );
-                setHealthData(combinedHealthData);
-                setLoading(false);
+                setResourceMappingData(parsedResourceData);
+                setProductMappingData(parsedProductData);
+                setOfferingMappingData(parsedOfferingData);
+
+                // Clear error if successful
+                setError(null);
             } catch (err) {
+                console.error("Error fetching data:", err);  // Log specific error details
                 setError("Error fetching mapping data.");
+            } finally {
                 setLoading(false);
             }
         };
 
         fetchData();
     }, []);
+
 
     const handleNodeClick = (event: any, node: Node) => {
         setSelectedNodeId(node.id);
@@ -403,7 +351,7 @@ export default function OPSRMapping() {
     }
 
     if (error) {
-        return <p>{error}</p>;
+        return <p className='text-center text-red-500 font-bold'> Huy Baks, Wait Lang Ah.  </p>;
     }
 
     const { nodes, edges } = generateNodesAndEdges();
