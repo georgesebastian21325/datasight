@@ -23,6 +23,14 @@ interface ProductOfferingMappingData {
     product_id: string;
 }
 
+interface HealthStatus {
+    resource_id: string;
+    resource_type: string;
+    obsolescence_health: string;
+    capacity_health: string;
+    total_health: string;
+}
+
 const nodeTypes = {};
 const edgeTypes = {};
 
@@ -30,14 +38,64 @@ export default function OPSRMapping() {
     const [resourceMappingData, setResourceMappingData] = useState<ResourceServiceMappingData[]>([]);
     const [productMappingData, setProductMappingData] = useState<ProductServiceMappingData[]>([]);
     const [offeringMappingData, setOfferingMappingData] = useState<ProductOfferingMappingData[]>([]);
+    const [healthData, setHealthData] = useState<HealthStatus[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
     const [highlightedNodes, setHighlightedNodes] = useState<Set<string>>(new Set());
 
+    const getHealthColor = (health: string) => {
+        switch (health) {
+            case 'Green':
+                return 'green';
+            case 'Yellow':
+                return 'yellow';
+            case 'Red':
+                return 'red';
+            default:
+                return 'gray'; // Default color if the health status is unknown
+        }
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
+                // Fetch the health status data
+                const [computerHealthStatus, serverHealthStatus, storageHealthStatus, commInfraHealthStatus, networkEquipmentHealthStatus] = await Promise.all([
+                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getComputerHealthStatus'),
+                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getServerHealthStatus'),
+                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getSDHealthStatus'),
+                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getCommunicationInfraHealthStatus'),
+                    fetch('https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getNetworkEquipmentHealthStatus')
+                ]);
+
+                // Process computer health data
+                let computerHealthData: string = await computerHealthStatus.text();
+                computerHealthData = computerHealthData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                const parsedComputerData: HealthStatus[] = JSON.parse(computerHealthData);
+
+                // Process server health data
+                let serverHealthData: string = await serverHealthStatus.text();
+                serverHealthData = serverHealthData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                const parsedServerData: HealthStatus[] = JSON.parse(serverHealthData);
+
+                let storageHealthData: string = await storageHealthStatus.text();
+                storageHealthData = storageHealthData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                const parsedStorageData: HealthStatus[] = JSON.parse(storageHealthData);
+                
+                let commInfraHealthData: string = await commInfraHealthStatus.text();
+                commInfraHealthData = commInfraHealthData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                const parsedCommInfraData: HealthStatus[] = JSON.parse(commInfraHealthData);
+
+                let networkEquipmentData: string = await networkEquipmentHealthStatus.text();
+                networkEquipmentData = networkEquipmentData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                const parsedNetworkEquipmentData: HealthStatus[] = JSON.parse(networkEquipmentData);
+
+
+                // Combine both computer and server health data
+                const combinedHealthData: HealthStatus[] = [...parsedComputerData, ...parsedServerData, ...parsedStorageData, ...parsedCommInfraData, ...parsedNetworkEquipmentData];
+
+                
                 const [resourceRes, productRes, offeringRes] = await Promise.all([
                     fetch("https://ps11pluldf.execute-api.ap-southeast-2.amazonaws.com/development/getResourceServiceMapping"),
                     fetch("https://ps11pluldf.execute-api.ap-southeast-2.amazonaws.com/development/getServiceProductMapping"),
@@ -75,6 +133,7 @@ export default function OPSRMapping() {
                         ? parsedOfferingData
                         : Object.values(parsedOfferingData)
                 );
+                setHealthData(combinedHealthData);
                 setLoading(false);
             } catch (err) {
                 setError("Error fetching mapping data.");
@@ -257,14 +316,34 @@ export default function OPSRMapping() {
             });
         });
 
-        // Create resource nodes with a maximum of 5 per row
+        // Create resource nodes with health status colored dots
         Array.from(resourceNodes).forEach((resourceNodeId, index) => {
             const rowIndex = Math.floor(index / 10); // Every 5 items will start a new row
             const columnIndex = index % 10; // Position within the row
 
+            // Find the corresponding health data for the resource node
+            const healthStatus = healthData.find(h => h.resource_id === resourceNodeId);
+            const healthColor = healthStatus ? getHealthColor(healthStatus.total_health) : 'gray';
+
             nodes.push({
                 id: resourceNodeId,
-                data: { label: resourceNodeId },
+                data: {
+                    label: (
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                            <span
+                                style={{
+                                    display: "inline-block",
+                                    width: "15px",
+                                    height: "15px",
+                                    borderRadius: "50%",
+                                    backgroundColor: healthColor,
+                                    marginRight: "10px",
+                                }}
+                            ></span>
+                            {resourceNodeId}
+                        </div>
+                    ),
+                },
                 position: {
                     x: getXStart(10) + columnIndex * xGap,
                     y: yPositions.resource + rowIndex * yGap,
@@ -272,13 +351,14 @@ export default function OPSRMapping() {
                 style: {
                     cursor: "pointer",
                     borderColor: "black",
-                    boxShadow: highlightedNodes.has(resourceNodeId) ? "0 0 15px 5px #DC143C" : "none",
+                    boxShadow: highlightedNodes.has(resourceNodeId) ? `0 0 15px 5px green` : "none",
                 },
+
             });
         });
 
         return { nodes, edges };
-    }, [resourceMappingData, productMappingData, offeringMappingData, highlightedNodes]);
+    }, [resourceMappingData, productMappingData, offeringMappingData, highlightedNodes, healthData]);
 
     if (loading) {
         return <DataMappingLoadingState />;
