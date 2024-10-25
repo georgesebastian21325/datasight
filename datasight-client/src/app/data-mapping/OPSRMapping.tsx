@@ -119,10 +119,26 @@ export default function OPSRMapping() {
 
                 
                 const [resourceRes, productRes, offeringRes] = await Promise.all([
-                    fetch("https://ps11pluldf.execute-api.ap-southeast-2.amazonaws.com/development/getResourceServiceMapping"),
-                    fetch("https://ps11pluldf.execute-api.ap-southeast-2.amazonaws.com/development/getServiceProductMapping"),
-                    fetch("https://ps11pluldf.execute-api.ap-southeast-2.amazonaws.com/development/getProductOfferingMapping"),
+                    fetch("https://ps11pluldf.execute-api.ap-southeast-2.amazonaws.com/development/getResourceServiceMapping", {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    } ),
+                    fetch("https://ps11pluldf.execute-api.ap-southeast-2.amazonaws.com/development/getServiceProductMapping", {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    }),
+                    fetch("https://ps11pluldf.execute-api.ap-southeast-2.amazonaws.com/development/getProductOfferingMapping", {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    }),
                 ]);
+
 
                 const [resourceData, productData, offeringData] = await Promise.all([
                     resourceRes.json(),
