@@ -110,12 +110,14 @@ export default function Page() {
 							<OPSRMapping />
 						) : (
 							<p className="text-center text-gray-500">
-								Click "Generate Mapping" to view the
+								Click &quot;Generate Mapping&quot; to view the
 								architecture mapping
 							</p>
 						)}
 					</div>
+
 				</div>
+				{showMapping && <div className="bg-red-50">{selectedNodeId}</div>}
 			</div>
 		</div>
 	);

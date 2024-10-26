@@ -9,6 +9,7 @@ import React, {
 interface GlobalStateContextType {
 	selectedNodeId: string | null;
 	setSelectedNodeId: (id: string | null) => void;
+	handleSetSelectedNodeId: (id: string) => void;
 }
 
 const GlobalStateContext = createContext<
@@ -24,9 +25,17 @@ export function GlobalStateProvider({
 		string | null
 	>(null);
 
+	function handleSetSelectedNodeId(id: string) {
+		if (selectedNodeId == id) {
+			setSelectedNodeId(null)
+		} else {
+			setSelectedNodeId(id)
+		}
+	}
+
 	return (
 		<GlobalStateContext.Provider
-			value={{ selectedNodeId, setSelectedNodeId }}
+			value={{ selectedNodeId, setSelectedNodeId, handleSetSelectedNodeId }}
 		>
 			{children}
 		</GlobalStateContext.Provider>

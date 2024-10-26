@@ -52,7 +52,8 @@ export default function OPSRMapping() {
 	const [healthData, setHealthData] = useState<HealthStatus[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-	const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+	// const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+	const { handleSetSelectedNodeId } = useGlobalState()
 	const [highlightedNodes, setHighlightedNodes] = useState<Set<string>>(new Set());
 
 	const getHealthColor = (health: string) => {
@@ -142,7 +143,7 @@ export default function OPSRMapping() {
 
 
 	const handleNodeClick = (event: any, node: Node) => {
-		setSelectedNodeId(node.id);
+		handleSetSelectedNodeId(node.id);
 
 		const connectedNodes = new Set<string>();
 		const connectedEdges = new Set<string>();
