@@ -36,6 +36,7 @@ interface ProductOfferingMappingData {
 
 interface HealthStatus {
 	resource_id: string;
+    service_id: string;
 	resource_type: string;
 	obsolescence_health: string;
 	capacity_health: string;
@@ -82,7 +83,8 @@ export default function OPSRMapping() {
 					'getBRHealthStatus',
 					'getVIHealthStatus',
 					'getCIHealthStatus',
-					'getSoftwareHealthStatus'
+					'getSoftwareHealthStatus',
+                    'getServerHealthStatus'
 				];
 				const healthFetches = healthEndpoints.map(endpoint =>
 					fetch(`https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/${endpoint}`)
@@ -332,9 +334,33 @@ export default function OPSRMapping() {
 		// Create service nodes
 		Array.from(serviceNodes).forEach(
 			(serviceNodeId, index) => {
+
+
+                const healthStatus = healthData.find(h => h.service_id === serviceNodeId);
+                const healthColor = healthStatus ? getHealthColor(healthStatus.total_health) : 'gray';
+
+                console.log(serviceNodes)
+                console.log(healthColor)
+
 				nodes.push({
 					id: serviceNodeId,
-					data: { label: serviceNodeId },
+                    data: {
+                        label: (
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                                <span
+                                    style={{
+                                        display: "inline-block",
+                                        width: "15px",
+                                        height: "15px",
+                                        borderRadius: "50%",
+                                        backgroundColor: healthColor,
+                                        marginRight: "10px",
+                                    }}
+                                ></span>
+                                {serviceNodeId}
+                            </div>
+                        ),
+                    },
 					position: {
 						x: getXStart(serviceNodes.size) + index * xGap,
 						y: yPositions.service,
