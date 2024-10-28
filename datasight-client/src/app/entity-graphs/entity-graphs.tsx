@@ -49,7 +49,7 @@ export default function EntityGraphs() {
 			setIsLoading(true);
 
 			const response = await fetch(
-				`${resourceEntityAPI}?resource_id=${selectedNodeId}`,
+				`${resourceEntityAPI}?entity_id=${selectedNodeId}`,
 			);
 
 			setIsLoading(false);
