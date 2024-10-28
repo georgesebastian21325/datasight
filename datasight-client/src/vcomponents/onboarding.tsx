@@ -1,33 +1,26 @@
+// Onboarding.tsx
 'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from "@/vcomponents/ui/button"
-import { Progress } from "@/vcomponents/ui/progress"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/vcomponents/ui/card"
-import { Upload, FileCheck, CheckCircle, ArrowLeft, ArrowRight } from 'lucide-react'
+import { Button } from "@/vcomponents/onboarding-components/button"
+import { Progress } from "@/vcomponents/onboarding-components/progress"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/vcomponents/onboarding-components/card"
+import { FileCheck, CheckCircle, ArrowLeft, ArrowRight } from 'lucide-react'
+
+import FileUploadModal from './file-upload-modal'
 
 export function Onboarding() {
   const [currentStep, setCurrentStep] = useState(1)
-  const [file, setFile] = useState<File | null>(null)
+  const [uploadedFiles, setUploadedFiles] = useState<FileInfo[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
-  const [uploading, setUploading] = useState(false)
   const router = useRouter()
 
   const totalSteps = 3
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const uploadedFile = event.target.files?.[0]
-    if (uploadedFile) {
-      setFile(uploadedFile)
-    }
-  }
-
   const handleNextStep = async () => {
     if (currentStep < totalSteps) {
-      if (currentStep === 1 && file) {
-        await uploadFile()
-      } else if (currentStep === 2) {
+      if (currentStep === 2) {
         processCSV()
       }
       setCurrentStep(currentStep + 1)
@@ -40,29 +33,8 @@ export function Onboarding() {
     }
   }
 
-  const uploadFile = async () => {
-    setUploading(true)
-    const formData = new FormData()
-    formData.append("files", file as Blob) 
-
-    try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      })
-
-      const data = await response.json()
-      console.log(data.status)
-    } catch (error) {
-      console.error("Upload failed", error)
-    } finally {
-      setUploading(false)
-    }
-  }
-
   const processCSV = () => {
     setIsProcessing(true)
-    // Simulating CSV processing
     setTimeout(() => {
       setIsProcessing(false)
     }, 2000)
@@ -81,19 +53,9 @@ export function Onboarding() {
         <CardContent className="min-h-[400px] flex flex-col items-center justify-center">
           {currentStep === 1 && (
             <div className="text-center w-full">
-              <h2 className="text-2xl font-semibold mb-4">Upload Your CSV File</h2>
-              <div className="flex items-center justify-center w-full">
-                <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <Upload className="w-10 h-10 mb-3 text-gray-400" />
-                    <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                    <p className="text-xs text-gray-500">CSV file containing your enterprise architecture data</p>
-                  </div>
-                  <input id="dropzone-file" type="file" className="hidden" accept=".csv" onChange={handleFileUpload} />
-                </label>
-              </div>
-              {file && <p className="mt-4 text-sm text-gray-500">Selected file: {file.name}</p>}
-              {uploading && <p className="mt-4 text-sm text-gray-500">Uploading...</p>}
+              <h2 className="text-2xl font-semibold mb-4">Upload Your CSV Files</h2>
+              <FileUploadModal onUploadComplete={(files) => setUploadedFiles(files)} />
+              {uploadedFiles.length > 0 && <p className="mt-4 text-sm text-gray-500">Files uploaded successfully!</p>}
             </div>
           )}
 
@@ -108,7 +70,7 @@ export function Onboarding() {
               ) : (
                 <div className="flex flex-col items-center">
                   <FileCheck className="w-16 h-16 text-green-500 mb-4" />
-                  <p>Your file has been successfully processed!</p>
+                  <p>Your files have been successfully processed!</p>
                 </div>
               )}
             </div>
@@ -135,7 +97,7 @@ export function Onboarding() {
           </Button>
           <Button
             onClick={handleNextStep}
-            disabled={(currentStep === 1 && !file) || uploading || currentStep === totalSteps}
+            disabled={(currentStep === 1 && uploadedFiles.length === 0) || currentStep === totalSteps}
           >
             {currentStep === totalSteps ? 'Finish' : 'Next'} <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
