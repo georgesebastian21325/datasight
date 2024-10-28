@@ -1,11 +1,18 @@
 "use client";
 
 import { useGlobalState } from "../context/GlobalStateContext";
-import React, {
-	useState,
-	useEffect,
-	useCallback,
-} from "react";
+import EntityGraphsLoadingState from "../components/global/EntityGraphsLoadingState";
+import React, { useState, useEffect } from "react";
+import {
+	LineChart,
+	Line,
+	XAxis,
+	YAxis,
+	CartesianGrid,
+	Tooltip,
+	Legend,
+	ResponsiveContainer,
+} from "recharts";
 
 interface MetricRecord {
 	resource_id: string;
@@ -20,6 +27,8 @@ interface GroupedData {
 
 export default function EntityGraphs() {
 	const { selectedNodeId } = useGlobalState();
+	const [isLoading, setIsLoading] =
+		useState<Boolean>(false);
 	const [groupedData, setGroupedData] = useState<Record<
 		string,
 		any
@@ -29,9 +38,11 @@ export default function EntityGraphs() {
 
 	const handleFetchData = async () => {
 		try {
+			setIsLoading(true);
 			const response = await fetch(
 				`${resourceEntityAPI}?resource_id=${selectedNodeId}`,
 			);
+			setIsLoading(false);
 
 			if (response.ok) {
 				const result: MetricRecord[] =
@@ -69,9 +80,48 @@ export default function EntityGraphs() {
 	}, [selectedNodeId]);
 
 	return (
-		<div className="bg-red-50">
-			Hello
-			{selectedNodeId}
-		</div>
+		<>
+			{isLoading && <EntityGraphsLoadingState />}
+			{groupedData && !isLoading && (
+				<div>
+					<h1>Entity Graphs for Node: {selectedNodeId}</h1>
+					<div className="grid grid-cols-2 gap-2">
+						{groupedData ? (
+							Object.entries(groupedData).map(
+								([metricType, records]) => (
+									<div
+										key={metricType}
+										style={{ marginBottom: "2rem" }}
+									>
+										<h2>{metricType}</h2>
+										<ResponsiveContainer
+											width="100%"
+											height={400}
+										>
+											<LineChart data={records}>
+												<CartesianGrid strokeDasharray="3 3" />
+												<XAxis dataKey="week" />
+												<YAxis />
+												<Tooltip />
+												<Legend />
+												<Line
+													type="natural"
+													dataKey="average_metric_value"
+													stroke="#8884d8"
+													strokeWidth={1}
+													activeDot={{ r: 8 }}
+												/>
+											</LineChart>
+										</ResponsiveContainer>
+									</div>
+								),
+							)
+						) : (
+							<p>Loading data...</p>
+						)}
+					</div>
+				</div>
+			)}
+		</>
 	);
 }
