@@ -42,18 +42,24 @@ export function Onboarding() {
 
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
-      <h1 className="text-3xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-[#f47820] to-[#1050d2]">Welcome to Your Enterprise Architecture Onboarding</h1>
-      <p className='mb-6 text-gray-600'>Follow the simple steps below to upload, process, and analyze your architecture data effortlessly. Visualize the current mapping of your enterprise architecture and get ready for actionable insights!</p>
-      <Progress value={(currentStep / totalSteps) * 100} className="mb-6" />
+      <h1 className="text-3xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820] ">
+        Welcome to Data Sight!
+      </h1>
+      <p className="text-lg text-gray-600 mb-5">
+        We’re thrilled to have you on board! At Data Sight, we’re dedicated to helping you make the most of your data.
+        Let’s get started and unlock the full potential of your enterprise architecture together!
+      </p>
 
+      <Progress value={(currentStep / totalSteps) * 100} className="mb-6" />
       <Card>
         <CardHeader>
           <CardTitle>Step {currentStep} of {totalSteps}</CardTitle>
         </CardHeader>
-        <CardContent className="min-h-[400px] flex flex-col items-center justify-center">
+        <CardContent className="min-h-[250px] flex flex-col items-center justify-center">
           {currentStep === 1 && (
-            <div className="text-center w-full">
-              <h2 className="text-2xl font-semibold mb-4">Upload Your CSV Files</h2>
+            <div className="text-center w-full flex flex-col items-center">
+              <h1 className='text-2xl font-bold'> Upload Your Data Set</h1>
+              <p className='mb-6 text-gray-600 w-[95%]'>Click on the Upload Enterprise Architecture Datasets to begin storing your datasets in to our system. </p>
               <FileUploadModal onUploadComplete={(files) => setUploadedFiles(files)} />
               {uploadedFiles.length > 0 && <p className="mt-4 text-sm text-gray-500">Files uploaded successfully!</p>}
             </div>

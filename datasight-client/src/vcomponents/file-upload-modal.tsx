@@ -132,14 +132,17 @@ export default function FileUploadModal({ onUploadComplete }: FileUploadModalPro
   );
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div className="flex flex-col items-center justify-center p-4">
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="outline">Upload Files</Button>
+          <Button variant="outline" className='bg-green-900 text-white'>Upload Enterprise Architecture Datasets</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[700px]">
           <DialogHeader>
-            <DialogTitle>File Upload</DialogTitle>
+            <DialogTitle className='text-center mt-8 text-2xl font-bold'>Upload Enterprise Architecture Datasets</DialogTitle>
+            <p className="text-center text-gray-500">
+              Please ensure you upload all <b className="text-red-500">32 datasets</b> related to your enterprise architecture.
+            </p>
           </DialogHeader>
           <div className="mb-4">
             <input
@@ -219,10 +222,10 @@ export default function FileUploadModal({ onUploadComplete }: FileUploadModalPro
               </Button>
             </div>
           )}
-          <div className="flex justify-end mt-4">
-            <Button onClick={handleUpload} disabled={isUploading || selectedFiles.length === 0}>
+          <div className="flex justify-center mt-4">
+            <Button onClick={handleUpload} disabled={isUploading || selectedFiles.length === 0} className='bg-green-900'>
               <Upload className="mr-2 h-4 w-4" />
-              {isUploading ? "Uploading..." : "Upload Files"}
+              {isUploading ? "Uploading..." : "Upload Datasets"}
             </Button>
           </div>
         </DialogContent>
