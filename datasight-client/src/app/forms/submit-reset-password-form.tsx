@@ -77,8 +77,8 @@ function SendConfirmationCodeButton() {
     const { pending } = useFormStatus();
 
     return (
-        <Button className="flex mt-9 w-[50%] bg-brand-blue text-center items-center justify-center" aria-disabled={pending}>
-            <p className='text-sm '> Send Code </p> <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+        <Button className="flex mt-9 w-[50%] bg-brand-blue text-center items-center hover:bg-blue-800 justify-center" aria-disabled={pending}>
+            <p className='text-sm'> Send Code </p> <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
     );
 }

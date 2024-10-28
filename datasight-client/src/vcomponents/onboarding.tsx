@@ -2,18 +2,16 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-
 import { Button } from "@/vcomponents/ui/button"
 import { Progress } from "@/vcomponents/ui/progress"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/vcomponents/ui/card"
 import { Upload, FileCheck, CheckCircle, ArrowLeft, ArrowRight } from 'lucide-react'
 
-
-
 export function Onboarding() {
   const [currentStep, setCurrentStep] = useState(1)
   const [file, setFile] = useState<File | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const router = useRouter()
 
   const totalSteps = 3
@@ -25,18 +23,40 @@ export function Onboarding() {
     }
   }
 
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
     if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1)
-      if (currentStep === 2) {
+      if (currentStep === 1 && file) {
+        await uploadFile()
+      } else if (currentStep === 2) {
         processCSV()
       }
+      setCurrentStep(currentStep + 1)
     }
   }
 
   const handlePreviousStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1)
+    }
+  }
+
+  const uploadFile = async () => {
+    setUploading(true)
+    const formData = new FormData()
+    formData.append("files", file as Blob) 
+
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      })
+
+      const data = await response.json()
+      console.log(data.status)
+    } catch (error) {
+      console.error("Upload failed", error)
+    } finally {
+      setUploading(false)
     }
   }
 
@@ -48,15 +68,10 @@ export function Onboarding() {
     }, 2000)
   }
 
-  const handleViewArchitecture = () => {
-    router.push('/enterprise-architecture-view');
-    // In a real application, you might use Next.js router or window.location here
-  }
-
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
       <h1 className="text-3xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-[#f47820] to-[#1050d2]">Welcome to Your Enterprise Architecture Onboarding</h1>
-      <p className='mb-6 text-gray-600'> Follow the simple steps below to upload, process, and analyze your architecture data effortlessly. Visualize the current mapping of your enterprise architecture and get ready for actionable insights!</p>
+      <p className='mb-6 text-gray-600'>Follow the simple steps below to upload, process, and analyze your architecture data effortlessly. Visualize the current mapping of your enterprise architecture and get ready for actionable insights!</p>
       <Progress value={(currentStep / totalSteps) * 100} className="mb-6" />
 
       <Card>
@@ -78,6 +93,7 @@ export function Onboarding() {
                 </label>
               </div>
               {file && <p className="mt-4 text-sm text-gray-500">Selected file: {file.name}</p>}
+              {uploading && <p className="mt-4 text-sm text-gray-500">Uploading...</p>}
             </div>
           )}
 
@@ -119,7 +135,7 @@ export function Onboarding() {
           </Button>
           <Button
             onClick={handleNextStep}
-            disabled={currentStep === 1 && !file || currentStep === totalSteps}
+            disabled={(currentStep === 1 && !file) || uploading || currentStep === totalSteps}
           >
             {currentStep === totalSteps ? 'Finish' : 'Next'} <ArrowRight className="ml-2 h-4 w-4" />
           </Button>

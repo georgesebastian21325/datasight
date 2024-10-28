@@ -30,7 +30,7 @@ export default function ConfirmResetPasswordForm() {
         >
             <form action={dispatch} className="flex flex-col items-center justify-center  space-y-3  p-10 rounded-lg">
                 <div className="flex flex-col rounded-lg w-[30%] px-6 pb-4 pt-8 items-center border-2 mt-10">
-                    <Image src={CompanyLogo} alt='company_logo' width={170} height={50} />
+                    <Image src={CompanyLogo} alt='company_logo' width={170} height={50} className='mb-5' />
                     <h1 className='font-bold gradient-text text-xl mb-1'>
                         CONFIRMATION CODE SENT.
                     </h1>
@@ -117,7 +117,7 @@ export default function ConfirmResetPasswordForm() {
                                 </div>
                             </div>
                         </div>
-                        <div className="mt-4">
+                        <div className="mt-4 ">
                             <label
                                 className="mb-3 mt-5 block text-xs font-medium text-gray-900"
                                 htmlFor="code"
@@ -163,7 +163,7 @@ function ResetPasswordButton() {
     const { pending } = useFormStatus();
 
     return (
-        <Button className="mt-4 w-full" aria-disabled={pending}>
+        <Button className="mt-4 w-full bg-brand-blue text-center items-center hover:bg-blue-800" aria-disabled={pending}>
             Reset Password <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
     );
