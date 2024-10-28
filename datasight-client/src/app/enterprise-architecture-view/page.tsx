@@ -89,13 +89,6 @@ export default function Page() {
 					<GenerateMappingBtn
 						onGenerateMapping={handleGenerateMapping}
 					/>
-					<OpenFileUploadModalBtn openModal={openModal} />
-					<div>
-						<FileUploadModal
-							isModalOpen={isFileUploadModalOpen}
-							closeModal={closeModal}
-						/>
-					</div>
 				</div>
 
 				{/* Always show the dashed container */}

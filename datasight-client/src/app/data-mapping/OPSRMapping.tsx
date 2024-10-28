@@ -56,6 +56,13 @@ interface ProductHealthStatus {
     total_health: string;
 }
 
+interface OfferingHealthStatus {
+    offering_id: string;
+    obsolescence_health: string;
+    capacity_health: string;
+    total_health: string;
+}
+
 const nodeTypes = {};
 const edgeTypes = {};
 
@@ -67,6 +74,7 @@ export default function OPSRMapping() {
     const [healthResourceData, setResourceHealthData] = useState<ResourceHealthStatus[]>([]);
     const [healthServiceData, setServiceHealthData] = useState<ServiceHealthStatus[]>([]);
     const [healthProductData, setProductHealthData] = useState<ProductHealthStatus[]>([]);
+    const [healthOfferingData, setOfferingHealthData] = useState<OfferingHealthStatus[]>([]);
 
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -102,8 +110,6 @@ export default function OPSRMapping() {
 					'getVIHealthStatus',
 					'getCIHealthStatus',
 					'getSoftwareHealthStatus',
-                    'getServiceHealthStatus',
-                    'getProductHealthStatus'
 				];
 				const fetchResourceHealth = healthEndpoints.map(endpoint =>
 					fetch(`https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/${endpoint}`)
@@ -148,11 +154,24 @@ export default function OPSRMapping() {
 
                 const combinedProductHealthData = healthProductData.flat();
 
-                console.log('Product Health: ' + combinedProductHealthData)
+                const fetchOfferingHealth = healthEndpoints.map(endpoint =>
+                    fetch(`https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getOfferingHealthStatus`)
+                );
+
+                const healthOfferingResponses = await Promise.all(fetchOfferingHealth);
+
+                const healthOfferingData = await Promise.all(healthOfferingResponses.map(async (res) => {
+                    let textData = await res.text();
+                    textData = textData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                    return JSON.parse(textData);  // Convert to JSON
+                }));
+
+                const combinedOfferingHealthData = healthOfferingData.flat();
 
                 setResourceHealthData(combinedResourceHealthData);
                 setServiceHealthData(combinedServiceHealthData);
                 setProductHealthData(combinedProductHealthData);
+                setOfferingHealthData(combinedOfferingHealthData);
 
 				// Fetch mappings with enhanced error handling
 				const [resourceRes, productRes, offeringRes] = await Promise.all([
@@ -310,9 +329,33 @@ export default function OPSRMapping() {
 		// Create offering nodes
 		Array.from(offeringNodes).forEach(
 			(offeringNodeId, index) => {
+                const healthStatus = healthOfferingData.find(h => {
+                    console.log("Checking product_id:", h.offering_id); // Logs each product_id
+                    return h.offering_id === offeringNodeId;
+                });
+
+                const healthColor = healthStatus ? getHealthColor(healthStatus.total_health) : 'gray';
+
+
 				nodes.push({
 					id: offeringNodeId,
-					data: { label: offeringNodeId },
+                    data: {
+                        label: (
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                                <span
+                                    style={{
+                                        display: "inline-block",
+                                        width: "15px",
+                                        height: "15px",
+                                        borderRadius: "50%",
+                                        backgroundColor: healthColor,
+                                        marginRight: "10px",
+                                    }}
+                                ></span>
+                                {offeringNodeId}
+                            </div>
+                        ),
+                    },
 					position: {
 						x: getXStart(offeringNodes.size) + index * xGap,
 						y: yPositions.offering,
@@ -531,7 +574,7 @@ export default function OPSRMapping() {
 		});
 
 		return { nodes, edges };
-	}, [resourceMappingData, productMappingData, offeringMappingData, highlightedNodes, healthResourceData, healthServiceData, healthProductData]);
+	}, [resourceMappingData, productMappingData, offeringMappingData, highlightedNodes, healthResourceData, healthServiceData, healthProductData, healthOfferingData]);
 
 	if (loading) {
 		return <DataMappingLoadingState />;
