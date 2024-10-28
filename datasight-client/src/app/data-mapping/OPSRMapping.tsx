@@ -66,11 +66,12 @@ export default function OPSRMapping() {
 
     const [healthResourceData, setResourceHealthData] = useState<ResourceHealthStatus[]>([]);
     const [healthServiceData, setServiceHealthData] = useState<ServiceHealthStatus[]>([]);
+    const [healthProductData, setProductHealthData] = useState<ProductHealthStatus[]>([]);
 
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
-	// const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+
 	const { handleSetSelectedNodeId } = useGlobalState()
 	const [highlightedNodes, setHighlightedNodes] = useState<Set<string>>(new Set());
 
@@ -101,7 +102,8 @@ export default function OPSRMapping() {
 					'getVIHealthStatus',
 					'getCIHealthStatus',
 					'getSoftwareHealthStatus',
-                    'getServerHealthStatus'
+                    'getServiceHealthStatus',
+                    'getProductHealthStatus'
 				];
 				const fetchResourceHealth = healthEndpoints.map(endpoint =>
 					fetch(`https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/${endpoint}`)
@@ -132,10 +134,25 @@ export default function OPSRMapping() {
 
                 const combinedServiceHealthData = healthServiceData.flat();
 
-                console.log(combinedServiceHealthData);
+                const fetchProductHealth = healthEndpoints.map(endpoint =>
+                    fetch(`https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getProductHealthStatus`)
+                );
+
+                const healthProductResponses = await Promise.all(fetchProductHealth);
+
+                const healthProductData = await Promise.all(healthProductResponses.map(async (res) => {
+                    let textData = await res.text();
+                    textData = textData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                    return JSON.parse(textData);  // Convert to JSON
+                }));
+
+                const combinedProductHealthData = healthProductData.flat();
+
+                console.log('Product Health: ' + combinedProductHealthData)
 
                 setResourceHealthData(combinedResourceHealthData);
                 setServiceHealthData(combinedServiceHealthData);
+                setProductHealthData(combinedProductHealthData);
 
 				// Fetch mappings with enhanced error handling
 				const [resourceRes, productRes, offeringRes] = await Promise.all([
@@ -314,9 +331,32 @@ export default function OPSRMapping() {
 		// Create product nodes
 		Array.from(productNodes).forEach(
 			(productNodeId, index) => {
+                const healthStatus = healthProductData.find(h => {
+                    console.log("Checking product_id:", h.product_id); // Logs each product_id
+                    return h.product_id === productNodeId;
+                });
+
+                const healthColor = healthStatus ? getHealthColor(healthStatus.total_health) : 'gray';
+
 				nodes.push({
 					id: productNodeId,
-					data: { label: productNodeId },
+                    data: {
+                        label: (
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                                <span
+                                    style={{
+                                        display: "inline-block",
+                                        width: "15px",
+                                        height: "15px",
+                                        borderRadius: "50%",
+                                        backgroundColor: healthColor,
+                                        marginRight: "10px",
+                                    }}
+                                ></span>
+                                {productNodeId}
+                            </div>
+                        ),
+                    },
 					position: {
 						x: getXStart(productNodes.size) + index * xGap,
 						y: yPositions.product,
@@ -426,8 +466,8 @@ export default function OPSRMapping() {
 
 			edges.push({
 				id: `edge-${resourceNodeId}-${serviceNodeId}`,
-				source: resourceNodeId,
-				target: serviceNodeId,
+				source: serviceNodeId,
+                target: resourceNodeId,
 				type: "simplebezier",
 				style: {
 					stroke:
@@ -491,14 +531,14 @@ export default function OPSRMapping() {
 		});
 
 		return { nodes, edges };
-	}, [resourceMappingData, productMappingData, offeringMappingData, highlightedNodes, healthResourceData, healthServiceData]);
+	}, [resourceMappingData, productMappingData, offeringMappingData, highlightedNodes, healthResourceData, healthServiceData, healthProductData]);
 
 	if (loading) {
 		return <DataMappingLoadingState />;
 	}
 
 	if (error) {
-		return <p className='text-center text-red-500 font-bold'> Huy Baks, Wait Lang Ah.  </p>;
+        return <DataMappingLoadingState />;
 	}
 
 	const { nodes, edges } = generateNodesAndEdges();
