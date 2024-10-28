@@ -16,10 +16,13 @@ export default function ConfirmResetPasswordForm() {
         undefined
     );
     return (
-        <form action={dispatch} className="space-y-3">
-            <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
-                <h1>
-                    Reset password.
+        <form action={dispatch} className="flex flex-col items-center justify-center space-y-3 mt-[10rem]">
+            <div className="flex flex-col rounded-lg w-[30%] px-6 pb-4 pt-8 items-center border-2">
+                <h1 className='font-bold gradient-text text-xl mb-1'>
+                    CONFIRMATION CODE SENT.
+                </h1>
+                <h1 className={`mb-4 text-sm text-gray-500`}>
+                    Kindly view your confirmation code via email. 
                 </h1>
                 <div className="w-full">
                     <div>
