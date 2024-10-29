@@ -30,7 +30,7 @@ export function ResourceGraphs({
 	selectedNodeId,
 }: ResourceGraphsProps) {
 	return (
-		<div className="flex flex-col justify-center text-center">
+		<div className="flex flex-col justify-center text-center mx-auto">
 			<h1 className="font-bold my-[1rem] text-[1.5rem]">
 				{selectedNodeId}
 			</h1>
@@ -42,7 +42,7 @@ export function ResourceGraphs({
 								key={metricType}
 								style={{ marginBottom: "2rem" }}
 							>
-								<h2 className="font-bold mb-[0.5rem]">
+								<h2 className="font-bold my-[1rem]">
 									{metricType}
 								</h2>
 								<ResponsiveContainer

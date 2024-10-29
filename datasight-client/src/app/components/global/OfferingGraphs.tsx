@@ -26,6 +26,7 @@ interface ParsedMetricRecord {
 	avg_usage: number;
 	avg_cost: number;
 	product_id: string;
+	weekly_revenue: number;
 }
 
 interface MetricRecord {
@@ -35,6 +36,7 @@ interface MetricRecord {
 	avg_usage: string; // Original data as string
 	avg_cost: string; // Original data as string
 	date: string;
+	weekly_revenue: string;
 }
 
 interface ParsedMetricRecord {
@@ -44,11 +46,16 @@ interface ParsedMetricRecord {
 	avg_usage: number; // Parsed to number
 	avg_cost: number; // Parsed to number
 	date: string;
+	weekly_revenue: number;
 }
 
 interface FormattedData {
 	weeklyUsage: Record<string, ParsedMetricRecord[]>; // For Weekly Average Usage Line Chart
 	weeklyCost: Record<string, ParsedMetricRecord[]>; // For Weekly Average Cost Line Chart
+	yearlyRevenue: Record<
+		string,
+		{ week: string; revenue: number }[]
+	>; // Weekly data by year for Yearly Revenue Line Chart
 	yearlyStackedData: {
 		[year: string]: YearlyFormattedData[];
 	};
@@ -70,6 +77,7 @@ export function formatDataForOffering(
 			...record,
 			avg_usage: parseFloat(record.avg_usage),
 			avg_cost: parseFloat(record.avg_cost),
+			weekly_revenue: parseFloat(record.weekly_revenue),
 		}),
 	);
 
@@ -139,11 +147,25 @@ export function formatDataForOffering(
 
 	const weeklyCost = { ...weeklyUsage };
 
+	// Aggregate weekly revenue for each year
+	const yearlyRevenue = parsedData.reduce((acc, record) => {
+		const year = getYear(parseISO(record.date)).toString();
+		if (!acc[year]) {
+			acc[year] = [];
+		}
+		acc[year].push({
+			week: record.week,
+			revenue: record.weekly_revenue,
+		});
+		return acc;
+	}, {} as Record<string, { week: string; revenue: number }[]>);
+
 	// Step 4: Return formatted data
 	return {
 		yearlyStackedData: dailyDataByYear,
 		weeklyUsage,
 		weeklyCost,
+		yearlyRevenue,
 	};
 }
 

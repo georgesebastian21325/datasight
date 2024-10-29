@@ -13,6 +13,7 @@ import formatDataForServiceGraphs, {
 } from "../components/global/ServiceGraphs";
 import {
 	formatDataForProduct,
+	YearlyRevenueLineChart,
 	YearlyStackedCostCharts,
 	YearlyStackedUsageCharts,
 } from "../components/global/ProductGraphs";
@@ -44,6 +45,7 @@ interface ProductMetricRecord extends MetricRecord {
 	avg_usage: string; // Original data as string
 	avg_cost: string; // Original data as string
 	date: string;
+	weekly_revenue: string;
 }
 
 interface OfferingMetricRecord extends MetricRecord {
@@ -217,6 +219,12 @@ export default function EntityGraphs() {
 							data={groupedData!.yearlyStackedData}
 						/>
 					);
+				case "revenueOvertime":
+					return (
+						<YearlyRevenueLineChart
+							data={groupedData!.yearlyRevenue}
+						/>
+					);
 				default:
 					return null;
 			}
@@ -346,6 +354,18 @@ export default function EntityGraphs() {
 								}`}
 							>
 								Cost Comparison
+							</button>
+							<button
+								onClick={() =>
+									setActiveTab("revenueOvertime")
+								}
+								className={`px-4 py-2 text-white rounded-md ${
+									activeTab === "revenueOvertime"
+										? "bg-brand-orange"
+										: "bg-black"
+								}`}
+							>
+								Revenue Trend
 							</button>
 						</div>
 						<div className="chart-container">

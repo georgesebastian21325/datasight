@@ -142,7 +142,7 @@ export function WeeklyUsageChart({
 					key={resourceId}
 					style={{ marginBottom: "2rem" }}
 				>
-					<h3 className="font-bold">
+					<h3 className="font-bold my-[1rem]">
 						Weekly Average Usage for Resource ID:{" "}
 						{resourceId}
 					</h3>
@@ -180,7 +180,7 @@ export function WeeklyCostChart({
 					key={resourceId}
 					style={{ marginBottom: "2rem" }}
 				>
-					<h3 className="font-bold">
+					<h3 className="font-bold my-[1rem]">
 						Weekly Average Cost for Resource ID:{" "}
 						{resourceId}
 					</h3>
@@ -249,7 +249,7 @@ export function ResourceTypeCostBarChart({
 }: ResourceTypeCostBarChartProps) {
 	return (
 		<div>
-			<h3 className="font-bold">
+			<h3 className="font-bold my-[1rem]">
 				Average Daily Cost by Resource Type
 			</h3>
 			<ResponsiveContainer
@@ -281,7 +281,7 @@ export function DualAxisLineChart({
 					key={resourceId}
 					style={{ marginBottom: "2rem" }}
 				>
-					<h3>
+					<h3 className="font-bold my-[1rem]">
 						Weekly Cost and Usage for Resource ID:{" "}
 						{resourceId}
 					</h3>

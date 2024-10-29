@@ -26,6 +26,7 @@ interface ParsedMetricRecord {
 	avg_usage: number;
 	avg_cost: number;
 	service_id: string;
+	weekly_revenue: number;
 }
 
 interface MetricRecord {
@@ -35,6 +36,7 @@ interface MetricRecord {
 	avg_usage: string; // Original data as string
 	avg_cost: string; // Original data as string
 	date: string;
+	weekly_revenue: string;
 }
 
 interface ParsedMetricRecord {
@@ -49,6 +51,10 @@ interface ParsedMetricRecord {
 interface FormattedData {
 	weeklyUsage: Record<string, ParsedMetricRecord[]>; // For Weekly Average Usage Line Chart
 	weeklyCost: Record<string, ParsedMetricRecord[]>; // For Weekly Average Cost Line Chart
+	yearlyRevenue: Record<
+		string,
+		{ week: string; revenue: number }[]
+	>; // Weekly data by year for Yearly Revenue Line Chart
 	yearlyStackedData: {
 		[year: string]: YearlyFormattedData[];
 	};
@@ -64,33 +70,27 @@ interface YearlyFormattedData {
 export function formatDataForProduct(
 	data: MetricRecord[],
 ): FormattedData {
-	// Step 1: Parse avg_usage and avg_cost to numbers
 	const parsedData: ParsedMetricRecord[] = data.map(
 		(record) => ({
 			...record,
 			avg_usage: parseFloat(record.avg_usage),
 			avg_cost: parseFloat(record.avg_cost),
+			weekly_revenue: parseFloat(record.weekly_revenue),
 		}),
 	);
 
-	// Step 2: Prepare data for daily aggregation by year
 	const dailyMap: { [key: string]: YearlyFormattedData[] } =
 		{};
-
 	parsedData.forEach((entry) => {
 		const { service_id, avg_usage, avg_cost } = entry;
-
-		// Parse the date to get the year
 		const date = parseISO(entry.date);
 		const year = getYear(date).toString();
 		const formattedDate = format(date, "yyyy-MM-dd");
 
-		// Initialize the year if it doesn’t exist in dailyMap
 		if (!dailyMap[year]) {
 			dailyMap[year] = [];
 		}
 
-		// Find or create the daily record for this date
 		let dayEntry = dailyMap[year].find(
 			(d) => d.year === formattedDate,
 		);
@@ -99,12 +99,10 @@ export function formatDataForProduct(
 			dailyMap[year].push(dayEntry);
 		}
 
-		// Initialize usage for the service_id if not already set
 		if (!dayEntry[service_id]) {
 			dayEntry[service_id] = { usage: 0, cost: 0 };
 		}
 
-		// Aggregate daily usage and cost
 		(
 			dayEntry[service_id] as {
 				usage: number;
@@ -119,7 +117,6 @@ export function formatDataForProduct(
 		).cost += avg_cost;
 	});
 
-	// Step 3: Convert dailyMap to arrays for each year
 	const dailyDataByYear = Object.fromEntries(
 		Object.entries(dailyMap).map(([year, dailyData]) => [
 			year,
@@ -127,7 +124,6 @@ export function formatDataForProduct(
 		]),
 	);
 
-	// Step 3: Prepare weekly usage and cost data grouped by service_id
 	const weeklyUsage = parsedData.reduce((acc, record) => {
 		const { service_id } = record;
 		if (!acc[service_id]) {
@@ -139,11 +135,24 @@ export function formatDataForProduct(
 
 	const weeklyCost = { ...weeklyUsage };
 
-	// Step 4: Return formatted data
+	// Aggregate weekly revenue for each year
+	const yearlyRevenue = parsedData.reduce((acc, record) => {
+		const year = getYear(parseISO(record.date)).toString();
+		if (!acc[year]) {
+			acc[year] = [];
+		}
+		acc[year].push({
+			week: record.week,
+			revenue: record.weekly_revenue,
+		});
+		return acc;
+	}, {} as Record<string, { week: string; revenue: number }[]>);
+
 	return {
 		yearlyStackedData: dailyDataByYear,
 		weeklyUsage,
 		weeklyCost,
+		yearlyRevenue, // Now contains weekly data for each year
 	};
 }
 
@@ -259,6 +268,55 @@ export const YearlyStackedCostCharts: React.FC<{
 					</ResponsiveContainer>
 				</div>
 			))}
+		</div>
+	);
+};
+
+export const YearlyRevenueLineChart: React.FC<{
+	data: Record<string, { week: string; revenue: number }[]>;
+}> = ({ data }) => {
+	return (
+		<div>
+			<h3 className="font-bold my-[1rem]">
+				Weekly Revenue by Year
+			</h3>
+			{Object.entries(data).map(
+				([year, revenueData], index) => (
+					<div
+						key={year}
+						style={{ marginBottom: "2rem" }}
+					>
+						<h4>Revenue for {year}</h4>
+						<ResponsiveContainer
+							width="100%"
+							height={400}
+						>
+							<LineChart
+								data={revenueData}
+								margin={{
+									top: 20,
+									right: 30,
+									left: 20,
+									bottom: 5,
+								}}
+							>
+								<CartesianGrid strokeDasharray="3 3" />
+								<XAxis dataKey="week" />
+								<YAxis />
+								<Tooltip />
+								<Legend />
+								<Line
+									type="monotone"
+									dataKey="revenue"
+									stroke={"#08296C"}
+									name={`Revenue ${year}`}
+									activeDot={{ r: 8 }}
+								/>
+							</LineChart>
+						</ResponsiveContainer>
+					</div>
+				),
+			)}
 		</div>
 	);
 };
