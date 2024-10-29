@@ -228,12 +228,16 @@ export default function EntityGraphs() {
 	return (
 		<>
 			{isLoading && <EntityGraphsLoadingState />}
-			{/* {groupedData && !isLoading && (
-				<ResourceGraphs
-					groupedData={groupedData}
-					selectedNodeId={selectedNodeId ?? ""}
-				/>
-			)} */}
+			{groupedData &&
+				!isLoading &&
+				(!selectedNodeId?.startsWith("SVC") ||
+					!selectedNodeId?.startsWith("P00") ||
+					!selectedNodeId?.startsWith("OFF")) && (
+					<ResourceGraphs
+						groupedData={groupedData}
+						selectedNodeId={selectedNodeId ?? ""}
+					/>
+				)}
 			{groupedData &&
 				!isLoading &&
 				selectedNodeId?.startsWith("SVC") && (
