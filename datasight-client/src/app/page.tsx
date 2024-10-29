@@ -7,6 +7,8 @@ import LoginForm from "./forms/login-form";
 import CompanyLogo from '../assets/company-logo.jpg';
 import LoginAsset from '../assets/login-asset-2.png';
 
+import { Card } from '@/vcomponents/onboarding-components/card'
+
 
 const phrases = [
 	"Transform data into insights.",
@@ -59,9 +61,9 @@ function LoginPage() {
 							{currentText}
 						</h1>
 					</div>
-					<div className="flex flex-col items-center justify-center h-[24rem] border-2 rounded-lg">
+					<Card>
 						<LoginForm />
-					</div>
+					</Card>
 				</div>
 			</div>
 			<div className="lg:flex items-center justify-center shadow-md bg-gradient-to-br from-black to-brand-blue rounded-tl-2xl rounded-bl-2xl hidden">
