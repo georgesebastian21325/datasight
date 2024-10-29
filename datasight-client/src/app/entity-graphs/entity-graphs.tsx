@@ -16,6 +16,7 @@ import {
 	YearlyStackedCostCharts,
 	YearlyStackedUsageCharts,
 } from "../components/global/ProductGraphs";
+import { formatDataForOffering } from "../components/global/OfferingGraphs";
 
 interface MetricRecord {
 	resource_id: string;
@@ -39,6 +40,15 @@ interface ServiceMetricRecord extends MetricRecord {
 interface ProductMetricRecord extends MetricRecord {
 	product_id: string;
 	service_id: string;
+	week: string;
+	avg_usage: string; // Original data as string
+	avg_cost: string; // Original data as string
+	date: string;
+}
+
+interface OfferingMetricRecord extends MetricRecord {
+	offering_id: string;
+	product_id: string;
 	week: string;
 	avg_usage: string; // Original data as string
 	avg_cost: string; // Original data as string
@@ -102,6 +112,10 @@ export default function EntityGraphs() {
 						result as ProductMetricRecord[],
 					);
 					console.log(grouped);
+				} else if (selectedNodeId?.startsWith("OFF")) {
+					grouped = formatDataForOffering(
+						result as OfferingMetricRecord[],
+					);
 				} else {
 					grouped = result.reduce(
 						(acc: GroupedData, record: MetricRecord) => {
@@ -174,7 +188,10 @@ export default function EntityGraphs() {
 			}
 		}
 
-		if (selectedNodeId?.startsWith("P00")) {
+		if (
+			selectedNodeId?.startsWith("P00") ||
+			selectedNodeId?.startsWith("OFF")
+		) {
 			switch (activeTab) {
 				case "weeklyUsage":
 					return (
@@ -275,7 +292,8 @@ export default function EntityGraphs() {
 				)}
 			{groupedData &&
 				!isLoading &&
-				selectedNodeId?.startsWith("P00") && (
+				(selectedNodeId?.startsWith("P00") ||
+					selectedNodeId?.startsWith("OFF")) && (
 					<div className="flex flex-col justify-center text-center py-[2rem]">
 						<h1 className="text-[1.5rem] font-bold">
 							{selectedNodeId}

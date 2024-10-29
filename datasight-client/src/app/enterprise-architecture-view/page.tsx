@@ -94,7 +94,7 @@ export default function Page() {
 					<OpenFileUploadModalBtn openModal={openModal} />
 					<button
 						onClick={() => {
-							setSelectedNodeId("P0001");
+							setSelectedNodeId("OFF002");
 						}}
 					>
 						Product 1

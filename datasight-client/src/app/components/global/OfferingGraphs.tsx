@@ -25,12 +25,12 @@ interface ParsedMetricRecord {
 	week: string;
 	avg_usage: number;
 	avg_cost: number;
-	service_id: string;
+	product_id: string;
 }
 
 interface MetricRecord {
+	offering_id: string;
 	product_id: string;
-	service_id: string;
 	week: string;
 	avg_usage: string; // Original data as string
 	avg_cost: string; // Original data as string
@@ -38,8 +38,8 @@ interface MetricRecord {
 }
 
 interface ParsedMetricRecord {
+	offering_id: string;
 	product_id: string;
-	service_id: string;
 	week: string;
 	avg_usage: number; // Parsed to number
 	avg_cost: number; // Parsed to number
@@ -58,10 +58,10 @@ interface YearlyFormattedData {
 	year: string;
 	[serviceId: string]:
 		| { usage: number; cost: number }
-		| string; // Only `service_id` entries have `{ usage: number }`
+		| string; // Only `product_id` entries have `{ usage: number }`
 }
 
-export function formatDataForProduct(
+export function formatDataForOffering(
 	data: MetricRecord[],
 ): FormattedData {
 	// Step 1: Parse avg_usage and avg_cost to numbers
@@ -78,7 +78,7 @@ export function formatDataForProduct(
 		{};
 
 	parsedData.forEach((entry) => {
-		const { service_id, avg_usage, avg_cost } = entry;
+		const { product_id, avg_usage, avg_cost } = entry;
 
 		// Parse the date to get the year
 		const date = parseISO(entry.date);
@@ -99,20 +99,20 @@ export function formatDataForProduct(
 			dailyMap[year].push(dayEntry);
 		}
 
-		// Initialize usage for the service_id if not already set
-		if (!dayEntry[service_id]) {
-			dayEntry[service_id] = { usage: 0, cost: 0 };
+		// Initialize usage for the product_id if not already set
+		if (!dayEntry[product_id]) {
+			dayEntry[product_id] = { usage: 0, cost: 0 };
 		}
 
 		// Aggregate daily usage and cost
 		(
-			dayEntry[service_id] as {
+			dayEntry[product_id] as {
 				usage: number;
 				cost: number;
 			}
 		).usage += avg_usage;
 		(
-			dayEntry[service_id] as {
+			dayEntry[product_id] as {
 				usage: number;
 				cost: number;
 			}
@@ -127,13 +127,13 @@ export function formatDataForProduct(
 		]),
 	);
 
-	// Step 3: Prepare weekly usage and cost data grouped by service_id
+	// Step 3: Prepare weekly usage and cost data grouped by product_id
 	const weeklyUsage = parsedData.reduce((acc, record) => {
-		const { service_id } = record;
-		if (!acc[service_id]) {
-			acc[service_id] = [];
+		const { product_id } = record;
+		if (!acc[product_id]) {
+			acc[product_id] = [];
 		}
-		acc[service_id].push(record);
+		acc[product_id].push(record);
 		return acc;
 	}, {} as Record<string, ParsedMetricRecord[]>);
 
