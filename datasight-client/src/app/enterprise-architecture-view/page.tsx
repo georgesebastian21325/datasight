@@ -17,7 +17,8 @@ export default function Page() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [showMapping, setShowMapping] = useState(false);
-	const { selectedNodeId } = useGlobalState();
+	const { selectedNodeId, setSelectedNodeId } =
+		useGlobalState();
 
 	const handleGenerateMapping = () => {
 		setError(null);
@@ -91,6 +92,13 @@ export default function Page() {
 						onGenerateMapping={handleGenerateMapping}
 					/>
 					<OpenFileUploadModalBtn openModal={openModal} />
+					<button
+						onClick={() => {
+							setSelectedNodeId("P0001");
+						}}
+					>
+						Product 1
+					</button>
 					<div>
 						<FileUploadModal
 							isModalOpen={isFileUploadModalOpen}
@@ -111,12 +119,11 @@ export default function Page() {
 							<OPSRMapping />
 						) : (
 							<p className="text-center text-gray-500">
-								Click &quot;Generate Mapping&quot; to view the
-								architecture mapping
+								Click &quot;Generate Mapping&quot; to view
+								the architecture mapping
 							</p>
 						)}
 					</div>
-
 				</div>
 				<EntityGraphs />
 			</div>

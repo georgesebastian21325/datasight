@@ -11,6 +11,11 @@ import formatDataForServiceGraphs, {
 	WeeklyCostChart,
 	WeeklyUsageChart,
 } from "../components/global/ServiceGraphs";
+import {
+	formatDataForProduct,
+	YearlyStackedCostCharts,
+	YearlyStackedUsageCharts,
+} from "../components/global/ProductGraphs";
 
 interface MetricRecord {
 	resource_id: string;
@@ -31,6 +36,36 @@ interface ServiceMetricRecord extends MetricRecord {
 	date: string;
 }
 
+interface ProductMetricRecord extends MetricRecord {
+	product_id: string;
+	service_id: string;
+	week: string;
+	avg_usage: string; // Original data as string
+	avg_cost: string; // Original data as string
+	date: string;
+}
+
+interface ApiResponseEntry {
+	week: string;
+	avg_usage: string;
+	avg_cost: string;
+	date: string;
+}
+
+interface ProductMetricRecord extends ApiResponseEntry {
+	product_id: string;
+}
+
+interface StackedFormattedData {
+	week: string;
+	[serviceId: string]:
+		| {
+				usage: number;
+				cost: number;
+		  }
+		| string;
+}
+
 export default function EntityGraphs() {
 	const { selectedNodeId } = useGlobalState();
 	const [isLoading, setIsLoading] =
@@ -43,7 +78,7 @@ export default function EntityGraphs() {
 		useState<string>("weeklyUsage");
 	const resourceEntityAPI =
 		"https://8i6i5nm7ba.execute-api.ap-southeast-2.amazonaws.com/development/getEntityMetrics";
-
+	let stackedData: StackedFormattedData[] = [];
 	const handleFetchData = async () => {
 		try {
 			setIsLoading(true);
@@ -62,6 +97,11 @@ export default function EntityGraphs() {
 					grouped = formatDataForServiceGraphs(
 						result as ServiceMetricRecord[],
 					);
+				} else if (selectedNodeId?.startsWith("P00")) {
+					grouped = formatDataForProduct(
+						result as ProductMetricRecord[],
+					);
+					console.log(grouped);
 				} else {
 					grouped = result.reduce(
 						(acc: GroupedData, record: MetricRecord) => {
@@ -96,35 +136,76 @@ export default function EntityGraphs() {
 	}, [selectedNodeId]);
 
 	const renderChart = () => {
-		if (!groupedData && !selectedNodeId?.startsWith("SVC"))
+		if (
+			!groupedData &&
+			!selectedNodeId?.startsWith("SVC")
+		) {
 			return null;
-
-		switch (activeTab) {
-			case "weeklyUsage":
-				return (
-					<WeeklyUsageChart
-						data={groupedData!.weeklyUsage}
-					/>
-				);
-			case "weeklyCost":
-				return (
-					<WeeklyCostChart data={groupedData!.weeklyCost} />
-				);
-			case "resourceTypeCost":
-				return (
-					<ResourceTypeCostBarChart
-						data={groupedData!.resourceTypeCost}
-					/>
-				);
-			case "dualAxis":
-				return (
-					<DualAxisLineChart
-						data={groupedData!.dualAxisData}
-					/>
-				);
-			default:
-				return null;
 		}
+
+		if (groupedData && selectedNodeId?.startsWith("SVC")) {
+			switch (activeTab) {
+				case "weeklyUsage":
+					return (
+						<WeeklyUsageChart
+							data={groupedData!.weeklyUsage}
+						/>
+					);
+				case "weeklyCost":
+					return (
+						<WeeklyCostChart
+							data={groupedData!.weeklyCost}
+						/>
+					);
+				case "resourceTypeCost":
+					return (
+						<ResourceTypeCostBarChart
+							data={groupedData!.resourceTypeCost}
+						/>
+					);
+				case "dualAxis":
+					return (
+						<DualAxisLineChart
+							data={groupedData!.dualAxisData}
+						/>
+					);
+				default:
+					return null;
+			}
+		}
+
+		if (selectedNodeId?.startsWith("P00")) {
+			switch (activeTab) {
+				case "weeklyUsage":
+					return (
+						<WeeklyUsageChart
+							data={groupedData!.weeklyUsage}
+						/>
+					);
+				case "weeklyCost":
+					return (
+						<WeeklyCostChart
+							data={groupedData!.weeklyCost}
+						/>
+					);
+				case "usageComparison":
+					return (
+						<YearlyStackedUsageCharts
+							data={groupedData!.yearlyStackedData}
+						/>
+					);
+				case "costComparison":
+					return (
+						<YearlyStackedCostCharts
+							data={groupedData!.yearlyStackedData}
+						/>
+					);
+				default:
+					return null;
+			}
+		}
+
+		return null;
 	};
 
 	return (
@@ -136,60 +217,120 @@ export default function EntityGraphs() {
 					selectedNodeId={selectedNodeId ?? ""}
 				/>
 			)} */}
-			{groupedData && !isLoading && (
-				<div className="flex flex-col justify-center text-center py-[2rem]">
-					<h1 className="text-[1.5rem] font-bold">
-						{selectedNodeId}
-					</h1>
-					<div className="tabs flex flex-row items-center justify-center gap-4 my-[1rem]">
-						<button
-							onClick={() => setActiveTab("weeklyUsage")}
-							className={`px-4 py-2 text-white rounded-md ${
-								activeTab == "weeklyUsage"
-									? "bg-brand-orange"
-									: "bg-black"
-							}`}
-						>
-							Weekly Usage
-						</button>
-						<button
-							onClick={() => setActiveTab("weeklyCost")}
-							className={`px-4 py-2 text-white rounded-md ${
-								activeTab == "weeklyCost"
-									? "bg-brand-orange"
-									: "bg-black"
-							}`}
-						>
-							Weekly Cost
-						</button>
-						<button
-							onClick={() =>
-								setActiveTab("resourceTypeCost")
-							}
-							className={`px-4 py-2 text-white rounded-md ${
-								activeTab == "resourceTypeCost"
-									? "bg-brand-orange"
-									: "bg-black"
-							}`}
-						>
-							Resource Type Cost
-						</button>
-						<button
-							onClick={() => setActiveTab("dualAxis")}
-							className={`px-4 py-2 text-white rounded-md ${
-								activeTab == "dualAxis"
-									? "bg-brand-orange"
-									: "bg-black"
-							}`}
-						>
-							Dual Axis
-						</button>
+			{groupedData &&
+				!isLoading &&
+				selectedNodeId?.startsWith("SVC") && (
+					<div className="flex flex-col justify-center text-center py-[2rem]">
+						<h1 className="text-[1.5rem] font-bold">
+							{selectedNodeId}
+						</h1>
+						<div className="tabs flex flex-row items-center justify-center gap-4 my-[1rem]">
+							<button
+								onClick={() => setActiveTab("weeklyUsage")}
+								className={`px-4 py-2 text-white rounded-md ${
+									activeTab == "weeklyUsage"
+										? "bg-brand-orange"
+										: "bg-black"
+								}`}
+							>
+								Weekly Usage
+							</button>
+							<button
+								onClick={() => setActiveTab("weeklyCost")}
+								className={`px-4 py-2 text-white rounded-md ${
+									activeTab == "weeklyCost"
+										? "bg-brand-orange"
+										: "bg-black"
+								}`}
+							>
+								Weekly Cost
+							</button>
+							<button
+								onClick={() =>
+									setActiveTab("resourceTypeCost")
+								}
+								className={`px-4 py-2 text-white rounded-md ${
+									activeTab == "resourceTypeCost"
+										? "bg-brand-orange"
+										: "bg-black"
+								}`}
+							>
+								Resource Type Cost
+							</button>
+							<button
+								onClick={() => setActiveTab("dualAxis")}
+								className={`px-4 py-2 text-white rounded-md ${
+									activeTab == "dualAxis"
+										? "bg-brand-orange"
+										: "bg-black"
+								}`}
+							>
+								Dual Axis
+							</button>
+						</div>
+						<div className="chart-container">
+							{renderChart()}
+						</div>
 					</div>
-					<div className="chart-container">
-						{renderChart()}
+				)}
+			{groupedData &&
+				!isLoading &&
+				selectedNodeId?.startsWith("P00") && (
+					<div className="flex flex-col justify-center text-center py-[2rem]">
+						<h1 className="text-[1.5rem] font-bold">
+							{selectedNodeId}
+						</h1>
+						<div className="tabs flex flex-row items-center justify-center gap-4 my-[1rem]">
+							<button
+								onClick={() => setActiveTab("weeklyUsage")}
+								className={`px-4 py-2 text-white rounded-md ${
+									activeTab === "weeklyUsage"
+										? "bg-brand-orange"
+										: "bg-black"
+								}`}
+							>
+								Weekly Usage
+							</button>
+							<button
+								onClick={() => setActiveTab("weeklyCost")}
+								className={`px-4 py-2 text-white rounded-md ${
+									activeTab === "weeklyCost"
+										? "bg-brand-orange"
+										: "bg-black"
+								}`}
+							>
+								Weekly Cost
+							</button>
+							<button
+								onClick={() =>
+									setActiveTab("usageComparison")
+								}
+								className={`px-4 py-2 text-white rounded-md ${
+									activeTab === "usageComparison"
+										? "bg-brand-orange"
+										: "bg-black"
+								}`}
+							>
+								Usage Comparison
+							</button>
+							<button
+								onClick={() =>
+									setActiveTab("costComparison")
+								}
+								className={`px-4 py-2 text-white rounded-md ${
+									activeTab === "costComparison"
+										? "bg-brand-orange"
+										: "bg-black"
+								}`}
+							>
+								Cost Comparison
+							</button>
+						</div>
+						<div className="chart-container">
+							{renderChart()}
+						</div>
 					</div>
-				</div>
-			)}
+				)}
 		</>
 	);
 }
