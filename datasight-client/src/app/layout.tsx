@@ -13,6 +13,9 @@ const libreFranklin = Libre_Franklin({
 export const metadata: Metadata = {
 	title: "Data Sight",
 	description: "A capstone project for group 3b.",
+	icons: {
+		icon: '/company-logo-no-text.png', // Relative path to your favicon in the public folder
+	},
 };
 
 export default function RootLayout({

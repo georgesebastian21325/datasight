@@ -34,12 +34,33 @@ interface ProductOfferingMappingData {
 	product_id: string;
 }
 
-interface HealthStatus {
+interface ResourceHealthStatus {
 	resource_id: string;
 	resource_type: string;
 	obsolescence_health: string;
 	capacity_health: string;
 	total_health: string;
+}
+
+interface ServiceHealthStatus {
+    service_id: string;
+    obsolescence_health: string;
+    capacity_health: string;
+    total_health: string;
+}
+
+interface ProductHealthStatus {
+    product_id: string;
+    obsolescence_health: string;
+    capacity_health: string;
+    total_health: string;
+}
+
+interface OfferingHealthStatus {
+    offering_id: string;
+    obsolescence_health: string;
+    capacity_health: string;
+    total_health: string;
 }
 
 const nodeTypes = {};
@@ -49,10 +70,16 @@ export default function OPSRMapping() {
 	const [resourceMappingData, setResourceMappingData] = useState<ResourceServiceMappingData[]>([]);
 	const [productMappingData, setProductMappingData] = useState<ProductServiceMappingData[]>([]);
 	const [offeringMappingData, setOfferingMappingData] = useState<ProductOfferingMappingData[]>([]);
-	const [healthData, setHealthData] = useState<HealthStatus[]>([]);
+
+    const [healthResourceData, setResourceHealthData] = useState<ResourceHealthStatus[]>([]);
+    const [healthServiceData, setServiceHealthData] = useState<ServiceHealthStatus[]>([]);
+    const [healthProductData, setProductHealthData] = useState<ProductHealthStatus[]>([]);
+    const [healthOfferingData, setOfferingHealthData] = useState<OfferingHealthStatus[]>([]);
+
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-	// const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+
+
 	const { handleSetSelectedNodeId } = useGlobalState()
 	const [highlightedNodes, setHighlightedNodes] = useState<Set<string>>(new Set());
 
@@ -72,7 +99,7 @@ export default function OPSRMapping() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				// Fetch all health statuses
+				// Fetch all resource health statuses
 				const healthEndpoints = [
 					'getComputerHealthStatus',
 					'getServerHealthStatus',
@@ -82,23 +109,69 @@ export default function OPSRMapping() {
 					'getBRHealthStatus',
 					'getVIHealthStatus',
 					'getCIHealthStatus',
-					'getSoftwareHealthStatus'
+					'getSoftwareHealthStatus',
 				];
-				const healthFetches = healthEndpoints.map(endpoint =>
+				const fetchResourceHealth = healthEndpoints.map(endpoint =>
 					fetch(`https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/${endpoint}`)
 				);
-				const healthResponses = await Promise.all(healthFetches);
+                const healthResourceResponses = await Promise.all(fetchResourceHealth);
 
 				// Process each health status response
-				const healthData = await Promise.all(healthResponses.map(async (res) => {
+                const healthResourceData = await Promise.all(healthResourceResponses.map(async (res) => {
 					let textData = await res.text();
 					textData = textData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
 					return JSON.parse(textData);  // Convert to JSON
 				}));
 
 				// Flatten health data and set state
-				const combinedHealthData = healthData.flat();
-				setHealthData(combinedHealthData);
+                const combinedResourceHealthData = healthResourceData.flat();
+
+                const fetchServiceHealth = healthEndpoints.map(endpoint =>
+                    fetch(`https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getServiceHealthStatus`)
+                );
+
+                const healthServiceResponses = await Promise.all(fetchServiceHealth);
+
+                const healthServiceData = await Promise.all(healthServiceResponses.map(async (res) => {
+                    let textData = await res.text();
+                    textData = textData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                    return JSON.parse(textData);  // Convert to JSON
+                }));
+
+                const combinedServiceHealthData = healthServiceData.flat();
+
+                const fetchProductHealth = healthEndpoints.map(endpoint =>
+                    fetch(`https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getProductHealthStatus`)
+                );
+
+                const healthProductResponses = await Promise.all(fetchProductHealth);
+
+                const healthProductData = await Promise.all(healthProductResponses.map(async (res) => {
+                    let textData = await res.text();
+                    textData = textData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                    return JSON.parse(textData);  // Convert to JSON
+                }));
+
+                const combinedProductHealthData = healthProductData.flat();
+
+                const fetchOfferingHealth = healthEndpoints.map(endpoint =>
+                    fetch(`https://t0ov1orov1.execute-api.ap-southeast-2.amazonaws.com/development/getOfferingHealthStatus`)
+                );
+
+                const healthOfferingResponses = await Promise.all(fetchOfferingHealth);
+
+                const healthOfferingData = await Promise.all(healthOfferingResponses.map(async (res) => {
+                    let textData = await res.text();
+                    textData = textData.replace(/\\n/g, '').replace(/\\"/g, '"').trim();
+                    return JSON.parse(textData);  // Convert to JSON
+                }));
+
+                const combinedOfferingHealthData = healthOfferingData.flat();
+
+                setResourceHealthData(combinedResourceHealthData);
+                setServiceHealthData(combinedServiceHealthData);
+                setProductHealthData(combinedProductHealthData);
+                setOfferingHealthData(combinedOfferingHealthData);
 
 				// Fetch mappings with enhanced error handling
 				const [resourceRes, productRes, offeringRes] = await Promise.all([
@@ -256,9 +329,33 @@ export default function OPSRMapping() {
 		// Create offering nodes
 		Array.from(offeringNodes).forEach(
 			(offeringNodeId, index) => {
+                const healthStatus = healthOfferingData.find(h => {
+                    console.log("Checking product_id:", h.offering_id); // Logs each product_id
+                    return h.offering_id === offeringNodeId;
+                });
+
+                const healthColor = healthStatus ? getHealthColor(healthStatus.total_health) : 'gray';
+
+
 				nodes.push({
 					id: offeringNodeId,
-					data: { label: offeringNodeId },
+                    data: {
+                        label: (
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                                <span
+                                    style={{
+                                        display: "inline-block",
+                                        width: "15px",
+                                        height: "15px",
+                                        borderRadius: "50%",
+                                        backgroundColor: healthColor,
+                                        marginRight: "10px",
+                                    }}
+                                ></span>
+                                {offeringNodeId}
+                            </div>
+                        ),
+                    },
 					position: {
 						x: getXStart(offeringNodes.size) + index * xGap,
 						y: yPositions.offering,
@@ -277,9 +374,32 @@ export default function OPSRMapping() {
 		// Create product nodes
 		Array.from(productNodes).forEach(
 			(productNodeId, index) => {
+                const healthStatus = healthProductData.find(h => {
+                    console.log("Checking product_id:", h.product_id); // Logs each product_id
+                    return h.product_id === productNodeId;
+                });
+
+                const healthColor = healthStatus ? getHealthColor(healthStatus.total_health) : 'gray';
+
 				nodes.push({
 					id: productNodeId,
-					data: { label: productNodeId },
+                    data: {
+                        label: (
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                                <span
+                                    style={{
+                                        display: "inline-block",
+                                        width: "15px",
+                                        height: "15px",
+                                        borderRadius: "50%",
+                                        backgroundColor: healthColor,
+                                        marginRight: "10px",
+                                    }}
+                                ></span>
+                                {productNodeId}
+                            </div>
+                        ),
+                    },
 					position: {
 						x: getXStart(productNodes.size) + index * xGap,
 						y: yPositions.product,
@@ -332,9 +452,37 @@ export default function OPSRMapping() {
 		// Create service nodes
 		Array.from(serviceNodes).forEach(
 			(serviceNodeId, index) => {
+
+                const healthStatus = healthServiceData.find(h => {
+                    console.log("Checking service_id:", h.service_id); // Logs each service_id
+                    return h.service_id === serviceNodeId;
+                });
+
+                const healthColor = healthStatus ? getHealthColor(healthStatus.total_health) : 'gray';
+
+
+                console.log('Service Ids: ', serviceNodes)
+                console.log(healthColor)
+
 				nodes.push({
 					id: serviceNodeId,
-					data: { label: serviceNodeId },
+                    data: {
+                        label: (
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                                <span
+                                    style={{
+                                        display: "inline-block",
+                                        width: "15px",
+                                        height: "15px",
+                                        borderRadius: "50%",
+                                        backgroundColor: healthColor,
+                                        marginRight: "10px",
+                                    }}
+                                ></span>
+                                {serviceNodeId}
+                            </div>
+                        ),
+                    },
 					position: {
 						x: getXStart(serviceNodes.size) + index * xGap,
 						y: yPositions.service,
@@ -361,8 +509,8 @@ export default function OPSRMapping() {
 
 			edges.push({
 				id: `edge-${resourceNodeId}-${serviceNodeId}`,
-				source: resourceNodeId,
-				target: serviceNodeId,
+				source: serviceNodeId,
+                target: resourceNodeId,
 				type: "simplebezier",
 				style: {
 					stroke:
@@ -390,7 +538,7 @@ export default function OPSRMapping() {
 			const columnIndex = index % 10; // Position within the row
 
 			// Find the corresponding health data for the resource node
-			const healthStatus = healthData.find(h => h.resource_id === resourceNodeId);
+			const healthStatus = healthResourceData.find(h => h.resource_id === resourceNodeId);
 			const healthColor = healthStatus ? getHealthColor(healthStatus.total_health) : 'gray';
 
 			nodes.push({
@@ -426,14 +574,14 @@ export default function OPSRMapping() {
 		});
 
 		return { nodes, edges };
-	}, [resourceMappingData, productMappingData, offeringMappingData, highlightedNodes, healthData]);
+	}, [resourceMappingData, productMappingData, offeringMappingData, highlightedNodes, healthResourceData, healthServiceData, healthProductData, healthOfferingData]);
 
 	if (loading) {
 		return <DataMappingLoadingState />;
 	}
 
 	if (error) {
-		return <p className='text-center text-red-500 font-bold'> Huy Baks, Wait Lang Ah.  </p>;
+        return <DataMappingLoadingState />;
 	}
 
 	const { nodes, edges } = generateNodesAndEdges();

@@ -91,20 +91,6 @@ export default function Page() {
 					<GenerateMappingBtn
 						onGenerateMapping={handleGenerateMapping}
 					/>
-					<OpenFileUploadModalBtn openModal={openModal} />
-					<button
-						onClick={() => {
-							setSelectedNodeId("OFF002");
-						}}
-					>
-						Product 1
-					</button>
-					<div>
-						<FileUploadModal
-							isModalOpen={isFileUploadModalOpen}
-							closeModal={closeModal}
-						/>
-					</div>
 				</div>
 
 				{/* Always show the dashed container */}
