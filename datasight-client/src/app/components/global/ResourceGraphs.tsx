@@ -30,8 +30,10 @@ export function ResourceGraphs({
 	selectedNodeId,
 }: ResourceGraphsProps) {
 	return (
-		<div>
-			<h1>Entity Graphs for Node: {selectedNodeId}</h1>
+		<div className="flex flex-col justify-center text-center">
+			<h1 className="font-bold my-[1rem] text-[1.5rem]">
+				{selectedNodeId}
+			</h1>
 			<div className="grid grid-cols-2 gap-2">
 				{groupedData ? (
 					Object.entries(groupedData).map(
@@ -40,7 +42,9 @@ export function ResourceGraphs({
 								key={metricType}
 								style={{ marginBottom: "2rem" }}
 							>
-								<h2>{metricType}</h2>
+								<h2 className="font-bold mb-[0.5rem]">
+									{metricType}
+								</h2>
 								<ResponsiveContainer
 									width="100%"
 									height={400}
@@ -56,7 +60,7 @@ export function ResourceGraphs({
 											dataKey="average_metric_value"
 											stroke="#8884d8"
 											strokeWidth={1}
-											activeDot={{ r: 8 }}
+											activeDot={{ r: 6 }}
 										/>
 									</LineChart>
 								</ResponsiveContainer>

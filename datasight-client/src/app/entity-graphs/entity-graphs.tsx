@@ -84,8 +84,7 @@ export default function EntityGraphs() {
 		string,
 		any
 	> | null>(null);
-	const [activeTab, setActiveTab] =
-		useState<string>("weeklyUsage");
+	const [activeTab, setActiveTab] = useState<string>("");
 	const resourceEntityAPI =
 		"https://8i6i5nm7ba.execute-api.ap-southeast-2.amazonaws.com/development/getEntityMetrics";
 	let stackedData: StackedFormattedData[] = [];
@@ -146,8 +145,9 @@ export default function EntityGraphs() {
 	useEffect(() => {
 		if (selectedNodeId) {
 			handleFetchData();
+			setActiveTab("");
 		}
-	}, [selectedNodeId]);
+	}, [selectedNodeId, setActiveTab]);
 
 	const renderChart = () => {
 		if (
@@ -230,9 +230,9 @@ export default function EntityGraphs() {
 			{isLoading && <EntityGraphsLoadingState />}
 			{groupedData &&
 				!isLoading &&
-				(!selectedNodeId?.startsWith("SVC") ||
-					!selectedNodeId?.startsWith("P00") ||
-					!selectedNodeId?.startsWith("OFF")) && (
+				!selectedNodeId?.startsWith("SVC") &&
+				!selectedNodeId?.startsWith("P00") &&
+				!selectedNodeId?.startsWith("OFF") && (
 					<ResourceGraphs
 						groupedData={groupedData}
 						selectedNodeId={selectedNodeId ?? ""}
