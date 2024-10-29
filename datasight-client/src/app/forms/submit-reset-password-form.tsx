@@ -77,8 +77,8 @@ function SendConfirmationCodeButton() {
     const { pending } = useFormStatus();
 
     return (
-        <Button className="flex mt-9 w-[50%] bg-brand-blue text-center items-center hover:bg-blue-800 justify-center" aria-disabled={pending}>
-            <p className='text-sm'> Send Code </p> <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+        <Button className="flex mt-9 w-[50%] bg-brand-blue text-center items-center hover:bg-blue-800 justify-center gap-x-2" aria-disabled={pending}>
+            <p className='text-sm text-white font-semibold'> Send Code </p> <ArrowRightIcon className=" h-5 w-5 text-gray-50" />
         </Button>
     );
 }
@@ -87,8 +87,8 @@ function BackBtn() {
     return (
         <Link href='/' className="flex mt-9 w-[50%] bg-black justify-center rounded-md items-center transition-transform transform hover:scale-105 hover:bg-gray-800">
             <button>
-                <div className='flex gap-2 items-center'>
-                    <ArrowLeftIcon className="ml-auto h-5 w-5 text-gray-50" /> <p className='text-white text-sm   font-medium'> Go Back </p>
+                <div className='flex gap-2 items-center '>
+                    <ArrowLeftIcon className="ml-auto h-5 w-5 text-gray-50" /> <p className='text-white text-sm  font-semibold'> Go Back </p>
                 </div>
             </button>
         </Link>

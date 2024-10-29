@@ -38,14 +38,6 @@ export default function Page() {
 
 	return (
 		<div className="flex flex-col lg:flex-row h-screen relative">
-			{/* Back Button */}
-			<Link href="/home-page">
-				<button className="absolute rounded-md top-4 right-4 px-4 py-2 text-white bg-black hover:bg-gray-500 transition-transform transform hover:scale-105 font-medium shadow-sm">
-					Back
-				</button>
-			</Link>
-
-			{/* Left sidebar - Console */}
 			<div className="w-full lg:w-1/5 h-full overflow-auto border-r border-gray-200 p-4 flex flex-col">
 				{/* Logo */}
 				<div className="mb-8">

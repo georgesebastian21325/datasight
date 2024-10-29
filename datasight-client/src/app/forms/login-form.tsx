@@ -95,8 +95,11 @@ export default function LoginForm() {
 						</div>
 					</div>
 				</div>
-				<div className='flex flex-col mt-5'>
+				<div className='flex flex-col mt-5 items-center'>
 					<LoginButton />
+					<p className='mt-2 text-sm'> Don't have an account yet? <span className='text-brand-blue font-semibold'>
+						<Link href='/auth/signup' className='text-sm text-blue-600 hover:underline font-medium'>  Sign Up </Link>
+					</span></p>
 				</div>
 			</div>
 		</form>
@@ -140,7 +143,7 @@ function LoginButton() {
 				</div>
 			) : (
 				// Default login text when not pending
-				<span className="flex items-center font-semibold">
+				<span className="flex items-center font-semibold text-white">
 					Log In
 					<ArrowRightIcon className="ml-2 h-5 w-5 text-gray-50" />
 				</span>
