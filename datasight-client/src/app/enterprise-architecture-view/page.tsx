@@ -11,12 +11,14 @@ import OpenFileUploadModalBtn from "../components/button/OpenFileUploadModalBtn"
 import { useGlobalState } from "../context/GlobalStateContext"; // Import the global state
 
 import Link from "next/link";
+import EntityGraphs from "../entity-graphs/entity-graphs";
 
 export default function Page() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [showMapping, setShowMapping] = useState(false);
-	const { selectedNodeId } = useGlobalState();
+	const { selectedNodeId, setSelectedNodeId } =
+		useGlobalState();
 
 	const handleGenerateMapping = () => {
 		setError(null);
@@ -76,7 +78,7 @@ export default function Page() {
 			{/* Right side - Enterprise Mapping */}
 			<div className="w-full lg:w-4/5 h-full overflow-auto p-4 pt-16">
 				<h2 className="text-2xl font-bold mb-1 gradient-text">
-					Enterprise Architecture {selectedNodeId}
+					Enterprise Architecture
 				</h2>
 				<p className="mb-3 text-gray-500">
 					{" "}
@@ -103,14 +105,13 @@ export default function Page() {
 							<OPSRMapping />
 						) : (
 							<p className="text-center text-gray-500">
-								Click &quot;Generate Mapping&quot; to view the
-								architecture mapping
+								Click &quot;Generate Mapping&quot; to view
+								the architecture mapping
 							</p>
 						)}
 					</div>
-
 				</div>
-				{showMapping && <div className="bg-red-50">{selectedNodeId}</div>}
+				<EntityGraphs />
 			</div>
 		</div>
 	);
