@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from "@/vcomponents/onboarding-components/button"
 import { Progress } from "@/vcomponents/onboarding-components/progress"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/vcomponents/onboarding-components/card"
-import { FileCheck, CheckCircle, ArrowLeft, ArrowRight } from 'lucide-react'
+import { CheckCircle, ArrowLeft, ArrowRight } from 'lucide-react'
 
 import FileUploadModal from './file-upload-modal'
 
@@ -16,7 +16,7 @@ export function Onboarding() {
   const [isProcessing, setIsProcessing] = useState(false)
   const router = useRouter()
 
-  const totalSteps = 3
+  const totalSteps = 2
 
   const handleNextStep = async () => {
     if (currentStep < totalSteps) {
@@ -66,23 +66,6 @@ export function Onboarding() {
           )}
 
           {currentStep === 2 && (
-            <div className="text-center">
-              <h2 className="text-2xl font-semibold mb-4">Processing Your Data</h2>
-              {isProcessing ? (
-                <div className="flex flex-col items-center">
-                  <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-900 mb-4"></div>
-                  <p>Analyzing your enterprise architecture data...</p>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center">
-                  <FileCheck className="w-16 h-16 text-green-500 mb-4" />
-                  <p>Your files have been successfully processed!</p>
-                </div>
-              )}
-            </div>
-          )}
-
-          {currentStep === 3 && (
             <div className="text-center">
               <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
               <h2 className="text-2xl font-semibold mb-4">Onboarding Complete!</h2>
