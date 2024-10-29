@@ -55,6 +55,7 @@ interface OfferingMetricRecord extends MetricRecord {
 	avg_usage: string; // Original data as string
 	avg_cost: string; // Original data as string
 	date: string;
+	weekly_revenue: string;
 }
 
 interface ApiResponseEntry {
