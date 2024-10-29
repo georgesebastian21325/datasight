@@ -27,15 +27,19 @@ export function GlobalStateProvider({
 
 	function handleSetSelectedNodeId(id: string) {
 		if (selectedNodeId == id) {
-			setSelectedNodeId(null)
+			setSelectedNodeId(null);
 		} else {
-			setSelectedNodeId(id)
+			setSelectedNodeId(id);
 		}
 	}
 
 	return (
 		<GlobalStateContext.Provider
-			value={{ selectedNodeId, setSelectedNodeId, handleSetSelectedNodeId }}
+			value={{
+				selectedNodeId,
+				setSelectedNodeId,
+				handleSetSelectedNodeId,
+			}}
 		>
 			{children}
 		</GlobalStateContext.Provider>
