@@ -78,17 +78,43 @@ export async function handleSignIn(
   formData: FormData
 ) {
   let redirectLink = "/home-page";
+  
   try {
-    const { isSignedIn, nextStep } = await signIn({
+    // Sign the user in
+    const { isSignedIn } = await signIn({
       username: String(formData.get("email")),
       password: String(formData.get("password")),
+
     });
+
+    if (!isSignedIn) return getErrorMessage(new Error("Sign-in failed"));
+
+    // Check if the bucket exists and if it is empty
+    const bucketName = "datasight-landing";
+    const response = await fetch(`/api/checkBucket?bucketName=${bucketName}`, {
+      method: "GET",
+    });
+
+    if(response.ok) {
+      console.log('checked bucket.');
+    }
+
+    if (!response.ok) {
+      throw new Error("Failed to check bucket status");
+    }
+
+    const { isEmpty } = await response.json();
+
+    // Redirect based on whether the bucket is empty
+    redirectLink = isEmpty ? "/onboarding" : "/home-page";
+
   } catch (error) {
     return getErrorMessage(error);
   }
 
   redirect(redirectLink);
 }
+
 
 export async function handleSignOut() {
   try {
