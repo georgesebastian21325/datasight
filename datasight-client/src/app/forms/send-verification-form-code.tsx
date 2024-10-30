@@ -9,7 +9,7 @@ import { handleSendEmailVerificationCode } from "@/lib/cognitoActions";
 import { useFormState, useFormStatus } from "react-dom";
 import { Button } from "../components/button";
 
-export default function SendVerificationCode() {
+function SendVerificationCode() {
     const [response, dispatch] = useFormState(handleSendEmailVerificationCode, {
         message: "",
         errorMessage: "",
@@ -18,12 +18,14 @@ export default function SendVerificationCode() {
     return (
         <>
             <Button
-                className="mt-4 w-full"
+                className="mt-4 w-full text-white flex items-center justify-center bg-brand-blue hover:bg-blue-500"
                 aria-disabled={pending}
                 formAction={dispatch}
             >
-                Resend Verification Code{" "}
-                <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+                <span className='flex gap-x-2 font-semibold'>
+                    Resend Verification Code{" "}
+                    <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+                </span>
             </Button>
             <div className="flex h-8 items-end space-x-1">
                 <div
