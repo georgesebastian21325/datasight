@@ -203,7 +203,7 @@ export function Button({
 		<button
 			{...rest}
 			className={clsx(
-				"flex h-10 items-center rounded-lg bg-black px-4 text-sm ",
+				"flex h-10 items-center rounded-lg bg-black px-4 text-sm transition-transform transform hover:scale-105 ",
 				className,
 			)}
 		>

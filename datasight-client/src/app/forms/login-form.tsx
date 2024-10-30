@@ -112,7 +112,7 @@ function LoginButton() {
 
 	return (
 		<Button
-			className="mt-4 w-full flex justify-center items-center bg-brand-blue"
+			className="mt-4 w-full flex justify-center items-center bg-brand-blue text-white"
 			aria-disabled={pending} // Disable the button when pending
 			disabled={pending} // Also disable for accessibility
 		>

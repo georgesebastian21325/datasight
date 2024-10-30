@@ -10,6 +10,7 @@ import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { Button } from "../components/button";
 import { useFormState, useFormStatus } from "react-dom";
 import { handleSignUp } from "@/lib/cognitoActions";
+
 import Link from "next/link";
 import CompanyLogo from '../../assets/company-logo.jpg'
 import Image from "next/image";
@@ -120,7 +121,6 @@ export default function SignUpForm() {
                             </div>
                         </div>
                     </div>
-                   
                 </div>
             </form>
         </div>

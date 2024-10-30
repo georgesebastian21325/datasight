@@ -26,7 +26,7 @@ export default function ConfirmResetPasswordForm() {
     return (
         <div
             className="min-h-screen bg-center bg-fixed "
-            style={{ backgroundImage: `url(${BackgroundImage.src})`  }}
+            style={{ backgroundImage: `url(${BackgroundImage.src})` }}
         >
             <form action={dispatch} className="flex flex-col items-center justify-center  space-y-3  p-10 rounded-lg">
                 <div className="flex flex-col rounded-lg w-[30%] px-6 pb-4 pt-8 items-center border-2 mt-10">
@@ -163,8 +163,11 @@ function ResetPasswordButton() {
     const { pending } = useFormStatus();
 
     return (
-        <Button className="mt-4 w-full bg-brand-blue text-center items-center hover:bg-blue-800" aria-disabled={pending}>
-            Reset Password <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+        <Button className="flex justify-center mt-4 w-full bg-brand-blue text-center items-center hover:bg-blue-800 text-white" aria-disabled={pending}>
+            <span className="flex items-center font-semibold text-white gap-x-3">
+                Reset Password <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+            </span>
+
         </Button>
     );
 }
