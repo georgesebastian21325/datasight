@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { useRouter } from 'next/router';
 import {
   signUp,
   confirmSignUp,
@@ -59,19 +60,40 @@ export async function handleSendEmailVerificationCode(
 
 export async function handleConfirmSignUp(
   prevState: string | undefined,
-  formData: FormData
+  formData: FormData,
 ) {
   try {
     const { isSignUpComplete, nextStep } = await confirmSignUp({
       username: String(formData.get("email")),
       confirmationCode: String(formData.get("code")),
     });
-    await autoSignIn();
+
+    // Directly proceed to create the user's bucket
+    const response = await fetch('/api/createBucket', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user: formData.get("email"), // Include user info if required
+      }),
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || 'Bucket creation failed');
+    }
+
+    console.log(result.message); // Confirm bucket creation success
   } catch (error) {
+    console.error("Sign up or bucket creation error:", error);
     return getErrorMessage(error);
   }
-  redirect("/");
+
+  // Redirect to home after signup and bucket creation
+  redirect('/');
 }
+
 
 export async function handleSignIn(
   prevState: string | undefined,
