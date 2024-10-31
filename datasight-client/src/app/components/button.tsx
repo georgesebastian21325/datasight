@@ -157,4 +157,4 @@ export function Button({
 	);
 }
 
-export { LandingPageSignUpBtn, SignUpBtn, LoginBtn, UploadDataSetBtn, EnterpriseArchitectureBtn, SettingsBtn, SignOutBtn, OptimizeObsolenceBtn, OptimizeRiskBtn, OptimizeFinanceBtn, OptimizeCapacityBtn, GenerateMapBtn };
+export { EnterpriseArchitectureBtn, SettingsBtn, SignOutBtn, OptimizeObsolenceBtn, OptimizeRiskBtn, OptimizeFinanceBtn, OptimizeCapacityBtn, GenerateMapBtn };

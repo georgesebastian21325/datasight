@@ -2,21 +2,8 @@
 
 import { useState, useRef } from "react";
 import { Button } from "@/vcomponents/file-upload-components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/vcomponents/file-upload-components/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/vcomponents/file-upload-components/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/vcomponents/file-upload-components/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/vcomponents/file-upload-components/table";
 import { Upload, AlertCircle, ChevronLeft, ChevronRight, X, FileUp } from "lucide-react";
 import { Alert, AlertDescription } from "@/vcomponents/file-upload-components/alert";
 import { Badge } from "@/vcomponents/file-upload-components/badge";
@@ -41,17 +28,39 @@ export default function FileUploadModal({ onUploadComplete }: FileUploadModalPro
   const fileInputRef = useRef<HTMLInputElement>(null);
   const itemsPerPage = 4;
 
+  // Define the allowed file names
+  const allowedFileNames = [
+    "backup-and-recovery-systems.csv",
+    "cloud-infrastructure.csv",
+    "communication-infrastructure.csv",
+    "computer.csv",
+    "server.csv",
+    "storage-devices.csv",
+    "virtual-infrastructure.csv"
+    // Add other required file names here
+  ];
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
     if (event.target.files) {
       const fileList = Array.from(event.target.files);
-      const fileInfos = fileList.map((file) => ({
+
+      // Filter files to only include those with names in the allowed list
+      const validFiles = fileList.filter((file) => allowedFileNames.includes(file.name));
+      const invalidFiles = fileList.filter((file) => !allowedFileNames.includes(file.name));
+
+      if (invalidFiles.length > 0) {
+        setError(`Some files were not allowed: ${invalidFiles.map(f => f.name).join(", ")}`);
+      }
+
+      const fileInfos = validFiles.map((file) => ({
         id: Math.random().toString(36).substr(2, 9),
         name: file.name,
         size: file.size,
         status: "ready" as const,
         file,
       }));
+
       setSelectedFiles((prev) => [...prev, ...fileInfos]);
       setCurrentPage(Math.ceil((selectedFiles.length + fileInfos.length) / itemsPerPage));
     } else {
@@ -123,7 +132,6 @@ export default function FileUploadModal({ onUploadComplete }: FileUploadModalPro
     const { className, label } = statusConfig[status];
     return <Badge className={`${className} text-white`}>{label}</Badge>;
   };
-
 
   const totalPages = Math.ceil(selectedFiles.length / itemsPerPage);
   const paginatedFiles = selectedFiles.slice(
