@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Header from "../components/global/header";
+import Header from "../components/global/Header";
 import OPSRMapping from "../data-mapping/OPSRMapping";
 
 import GenerateMappingBtn from "../components/button/GenerateMappingBtn"; // Import the new button component
