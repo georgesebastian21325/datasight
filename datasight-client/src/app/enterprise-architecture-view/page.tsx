@@ -6,11 +6,8 @@ import OPSRMapping from "../data-mapping/OPSRMapping";
 
 import GenerateMappingBtn from "../components/button/GenerateMappingBtn"; // Import the new button component
 import DataMappingLoadingState from "../components/global/DataMappingLoadingState";
-import FileUploadModal from "../components/modal/FileUploadModal";
-import OpenFileUploadModalBtn from "../components/button/OpenFileUploadModalBtn";
 import { useGlobalState } from "../context/GlobalStateContext"; // Import the global state
 
-import Link from "next/link";
 import EntityGraphs from "../entity-graphs/entity-graphs";
 
 export default function Page() {

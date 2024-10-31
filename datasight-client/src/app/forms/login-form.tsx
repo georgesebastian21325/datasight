@@ -14,6 +14,8 @@ import { AuthenticationErrorPopUp } from "../components/popup";
 import Link from "next/link";
 import { useState } from "react";
 
+import LoadingPage from '../components/global/LoadingPage'
+
 export default function LoginForm() {
 	const [errorMessage, dispatch] = useFormState(
 		handleSignIn,

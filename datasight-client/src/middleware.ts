@@ -15,15 +15,10 @@ export async function middleware(request: NextRequest) {
     if (!user) {
       return NextResponse.redirect(new URL("/", request.nextUrl));
     }
-
-    if (isOnAdminArea && !user.isAdmin) {
-      return NextResponse.redirect(new URL("/home-page", request.nextUrl));
-    }
-
     return response;
   }
   {
-    /* 
+
   if (isOnEnterpriseView || isOnSettings) {
     if (!user) {
       return NextResponse.redirect(new URL("/", request.nextUrl));
@@ -35,7 +30,7 @@ export async function middleware(request: NextRequest) {
   if (user && (request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/login")) {
     return NextResponse.redirect(new URL("/home-page", request.nextUrl));
   }    
-    */
+
   }
   // Protecting /enterprise-architecture and /settings routes
 

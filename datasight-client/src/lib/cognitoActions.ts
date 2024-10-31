@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { useRouter } from 'next/router';
 import {
   signUp,
   confirmSignUp,
@@ -60,83 +59,36 @@ export async function handleSendEmailVerificationCode(
 
 export async function handleConfirmSignUp(
   prevState: string | undefined,
-  formData: FormData,
+  formData: FormData
 ) {
   try {
     const { isSignUpComplete, nextStep } = await confirmSignUp({
       username: String(formData.get("email")),
       confirmationCode: String(formData.get("code")),
     });
-
-    // Directly proceed to create the user's bucket
-    const response = await fetch('/api/createBucket', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        user: formData.get("email"), // Include user info if required
-      }),
-    });
-
-    const result = await response.json();
-    if (!response.ok) {
-      throw new Error(result.error || 'Bucket creation failed');
-    }
-
-    console.log(result.message); // Confirm bucket creation success
+    await autoSignIn();
   } catch (error) {
-    console.error("Sign up or bucket creation error:", error);
     return getErrorMessage(error);
   }
-
-  // Redirect to home after signup and bucket creation
-  redirect('/');
+  redirect("/");
 }
-
 
 export async function handleSignIn(
   prevState: string | undefined,
   formData: FormData
 ) {
   let redirectLink = "/home-page";
-  
   try {
-    // Sign the user in
-    const { isSignedIn } = await signIn({
+    const { isSignedIn, nextStep } = await signIn({
       username: String(formData.get("email")),
       password: String(formData.get("password")),
-
     });
-
-    if (!isSignedIn) return getErrorMessage(new Error("Sign-in failed"));
-
-    // Check if the bucket exists and if it is empty
-    const bucketName = "datasight-landing";
-    const response = await fetch(`/api/checkBucket?bucketName=${bucketName}`, {
-      method: "GET",
-    });
-
-    if(response.ok) {
-      console.log('checked bucket.');
-    }
-
-    if (!response.ok) {
-      throw new Error("Failed to check bucket status");
-    }
-
-    const { isEmpty } = await response.json();
-
-    // Redirect based on whether the bucket is empty
-    redirectLink = isEmpty ? "/onboarding" : "/home-page";
-
   } catch (error) {
     return getErrorMessage(error);
   }
 
   redirect(redirectLink);
 }
-
 
 export async function handleSignOut() {
   try {
