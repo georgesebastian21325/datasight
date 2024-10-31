@@ -82,7 +82,7 @@ export default function RecommendationsLayout() {
             ) : (
               <>
                 <p className="text-gray-500 text-center">
-                  Click &apos;Generate Mapping&apos; to view the architecture mapping
+                  
                 </p>
               </>
             )}
