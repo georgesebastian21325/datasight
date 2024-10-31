@@ -7,6 +7,7 @@ import SignOutModal from "../components/modal/SignOutModal"; // Import the SignO
 
 import { handleSignOut } from "@/lib/cognitoActions";
 import { getCurrentUser } from "aws-amplify/auth";
+import { Button } from "@/vcomponents/recommendations-components/button";
 
 export default function HomePage() {
 	const [currentTime, setCurrentTime] =
@@ -31,58 +32,20 @@ export default function HomePage() {
 	};
 
 	return (
-		<div className="min-h-screen bg-white flex flex-col items-center justify-start p-4">
-			<div className="w-full text-right mb-4">
-				{currentTime && (
-					<p
-						className="text-xl font-semibold text-gray-700"
-						aria-live="polite"
-					>
-						{formatTime(currentTime)}
-					</p>
-				)}
-			</div>
-			<div className="text-center mb-8">
-				<Header />
-			</div>
+		<div className="mx-12 mt-10">
 
-			<div className="text-center mb-8 p-6 border-2 border-gray-300 rounded-lg shadow-md">
-				<h2 className="text-2xl font-semibold text-gray-700 mb-2">
-					Welcome George, how can we help you today?
-				</h2>
-				<p className="text-gray-600 mb-6">
-					Manage your enterprise architecture with ease.
-				</p>
-
-				<div className="flex flex-wrap justify-center gap-4">
-					{[
-						{
-							label: "Enterprise Architecture",
-							href: "/enterprise-architecture-view",
-						},
-						{ label: "Settings", href: "/settings" },
-					].map(({ label, href }) => (
-						<Link
-							key={label}
-							href={href}
-						>
-							<button className="bg-[#000080] text-white font-medium px-4 py-2 rounded-md w-[250px] transition-transform transform hover:scale-105 hover:bg-black">
-								{label}
-							</button>
-						</Link>
-					))}
-
-					{/* Sign Out button */}
-					<button
-						onClick={() => setIsModalOpen(true)} // Open the modal on click
-						className="bg-[#000080] text-white font-medium px-4 py-2 rounded-md w-[250px] transition-transform transform hover:scale-105 hover:bg-red-600"
-					>
-						Sign Out
-					</button>
-				</div>
-			</div>
-
-			{/* Sign Out Modal */}
+				<nav className="flex justify-between items-center mb-8">
+					<div className="flex items-center gap-2">
+						<Header />
+					</div>
+					<div className="flex gap-4">
+						<Link href='/enterprise-architecture-view'>
+					<Button variant="ghost">  ENTERPRISE ARCHITECTURE   </Button>
+					</Link>
+						<Button variant="ghost">SETTINGS</Button>
+					</div>
+				<Button onClick={() => setIsModalOpen(true)} variant="ghost">SIGN OUT</Button>
+				</nav>
 			<SignOutModal
 				isOpen={isModalOpen}
 				onClose={() => setIsModalOpen(false)} // Close modal on cancel

@@ -10,6 +10,7 @@ export default function Header() {
 					<Image
 						src={CompanyLogo}
 						alt="company logo"
+						width={200}
 					/>
 				</Link>
 			</div>
