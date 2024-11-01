@@ -9,6 +9,8 @@ import { handleSignOut } from "@/lib/cognitoActions";
 import { getCurrentUser } from "aws-amplify/auth";
 import { Button } from "@/vcomponents/recommendations-components/button";
 
+import LoadingPage from '../components/global/LoadingPage'
+
 export default function HomePage() {
 	const [currentTime, setCurrentTime] =
 		useState<Date | null>(null);
@@ -30,6 +32,19 @@ export default function HomePage() {
 			hour12: true,
 		});
 	};
+
+	const [loading, setLoading] = useState(true); // Add loading state
+
+	useEffect(() => {
+		// Show the loading screen for 2 seconds
+		const loadingTimer = setTimeout(() => {
+			setLoading(false);
+		}, 5000);
+
+		return () => clearTimeout(loadingTimer);
+	}, []);
+
+	if (loading) return <LoadingPage />;
 
 	return (
 		<div className="mx-12 mt-10">

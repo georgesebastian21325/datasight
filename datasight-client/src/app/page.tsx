@@ -3,12 +3,10 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import LoginForm from "./forms/login-form";
-
 import CompanyLogo from '../assets/company-logo.jpg';
 import LoginAsset from '../assets/login-asset-2.png';
-
-import { Card } from '@/vcomponents/onboarding-components/card'
-
+import { Card } from '@/vcomponents/onboarding-components/card';
+import LoadingPage from './components/global/LoadingPage' // Import your loading page component
 
 const phrases = [
 	"Transform data into insights.",
@@ -22,8 +20,20 @@ function LoginPage() {
 	const [charIndex, setCharIndex] = useState(0);
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [delay, setDelay] = useState(150);
+	const [loading, setLoading] = useState(true); // Add loading state
 
 	useEffect(() => {
+		// Show the loading screen for 2 seconds
+		const loadingTimer = setTimeout(() => {
+			setLoading(false);
+		}, 5000);
+
+		return () => clearTimeout(loadingTimer);
+	}, []);
+
+	useEffect(() => {
+		if (loading) return; // Skip the typing effect if loading
+
 		const handleTyping = () => {
 			const currentPhrase = phrases[index];
 
@@ -47,7 +57,10 @@ function LoginPage() {
 
 		const timer = setTimeout(handleTyping, delay);
 		return () => clearTimeout(timer);
-	}, [charIndex, isDeleting, index, delay]);
+	}, [charIndex, isDeleting, index, delay, loading]);
+
+	// Show loading screen if loading is true
+	if (loading) return <LoadingPage />;
 
 	return (
 		<div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
