@@ -33,27 +33,27 @@ export default function HomePage() {
                 Welcome to Data Sight
               </h1>
               <p className="text-xl text-center mb-12 text-gray-600">
-                Transform your insights and empower the future with our comprehensive enterprise solutions.
+                Transform your insights and empower the future with our tool.
               </p>
 
               {/* Navigation Buttons */}
               <div className="grid grid-cols-4 gap-4 max-w-4xl mx-auto text-center">
-                <Button onClick={() => navigateWithLoading('/dashboard/resources')} className="w-full" size="lg">
+                <Button onClick={() => navigateWithLoading('/dashboard/resources')} className="w-full hover:bg-gray-900 hover:shadow-xl" size="lg">
                   Resource
                 </Button>
-                <Button onClick={() => navigateWithLoading('/dashboard/products')} className="w-full" size="lg">
+                  <Button onClick={() => navigateWithLoading('/dashboard/products')} className="w-full hover:bg-gray-900 hover:shadow-xl" size="lg">
                   Product
                 </Button>
-                <Button onClick={() => navigateWithLoading('/dashboard/services')} className="w-full" size="lg">
+                  <Button onClick={() => navigateWithLoading('/dashboard/services')} className="w-full hover:bg-gray-900 hover:shadow-xl" size="lg">
                   Service
                 </Button>
-                <Button onClick={() => navigateWithLoading('/dashboard/offerings')} className="w-full" size="lg">
+                  <Button onClick={() => navigateWithLoading('/dashboard/offerings')} className="w-full hover:bg-gray-900 hover:shadow-xl" size="lg">
                   Offering
                 </Button>
               </div>
 
               <div className="flex justify-center mt-5">
-                <Button onClick={() => navigateWithLoading('/enterprise-architecture-view')} className="w-full max-w-[15rem] bg-brand-blue" size="lg">
+                  <Button onClick={() => navigateWithLoading('/enterprise-architecture-view')} className="w-full max-w-[15rem] bg-brand-blue hover:bg-blue-800 hover:shadow-xl" size="lg">
                   Enterprise Architecture
                 </Button>
               </div>
