@@ -6,7 +6,6 @@ import Link from "next/link";
 import SignOutModal from "../components/modal/SignOutModal"; // Import the SignOutModal component
 
 import { handleSignOut } from "@/lib/cognitoActions";
-import { getCurrentUser } from "aws-amplify/auth";
 import { Button } from "@/vcomponents/recommendations-components/button";
 
 import LoadingPage from '../components/global/LoadingPage'
