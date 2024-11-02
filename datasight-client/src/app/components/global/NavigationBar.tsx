@@ -1,6 +1,8 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+
 import Header from '../global/Header'
 import Link from "next/link";
 
@@ -18,12 +20,6 @@ export default function NavigationBar() {
             <nav className="flex justify-between items-center mb-8">
                 <div className="flex items-center gap-2">
                     <Header />
-                </div>
-                <div className="flex gap-4">
-                    <Link href='/enterprise-architecture-view'>
-                        <Button variant="ghost">  ENTERPRISE ARCHITECTURE   </Button>
-                    </Link>
-                    <Button variant="ghost">SETTINGS</Button>
                 </div>
                 <Button onClick={() => setIsModalOpen(true)} variant="ghost">SIGN OUT</Button>
             </nav>

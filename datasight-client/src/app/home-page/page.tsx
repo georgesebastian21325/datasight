@@ -25,7 +25,6 @@ export default function HomePage() {
 
 	return (
 		<>
-			<NavigationBar />
 			<BodySection />
 		</>
 	);
