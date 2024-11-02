@@ -6,7 +6,7 @@ export default function Header() {
 	return (
 		<div>
 			<div className="flex items-center justify-center">
-				<Link href="./home-page">
+				<Link href="/home-page">
 					<Image
 						src={CompanyLogo}
 						alt="company logo"

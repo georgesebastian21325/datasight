@@ -3,10 +3,9 @@
 import { useState, useEffect } from "react";
 import Header from "../components/global/Header";
 import Link from "next/link";
-import SignOutModal from "../components/modal/SignOutModal"; // Import the SignOutModal component
+import SignOutModal from "../components/modal/SignOutModal"; 
 
 import { handleSignOut } from "@/lib/cognitoActions";
-import { getCurrentUser } from "aws-amplify/auth";
 import { Button } from "@/vcomponents/recommendations-components/button";
 
 import LoadingPage from '../components/global/LoadingPage'
