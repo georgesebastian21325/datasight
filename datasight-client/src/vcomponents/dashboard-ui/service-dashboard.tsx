@@ -99,7 +99,7 @@ const mockData = {
 export default function ServiceDashboardComponent() {
   return (
     <div className="container mx-auto p-4 space-y-8">
-      <h1 className="text-3xl font-bold mb-4">Service Layer Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820] ">Service Layer Dashboard</h1>
 
       {/* 1. Key Service Metrics Overview */}
       <section>

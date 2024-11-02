@@ -100,7 +100,7 @@ const mockData = {
 export default function ProductLayerDashboard() {
   return (
     <div className="container mx-auto p-4">
-      <h1 className="mb-4 text-3xl font-bold">Product Layer Dashboard</h1>
+      <h1 className="mb-4 text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820] ">Product Layer Dashboard</h1>
 
       <section className="mb-8">
         <h2 className="mb-4 text-2xl font-semibold">Key Product Metrics Overview</h2>
