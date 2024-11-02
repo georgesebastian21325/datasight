@@ -7,6 +7,9 @@ import { useRouter } from 'next/navigation';
 import NavigationBar from '../app/components/global/NavigationBar'
 import LoadingPage from '../app/components/global/LoadingPage'
 
+import BackgroundImage from '../assets/background-image.jpg'
+
+
 export default function HomePage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -21,7 +24,13 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div
+      className="min-h-screen bg-cover bg-center"
+    >
+      <div
+        className="absolute inset-0 bg-cover bg-center -z-10 opacity-50"
+        style={{ backgroundImage: `url(${BackgroundImage.src})` }}
+      ></div>
       {isLoading ? (
         <LoadingPage /> // Show LoadingPage while loading
       ) : (

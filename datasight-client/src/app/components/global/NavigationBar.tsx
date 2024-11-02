@@ -21,7 +21,7 @@ export default function NavigationBar() {
                 <div className="flex items-center gap-2">
                     <Header />
                 </div>
-                <Button onClick={() => setIsModalOpen(true)} variant="ghost">SIGN OUT</Button>
+                <Button onClick={() => setIsModalOpen(true)} variant="ghost" className='hover:bg-red-600 hover:text-white'>Sign Out</Button>
             </nav>
             <SignOutModal
                 isOpen={isModalOpen}
