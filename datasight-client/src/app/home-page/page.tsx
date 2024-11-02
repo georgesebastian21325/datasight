@@ -1,19 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-<<<<<<< Updated upstream
-import Header from "../components/global/Header";
-import Link from "next/link";
-import SignOutModal from "../components/modal/SignOutModal"; 
-
-import { handleSignOut } from "@/lib/cognitoActions";
-import { Button } from "@/vcomponents/recommendations-components/button";
-=======
->>>>>>> Stashed changes
 
 import LoadingPage from '../components/global/LoadingPage'
 
-import NavigationBar from '../components/global/NavigationBar'
+import NavigationBar from "../components/global/NavigationBar";
 import BodySection from '../../vcomponents/home-page'
 
 export default function HomePage() {

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from "react";
-import Header from '../../components/global/Header';
+import Header from '../global/Header'
 import Link from "next/link";
 
 import SignOutModal from "../modal/SignOutModal";
