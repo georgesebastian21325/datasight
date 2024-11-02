@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import LoadingPage from '../components/global/LoadingPage'
+import { useLoadingMessage } from '@/app/context/LoadingMessageContext';
 
 export default function LoginForm() {
 	const [errorMessage, dispatch] = useFormState(
@@ -111,12 +112,19 @@ export default function LoginForm() {
 // LoginButton Component with loading spinner
 function LoginButton() {
 	const { pending } = useFormStatus(); // Get the form status to know if it's pending
+	const { setMessage } = useLoadingMessage(); // Import useLoadingMessage to set message
+
+	// Set loading message when the button is clicked
+	const handleClick = () => {
+		setMessage("Logging In...");
+	};
 
 	return (
 		<Button
 			className="mt-4 w-full flex justify-center items-center bg-brand-blue text-white"
 			aria-disabled={pending} // Disable the button when pending
 			disabled={pending} // Also disable for accessibility
+			onClick={handleClick} // Set loading message on click
 		>
 			{pending ? (
 				// Show spinner while form is pending

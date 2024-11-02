@@ -20,7 +20,7 @@ export default function HomePage() {
     setTimeout(() => {
       router.push(path);
       setIsLoading(false);
-    }, 7000); // Optional delay for loading page visibility
+    }, 15000); // Optional delay for loading page visibility
   };
 
   return (

@@ -28,7 +28,7 @@ function LoginPage() {
 	const { setMessage } = useLoadingMessage();
 
 	useEffect(() => {
-		setMessage('Logging In');
+		setMessage('System Loading...');
 	}, [setMessage]);
 
 	useEffect(() => {
