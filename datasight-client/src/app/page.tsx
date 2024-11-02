@@ -4,9 +4,12 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import LoginForm from "./forms/login-form";
 import CompanyLogo from '../assets/company-logo.jpg';
+
 import LoginAsset from '../assets/login-asset-2.png';
 import { Card } from '@/vcomponents/onboarding-components/card';
 import LoadingPage from './components/global/LoadingPage' // Import your loading page component
+
+import { useLoadingMessage } from "./context/LoadingMessageContext";
 
 const phrases = [
 	"Transform data into insights.",
@@ -21,6 +24,12 @@ function LoginPage() {
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [delay, setDelay] = useState(150);
 	const [loading, setLoading] = useState(true); // Add loading state
+
+	const { setMessage } = useLoadingMessage();
+
+	useEffect(() => {
+		setMessage('Logging In');
+	}, [setMessage]);
 
 	useEffect(() => {
 		// Show the loading screen for 2 seconds

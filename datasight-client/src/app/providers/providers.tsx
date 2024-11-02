@@ -11,3 +11,4 @@ export function Providers({
 		<GlobalStateProvider>{children}</GlobalStateProvider>
 	);
 }
+

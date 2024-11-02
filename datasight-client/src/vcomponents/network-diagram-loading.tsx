@@ -6,9 +6,12 @@ import { useEffect, useState } from 'react'
 
 import CompanyLogo from '../assets/company-logo.jpg'
 
+import { useLoadingMessage } from '@/app/context/LoadingMessageContext'
+
 export default function NetworkDiagramLoading() {
   const [activeConnection, setActiveConnection] = useState(0)
   const [activePath, setActivePath] = useState(0)
+  const { message } = useLoadingMessage();
 
   // Define node positions for our grid
   const topRow = [
@@ -165,7 +168,7 @@ export default function NetworkDiagramLoading() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 2 }}
         >
-          <h2 className="text-2xl font-bold text-[#08296C] mb-2">System Loading</h2>
+          <h2 className="text-2xl font-bold text-[#08296C] mb-2">{message}</h2>
           <p className="text-[#F47820]">Establishing network connections...</p>
         </motion.div>
 

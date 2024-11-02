@@ -3,19 +3,19 @@
 import { useState } from "react";
 import { Button } from "@/vcomponents/home-page-components/button";
 import { useRouter } from 'next/navigation';
-
-import NavigationBar from '../app/components/global/NavigationBar'
-import LoadingPage from '../app/components/global/LoadingPage'
-
-import BackgroundImage from '../assets/background-image.jpg'
-
+import NavigationBar from '../app/components/global/NavigationBar';
+import LoadingPage from '../app/components/global/LoadingPage';
+import BackgroundImage from '../assets/background-image.jpg';
+import { useLoadingMessage } from "@/app/context/LoadingMessageContext";
 
 export default function HomePage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const { setMessage } = useLoadingMessage();
 
-  // Navigation functions with loading
-  const navigateWithLoading = (path) => {
+  // Navigation functions with loading and custom message
+  const navigateWithLoading = (path: string, message: string) => {
+    setMessage(message);
     setIsLoading(true);
     setTimeout(() => {
       router.push(path);
@@ -23,12 +23,8 @@ export default function HomePage() {
     }, 7000); // Optional delay for loading page visibility
   };
 
-  
-
   return (
-    <div
-      className="min-h-screen bg-cover bg-center"
-    >
+    <div className="min-h-screen bg-cover bg-center">
       <div
         className="absolute inset-0 bg-cover bg-center -z-10 opacity-50"
         style={{ backgroundImage: `url(${BackgroundImage.src})` }}
@@ -49,22 +45,42 @@ export default function HomePage() {
 
               {/* Navigation Buttons */}
               <div className="grid grid-cols-4 gap-4 max-w-4xl mx-auto text-center">
-                <Button onClick={() => navigateWithLoading('/dashboard/resources')} className="w-full hover:bg-gray-800 hover:shadow-xl" size="lg">
+                <Button
+                  onClick={() => navigateWithLoading('/dashboard/resources', 'Loading Resource Dashboard...')}
+                  className="w-full hover:bg-gray-800 hover:shadow-xl"
+                  size="lg"
+                >
                   Resource Dashboard
                 </Button>
-                  <Button onClick={() => navigateWithLoading('/dashboard/products')} className="w-full hover:bg-gray-800 hover:shadow-xl" size="lg">
+                <Button
+                  onClick={() => navigateWithLoading('/dashboard/products', 'Loading Product Dashboard...')}
+                  className="w-full hover:bg-gray-800 hover:shadow-xl"
+                  size="lg"
+                >
                   Product Dashboard
                 </Button>
-                  <Button onClick={() => navigateWithLoading('/dashboard/services')} className="w-full hover:bg-gray-800 hover:shadow-xl" size="lg">
+                <Button
+                  onClick={() => navigateWithLoading('/dashboard/services', 'Loading Service Dashboard...')}
+                  className="w-full hover:bg-gray-800 hover:shadow-xl"
+                  size="lg"
+                >
                   Service Dashboard
                 </Button>
-                  <Button onClick={() => navigateWithLoading('/dashboard/offerings')} className="w-full hover:bg-gray-800 hover:shadow-xl" size="lg">
+                <Button
+                  onClick={() => navigateWithLoading('/dashboard/offerings', 'Loading Offering Dashboard...')}
+                  className="w-full hover:bg-gray-800 hover:shadow-xl"
+                  size="lg"
+                >
                   Offering Dashboard
                 </Button>
               </div>
 
               <div className="flex justify-center mt-5">
-                  <Button onClick={() => navigateWithLoading('/enterprise-architecture-view')} className="w-full max-w-[15rem] bg-brand-blue hover:bg-blue-800 hover:shadow-xl" size="lg">
+                <Button
+                  onClick={() => navigateWithLoading('/enterprise-architecture-view', 'Loading Enterprise Architecture...')}
+                  className="w-full max-w-[15rem] bg-brand-blue hover:bg-blue-800 hover:shadow-xl"
+                  size="lg"
+                >
                   Enterprise Architecture
                 </Button>
               </div>
