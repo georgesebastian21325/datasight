@@ -14,8 +14,7 @@ export default function NavigationBar() {
 
 
     return (
-        <div className="mx-12 mt-10">
-
+        <div className="mx-[8.5rem] mt-10">
             <nav className="flex justify-between items-center mb-8">
                 <div className="flex items-center gap-2">
                     <Header />
