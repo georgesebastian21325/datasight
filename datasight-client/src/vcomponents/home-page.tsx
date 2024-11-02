@@ -12,7 +12,7 @@ export default function HomePage() {
             <p className="text-xl text-center mb-12 text-gray-600">
               Transform your insights and empower the future with our comprehensive enterprise solutions.
             </p>
-            <div className="grid grid-cols-4 gap-4 max-w-4xl mx-auto justify-center text-center ">
+            <div className="grid grid-cols-4 gap-4 max-w-4xl mx-auto text-center">
               <Button className="w-full" size="lg">
                 Resource
               </Button>
@@ -25,10 +25,15 @@ export default function HomePage() {
               <Button className="w-full" size="lg">
                 Offering
               </Button>
-              <Button className="w-full mt-5 bg-brand-blue" size="lg">
+            </div>
+
+            <div className="flex justify-center mt-5">
+              <Button className="w-full max-w-[15rem] bg-brand-blue" size="lg">
                 Enterprise Architecture
               </Button>
             </div>
+
+
           </div>
         </section>
       </main>
