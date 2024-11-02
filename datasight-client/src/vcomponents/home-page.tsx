@@ -20,8 +20,10 @@ export default function HomePage() {
     setTimeout(() => {
       router.push(path);
       setIsLoading(false);
-    }, 5000); // Optional delay for loading page visibility
+    }, 7000); // Optional delay for loading page visibility
   };
+
+  
 
   return (
     <div
@@ -48,16 +50,16 @@ export default function HomePage() {
               {/* Navigation Buttons */}
               <div className="grid grid-cols-4 gap-4 max-w-4xl mx-auto text-center">
                 <Button onClick={() => navigateWithLoading('/dashboard/resources')} className="w-full hover:bg-gray-900 hover:shadow-xl" size="lg">
-                  Resource
+                  Resource Dashboard
                 </Button>
                   <Button onClick={() => navigateWithLoading('/dashboard/products')} className="w-full hover:bg-gray-900 hover:shadow-xl" size="lg">
-                  Product
+                  Product Dashboard
                 </Button>
                   <Button onClick={() => navigateWithLoading('/dashboard/services')} className="w-full hover:bg-gray-900 hover:shadow-xl" size="lg">
-                  Service
+                  Service Dashboard
                 </Button>
                   <Button onClick={() => navigateWithLoading('/dashboard/offerings')} className="w-full hover:bg-gray-900 hover:shadow-xl" size="lg">
-                  Offering
+                  Offering Dashboard
                 </Button>
               </div>
 
