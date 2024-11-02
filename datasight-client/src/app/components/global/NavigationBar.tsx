@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
-import Header from '../global/Header'
+import Header from './header'
 import Link from "next/link";
 
 import SignOutModal from "../modal/SignOutModal";

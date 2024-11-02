@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Header from "../components/global/Header";
+import Header from "../components/global/header";
 import OPSRMapping from "../data-mapping/OPSRMapping";
 
 import GenerateMappingBtn from "../components/button/GenerateMappingBtn"; // Import the new button component
@@ -9,8 +9,6 @@ import DataMappingLoadingState from "../components/global/DataMappingLoadingStat
 import { useGlobalState } from "../context/GlobalStateContext"; // Import the global state
 
 import EntityGraphs from "../entity-graphs/entity-graphs";
-
-import LoadingPage from '../components/global/LoadingPage'
 
 export default function Page() {
 	const [loading, setLoading] = useState(false);
@@ -34,19 +32,6 @@ export default function Page() {
 
 	const openModal = () => setIsFileUploadModalOpen(true);
 	const closeModal = () => setIsFileUploadModalOpen(false);
-
-	const [pageLoading, setPageLoading] = useState(true); // Add loading state
-
-	useEffect(() => {
-		// Show the loading screen for 2 seconds
-		const loadingTimer = setTimeout(() => {
-			setPageLoading(false);
-		}, 5000);
-
-		return () => clearTimeout(loadingTimer);
-	}, []);
-
-	if (pageLoading) return <LoadingPage />;
 
 	return (
 		<div className="flex flex-col lg:flex-row h-screen relative">
