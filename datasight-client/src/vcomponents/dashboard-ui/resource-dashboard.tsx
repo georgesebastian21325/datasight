@@ -4,8 +4,6 @@ import React from 'react'
 import { Bar, BarChart, Scatter, ScatterChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/vcomponents/dashboard-ui/resource-components/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart"
-import { Alert, AlertDescription, AlertTitle } from "@/vcomponents/dashboard-ui/resource-components/alert"
-import { Progress } from "@/vcomponents/dashboard-ui/resource-components/progress"
 import { AlertCircle, ArrowDown, ArrowUp } from "lucide-react"
 
 // Mock data - replace with your actual data
