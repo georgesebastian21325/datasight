@@ -83,7 +83,7 @@ export default function HomePage() {
                   </Link>
                 </div>
                   <div className='flex justify-center'>
-                    <Link href='/dashboard/enterprise-architecture-view' >
+                    <Link href='/enterprise-architecture-view' >
                       <Button
                         onClick={() => navigateWithLoading('/enterprise-architecture-view', 'Loading Enterprise Architecture...')}
                         className="md:w-full w-[90%] text-[0.9rem] bg-brand-blue hover:bg-blue-800"
