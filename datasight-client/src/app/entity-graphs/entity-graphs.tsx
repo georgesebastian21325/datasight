@@ -7,7 +7,6 @@ import { ResourceGraphs } from "../components/global/ResourceGraphs";
 import formatDataForServiceGraphs, {
 	DualAxisLineChart,
 	ResourceTypeCostBarChart,
-	UsageVsCostScatterPlot,
 	WeeklyCostChart,
 	WeeklyUsageChart,
 } from "../components/global/ServiceGraphs";
@@ -265,7 +264,7 @@ export default function EntityGraphs() {
 							>
 								Weekly Usage
 							</button>
-							<button
+							{/* <button
 								onClick={() => setActiveTab("weeklyCost")}
 								className={`px-4 py-2 text-white rounded-md ${
 									activeTab == "weeklyCost"
@@ -296,7 +295,7 @@ export default function EntityGraphs() {
 								}`}
 							>
 								Dual Axis
-							</button>
+							</button> */}
 						</div>
 						<div className="chart-container">
 							{renderChart()}
@@ -322,7 +321,7 @@ export default function EntityGraphs() {
 							>
 								Weekly Usage
 							</button>
-							<button
+							{/* <button
 								onClick={() => setActiveTab("weeklyCost")}
 								className={`px-4 py-2 text-white rounded-md ${
 									activeTab === "weeklyCost"
@@ -331,7 +330,7 @@ export default function EntityGraphs() {
 								}`}
 							>
 								Weekly Cost
-							</button>
+							</button> */}
 							<button
 								onClick={() =>
 									setActiveTab("usageComparison")
@@ -344,7 +343,7 @@ export default function EntityGraphs() {
 							>
 								Usage Comparison
 							</button>
-							<button
+							{/* <button
 								onClick={() =>
 									setActiveTab("costComparison")
 								}
@@ -355,7 +354,7 @@ export default function EntityGraphs() {
 								}`}
 							>
 								Cost Comparison
-							</button>
+							</button> */}
 							<button
 								onClick={() =>
 									setActiveTab("revenueOvertime")
