@@ -13,7 +13,6 @@ import LoadingPage from './LoadingPage';
 import { useLoadingMessage } from "@/app/context/LoadingMessageContext";
 import { handleSignOut } from '@/lib/cognitoActions';
 
-
 export default function NavigationBar() {
   const router = useRouter();
   const pathname = usePathname(); // Get the current path
@@ -73,7 +72,10 @@ export default function NavigationBar() {
               <button
                 key={item.name}
                 onClick={() => navigateWithLoading(item.href, item.message)}
-                className="px-3 py-2 rounded-md text-sm font-medium  hover:text-white hover:bg-black transition-all duration-200 ease-in-out hover:scale-105"
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-in-out hover:scale-105 ${pathname === item.href
+                    ? 'bg-black text-white'  // Active style when on the page
+                    : 'text-gray-700 hover:text-white hover:bg-black' // Default style with hover effect
+                  }`}
               >
                 {item.name}
               </button>
@@ -82,13 +84,14 @@ export default function NavigationBar() {
 
           {/* Sign out button for desktop */}
           <div className="hidden sm:flex sm:items-center space-x-2">
-            <Button onClick={() => setIsModalOpen(true)}  variant="outline">Sign Out</Button>
+            <Button onClick={() => setIsModalOpen(true)} variant="outline">Sign Out</Button>
           </div>
           <SignOutModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)} // Close modal on cancel
             onSignOut={handleSignOut} // Handle sign-out logic
-          /> 
+          />
+
           {/* Mobile menu button */}
           <div className=" sm:hidden flex items-center">
             <Sheet>
@@ -107,7 +110,10 @@ export default function NavigationBar() {
                         setIsOpen(false);
                         navigateWithLoading(item.href, item.message);
                       }}
-                      className="px-3 py-2 rounded-md text-[0.8rem] text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 ease-in-out hover:scale-105"
+                      className={`px-3 py-2 rounded-md text-[0.8rem] text-base font-medium transition-all duration-200 ease-in-out hover:scale-105 ${pathname === item.href
+                          ? 'bg-black text-white'  // Active style when on the page
+                          : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' // Default style with hover effect
+                        }`}
                     >
                       {item.name}
                     </button>
