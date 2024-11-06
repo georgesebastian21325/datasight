@@ -10,14 +10,18 @@ import SignOutModal from "../modal/SignOutModal";
 import { handleSignOut } from "@/lib/cognitoActions";
 import { Button } from "@/vcomponents/recommendations-components/button"; 
 
+import NavigationBarComponent from "@/vcomponents/NavigationBar";
+
 
 export default function NavigationBar() {
-    const [isModalOpen, setIsModalOpen] = useState(false); // Manage modal visibility state
-
-
     return (
-        <div className="mx-[8.5rem] mt-10">
-            <nav className="flex justify-between items-center mb-8">
+            <NavigationBarComponent />
+
+    )
+}
+
+
+{  /*          <nav className="flex justify-between items-center mb-8">
                 <div className="flex items-center gap-2">
                     <Header />
                 </div>
@@ -27,7 +31,4 @@ export default function NavigationBar() {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)} // Close modal on cancel
                 onSignOut={handleSignOut} // Handle sign-out logic
-            />
-        </div>
-    )
-}
+    /> */}

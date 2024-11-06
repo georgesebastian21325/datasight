@@ -1,4 +1,4 @@
-import RecommendationsPage from '../../vcomponents/recommendations-layout'
+import RecommendationsPage from '../../vcomponents/RecommendationsPage'
 
 export default function page() {
     return (

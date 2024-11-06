@@ -1,4 +1,4 @@
-import { Onboarding } from "@/vcomponents/onboarding"
+import { Onboarding } from "@/vcomponents/OnboardingPage"
 
 export default function page() {
     return (

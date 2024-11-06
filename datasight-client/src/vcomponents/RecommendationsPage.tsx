@@ -11,28 +11,12 @@ export default function RecommendationsLayout() {
   return (
     <div className="container mx-auto p-4 md:p-8">
       {/* Navigation */}
-      {/*<nav className="flex justify-between items-center mb-8">
-        <div className="flex items-center gap-2">
-          <img
-            src="/placeholder.svg?height=40&width=40"
-            alt="Info Alchemy logo"
-            className="h-10 w-10"
-          />
-          <span className="font-bold text-xl">INFO ALCHEMY</span>
-        </div>
-        <div className="flex gap-4">
-          <Button variant="ghost">HOME</Button>
-          <Button variant="ghost">SETTINGS</Button>
-        </div>
-        <Button variant="ghost">SIGN OUT</Button>
-  </nav> */}
-
       {/* Main Content */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
         {/* Recommendations Card */}
         <Card className="h-full">
           <CardHeader>
-            <CardTitle>Reccomendations</CardTitle>
+            <CardTitle>Recommendations</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="list-disc pl-5 space-y-2">

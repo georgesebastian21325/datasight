@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 
 import LoadingPage from '../components/global/LoadingPage'
-import HomePage from '../../vcomponents/home-page'
+import HomePage from '../../vcomponents/HomePage'
 
 export default function page() {
 	const [loading, setLoading] = useState(true); 

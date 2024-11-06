@@ -1,4 +1,4 @@
-import LoadingPage from '../../../vcomponents/network-diagram-loading'
+import LoadingPage from '../../../vcomponents/LoadingPage'
 
 export default function page() {
     return (

@@ -8,7 +8,7 @@ import CompanyLogo from '../assets/company-logo.jpg'
 
 import { useLoadingMessage } from '@/app/context/LoadingMessageContext'
 
-export default function NetworkDiagramLoading() {
+export default function LoadingScreen() {
   const [activeConnection, setActiveConnection] = useState(0)
   const [activePath, setActivePath] = useState(0)
   const { message } = useLoadingMessage();

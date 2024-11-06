@@ -8,7 +8,7 @@ import { Progress } from "@/vcomponents/onboarding-components/progress"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/vcomponents/onboarding-components/card"
 import { CheckCircle, ArrowLeft, ArrowRight } from 'lucide-react'
 
-import FileUploadModal from './file-upload-modal'
+import FileUploadModal from './FileUploadModal'
 
 export function Onboarding() {
   const [currentStep, setCurrentStep] = useState(1)

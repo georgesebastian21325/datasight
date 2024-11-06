@@ -28,14 +28,20 @@ export default function HomePage() {
     <div className="min-h-screen bg-cover bg-center">
       <div
         className="absolute inset-0 bg-cover bg-center -z-10 opacity-50"
-        style={{ backgroundImage: `url(${BackgroundImage.src})` }}
       ></div>
       {isLoading ? (
         <LoadingPage /> // Show LoadingPage while loading
       ) : (
         <main className='relative z-10 flex flex-col text-center'>
             <NavigationBar />
-          <section className="py-24">
+        </main>
+      )}
+    </div>
+  );
+}
+
+
+{/* <section className="py-24">
             <div className="container mx-auto px-4">
               <h1 className="text-4xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820]">
                 Welcome to Data Sight
@@ -95,9 +101,4 @@ export default function HomePage() {
                   </div>
               </div>
             </div>
-          </section>
-        </main>
-      )}
-    </div>
-  );
-}
+          </section> */}
