@@ -60,7 +60,7 @@ export default function NavigationBar() {
 
   return (
     <nav className="mt-5 shadow-lg mb-12 rounded-xl lg:mx-[9rem]">
-      <div className="max-w-[91rem] mx-auto px-4 sm:px-6 lg:px-8 ">
+      <div className="max-w-[91rem] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo placeholder */}
           <div className="flex-shrink-0 flex items-center">
@@ -73,7 +73,7 @@ export default function NavigationBar() {
               <button
                 key={item.name}
                 onClick={() => navigateWithLoading(item.href, item.message)}
-                className="px-3 py-2 rounded-md text-sm font-medium  hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 ease-in-out hover:scale-105"
+                className="px-3 py-2 rounded-md text-sm font-medium  hover:text-white hover:bg-black transition-all duration-200 ease-in-out hover:scale-105"
               >
                 {item.name}
               </button>
@@ -81,7 +81,7 @@ export default function NavigationBar() {
           </div>
 
           {/* Sign out button for desktop */}
-          <div className="hidden sm:flex sm:items-center space-x-2 ">
+          <div className="hidden sm:flex sm:items-center space-x-2">
             <Button onClick={() => setIsModalOpen(true)}  variant="outline">Sign Out</Button>
           </div>
           <SignOutModal
@@ -90,15 +90,15 @@ export default function NavigationBar() {
             onSignOut={handleSignOut} // Handle sign-out logic
           /> 
           {/* Mobile menu button */}
-          <div className="sm:hidden flex items-center">
+          <div className=" sm:hidden flex items-center">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative  focus:outline-none">
+                <Button variant="ghost" size="icon" className="relative text-gray-700 hover:text-gray-900 focus:outline-none">
                   <span className="sr-only">Open main menu</span>
                   <Menu className="h-6 w-6" aria-hidden="true" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[250px] sm:w-[300px]">
+              <SheetContent side="right" className="w-[500px] sm:w-[300px]">
                 <nav className="flex flex-col gap-4 mt-6 items-start">
                   {navItems.map((item) => (
                     <button
@@ -107,12 +107,12 @@ export default function NavigationBar() {
                         setIsOpen(false);
                         navigateWithLoading(item.href, item.message);
                       }}
-                      className="px-3 py-2 rounded-md text-[0.8rem] text-base font-medium text-black hover:text-white hover:bg-black transition-all duration-200 ease-in-out hover:scale-105"
+                      className="px-3 py-2 rounded-md text-[0.8rem] text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 ease-in-out hover:scale-105"
                     >
                       {item.name}
                     </button>
                   ))}
-                  <Button variant="outline" onClick={() => setIsOpen(false)} className="w-full hover:bg-red-500 hover:text-white">
+                  <Button variant="outline" onClick={() => setIsOpen(false)} className=" hover:bg-red-500 hover:text-white">
                     Sign Out
                   </Button>
                   <SignOutModal
