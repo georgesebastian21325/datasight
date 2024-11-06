@@ -89,10 +89,10 @@ export default function ResourceDashboardComponent() {
       <h1 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820]  ">Resource Layer Dashboard</h1>
       
       {/* 1. Key Metrics Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <Card>
+      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+        <Card className='bg-brand-blue text-white'>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Resource Cost</CardTitle>
+            <CardTitle className="text-sm font-medium ">Total Resource Cost</CardTitle>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -103,40 +103,14 @@ export default function ResourceDashboardComponent() {
               strokeWidth="2"
               className="h-4 w-4 text-muted-foreground"
             >
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              <path className='text-white' d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
             </svg>
           </CardHeader>
-          <CardContent>
+          <CardContent className='text-white'>
             <div className="text-2xl font-bold">${resourceData.totalCost.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              +20.1% from last month
-            </p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Resource Utilization</CardTitle>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              className="h-4 w-4 text-muted-foreground"
-            >
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-            </svg>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{resourceData.averageUtilization}%</div>
-            <p className="text-xs text-muted-foreground">
-              +5% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
+        <Card className='bg-black text-white '>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue from Resources</CardTitle>
             <svg
@@ -149,33 +123,18 @@ export default function ResourceDashboardComponent() {
               strokeWidth="2"
               className="h-4 w-4 text-muted-foreground"
             >
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              <path className='text-white' d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
             </svg>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${resourceData.totalRevenue.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              +15% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Obsolescence Alerts</CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{resourceData.obsolescenceAlerts}</div>
-            <p className="text-xs text-muted-foreground">
-              +2 from last month
-            </p>
           </CardContent>
         </Card>
       </div>
 
       {/* 2. Performance and Financial Insights */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <Card>
+        <Card className='bg-gray-50'>
           <CardHeader>
             <CardTitle>Cost by Resource Type</CardTitle>
           </CardHeader>
@@ -194,7 +153,7 @@ export default function ResourceDashboardComponent() {
           </CardContent>
         </Card>
         <div className="grid grid-cols-1 gap-4">
-          <Card>
+          <Card className='bg-brand-blue text-white'>
             <CardHeader>
               <CardTitle>Top 5 Costliest Resources</CardTitle>
             </CardHeader>
@@ -209,7 +168,7 @@ export default function ResourceDashboardComponent() {
               </ul>
             </CardContent>
           </Card>
-          <Card>
+          <Card className='bg-black text-white'>
             <CardHeader>
               <CardTitle>Top 5 Revenue-Generating Resources</CardTitle>
             </CardHeader>
@@ -229,7 +188,7 @@ export default function ResourceDashboardComponent() {
 
       {/* 3. Capacity and Utilization Insights */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <Card>
+        <Card className='bg-gray-50'>
           <CardHeader>
             <CardTitle>Average Utilization by Resource Type</CardTitle>
           </CardHeader>
@@ -248,7 +207,7 @@ export default function ResourceDashboardComponent() {
           </CardContent>
         </Card>
         <div className="grid grid-cols-1 gap-4">
-          <Card>
+          <Card className='bg-brand-blue text-white'>
             <CardHeader>
               <CardTitle>Highest Utilized Resources</CardTitle>
             </CardHeader>
@@ -264,7 +223,7 @@ export default function ResourceDashboardComponent() {
             </CardContent>
           
           </Card>
-          <Card>
+          <Card className='bg-black text-white'>
             <CardHeader>
               <CardTitle>Lowest Utilized Resources</CardTitle>
             </CardHeader>
