@@ -59,8 +59,8 @@ export default function NavigationBar() {
   }
 
   return (
-    <nav className="bg-white shadow-md mb-12">
-      <div className="max-w-[91rem] mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="mt-5 shadow-lg mb-12 rounded-xl lg:mx-[9rem]">
+      <div className="max-w-[91rem] mx-auto px-4 sm:px-6 lg:px-8 ">
         <div className="flex justify-between items-center h-16">
           {/* Logo placeholder */}
           <div className="flex-shrink-0 flex items-center">
@@ -73,7 +73,7 @@ export default function NavigationBar() {
               <button
                 key={item.name}
                 onClick={() => navigateWithLoading(item.href, item.message)}
-                className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 ease-in-out hover:scale-105"
+                className="px-3 py-2 rounded-md text-sm font-medium  hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 ease-in-out hover:scale-105"
               >
                 {item.name}
               </button>
@@ -81,7 +81,7 @@ export default function NavigationBar() {
           </div>
 
           {/* Sign out button for desktop */}
-          <div className="hidden sm:flex sm:items-center space-x-2">
+          <div className="hidden sm:flex sm:items-center space-x-2 ">
             <Button onClick={() => setIsModalOpen(true)}  variant="outline">Sign Out</Button>
           </div>
           <SignOutModal
@@ -93,7 +93,7 @@ export default function NavigationBar() {
           <div className="sm:hidden flex items-center">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative text-gray-700 hover:text-gray-900 focus:outline-none">
+                <Button variant="ghost" size="icon" className="relative  focus:outline-none">
                   <span className="sr-only">Open main menu</span>
                   <Menu className="h-6 w-6" aria-hidden="true" />
                 </Button>
@@ -107,7 +107,7 @@ export default function NavigationBar() {
                         setIsOpen(false);
                         navigateWithLoading(item.href, item.message);
                       }}
-                      className="px-3 py-2 rounded-md text-[0.8rem] text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 ease-in-out hover:scale-105"
+                      className="px-3 py-2 rounded-md text-[0.8rem] text-base font-medium text-black hover:text-white hover:bg-black transition-all duration-200 ease-in-out hover:scale-105"
                     >
                       {item.name}
                     </button>
