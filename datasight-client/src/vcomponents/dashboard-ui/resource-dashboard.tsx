@@ -1,10 +1,13 @@
 "use client"
 
 import React from 'react'
+import { useState, useEffect } from 'react'
 import { Bar, BarChart, Scatter, ScatterChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/vcomponents/dashboard-ui/resource-components/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart"
 import { AlertCircle, ArrowDown, ArrowUp } from "lucide-react"
+
+import LoadingPage from '../LoadingPage'
 
 // Mock data - replace with your actual data
 const resourceData = {
@@ -84,6 +87,11 @@ const resourceData = {
 }
 
 export default function ResourceDashboardComponent() {
+  const [isLoading, setIsLoading] = useState(true);
+
+
+
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820]  ">Resource Layer Dashboard</h1>

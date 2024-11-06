@@ -1,12 +1,11 @@
 'use client'
 
-import { AlertCircle, DollarSign, Percent } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/vcomponents/dashboard-ui/product-components/card'
-import { Alert, AlertDescription, AlertTitle } from '@/vcomponents/dashboard-ui/product-components/alert'
-import { Progress } from '@/vcomponents/dashboard-ui/product-components/progress'
+import { DollarSign } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/vcomponents/dashboard-ui/product-components/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/vcomponents/dashboard-ui/product-components/table'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/vcomponents/dashboard-ui/product-components/chart'
-import { Bar, BarChart, Line, LineChart, ResponsiveContainer, Scatter, ScatterChart, XAxis, YAxis } from 'recharts'
+import { Bar, BarChart, ResponsiveContainer, Scatter, ScatterChart, XAxis, YAxis } from 'recharts'
+
 
 // Mock data (replace with actual data fetching logic)
 const mockData = {
@@ -98,13 +97,14 @@ const mockData = {
 }
 
 export default function ProductLayerDashboard() {
+
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="mb-4 text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820] ">Product Layer Dashboard</h1>
 
       <section className="mb-8">
-        <h2 className="mb-4 text-2xl font-semibold">Key Product Metrics Overview</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Product Cost</CardTitle>
@@ -123,30 +123,10 @@ export default function ProductLayerDashboard() {
               <div className="text-2xl font-bold">${mockData.totalProductRevenue.toLocaleString()}</div>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Average Product Utilization</CardTitle>
-              <Percent className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{mockData.averageProductUtilization}%</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">High-Cost Products Alert</CardTitle>
-              <AlertCircle className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{mockData.highCostProductsCount}</div>
-              <p className="text-xs text-muted-foreground">Products need cost control measures</p>
-            </CardContent>
-          </Card>
         </div>
       </section>
 
       <section className="mb-8">
-        <h2 className="mb-4 text-2xl font-semibold">Financial Performance</h2>
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
             <CardHeader>
@@ -167,7 +147,7 @@ export default function ProductLayerDashboard() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Top 5 Costliest Products</CardTitle>
+              <CardTitle>Cost Per Products</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
@@ -190,7 +170,7 @@ export default function ProductLayerDashboard() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Top Revenue-Generating Products</CardTitle>
+              <CardTitle>Revenue Per Product</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
@@ -224,205 +204,6 @@ export default function ProductLayerDashboard() {
                     <Scatter data={mockData.revenueVsCost} fill="var(--chart-1)" />
                     <ChartTooltip content={<ChartTooltipContent />} />
                   </ScatterChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      <section className="mb-8">
-        <h2 className="mb-4 text-2xl font-semibold">Product Utilization Insights</h2>
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Product Utilization by Category</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={{}} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={mockData.productUtilizationByCategory}>
-                    <XAxis dataKey="category" />
-                    <YAxis />
-                    <Bar dataKey="utilization" fill="var(--chart-1)" />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Underutilized Products</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    
-                    <TableHead>Product</TableHead>
-                    <TableHead>Utilization</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockData.underutilizedProducts.map((product, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{product.name}</TableCell>
-                      <TableCell>{product.utilization}%</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-          <Card className="md:col-span-2">
-            <CardHeader>
-              <CardTitle>Product Utilization Trends</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={{}} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={mockData.utilizationTrends}>
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Line type="monotone" dataKey="Product A" stroke="var(--chart-1)" />
-                    <Line type="monotone" dataKey="Product B" stroke="var(--chart-2)" />
-                    <Line type="monotone" dataKey="Product C" stroke="var(--chart-3)" />
-                    <Line type="monotone" dataKey="Product D" stroke="var(--chart-4)" />
-                    <Line type="monotone" dataKey="Product E" stroke="var(--chart-5)" />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      <section className="mb-8">
-        <h2 className="mb-4 text-2xl font-semibold">Cost and Revenue Attribution by Service</h2>
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Service-Attributed Cost per Product</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={{}} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={mockData.serviceAttributedCost}>
-                    <XAxis dataKey="product" />
-                    <YAxis />
-                    <Bar dataKey="Service A" stackId="a" fill="var(--chart-1)" />
-                    <Bar dataKey="Service B" stackId="a" fill="var(--chart-2)" />
-                    <Bar dataKey="Service C" stackId="a" fill="var(--chart-3)" />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Service-Attributed Revenue per Product</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={{}} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={mockData.serviceAttributedRevenue}>
-                    <XAxis dataKey="product" />
-                    <YAxis />
-                    <Bar dataKey="Service X" stackId="a" fill="var(--chart-1)" />
-                    <Bar dataKey="Service Y" stackId="a" fill="var(--chart-2)" />
-                    <Bar dataKey="Service Z" stackId="a" fill="var(--chart-3)" />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-          <Card className="md:col-span-2">
-            <CardHeader>
-              <CardTitle>Top 5 Costly Service-Product Connections</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Product</TableHead>
-                    <TableHead>Service</TableHead>
-                    <TableHead>Cost</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockData.costlyServiceConnections.map((connection, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{connection.product}</TableCell>
-                      <TableCell>{connection.service}</TableCell>
-                      <TableCell>${connection.cost.toLocaleString()}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      <section className="mb-8">
-        <h2 className="mb-4 text-2xl font-semibold">Risk and Obsolescence Analysis</h2>
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Product Cost at Risk</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Total Cost at Risk</p>
-                  <p className="text-2xl font-bold">${mockData.productCostAtRisk.toLocaleString()}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-medium text-muted-foreground">Risk Level</p>
-                  <p className="text-2xl font-bold text-yellow-500">Medium</p>
-                </div>
-              </div>
-              <Progress className="mt-4" value={(mockData.productCostAtRisk / mockData.totalProductCost) * 100} />
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Revenue Stability for Products</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={{}} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={mockData.revenueStability}>
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Line type="monotone" dataKey="Product A" stroke="var(--chart-1)" />
-                    <Line type="monotone" dataKey="Product B" stroke="var(--chart-2)" />
-                    <Line type="monotone" dataKey="Product C" stroke="var(--chart-3)" />
-                    <Line type="monotone" dataKey="Product D" stroke="var(--chart-4)" />
-                    <Line type="monotone" dataKey="Product E" stroke="var(--chart-5)" />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-          <Card className="md:col-span-2">
-            <CardHeader>
-              <CardTitle>Obsolescence Impact on Products</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={{}} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={mockData.obsolescenceImpact}>
-                    <XAxis dataKey="product" />
-                    <YAxis />
-                    <Bar dataKey="count" fill="var(--chart-1)" />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </BarChart>
                 </ResponsiveContainer>
               </ChartContainer>
             </CardContent>

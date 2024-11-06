@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, ResponsiveContainer, Scatter, ScatterChart, XAxis, YAxis } from 'recharts'
 import { AlertCircle, ArrowDown, ArrowUp, DollarSign, Percent } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/vcomponents/dashboard-ui/offering-components/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/vcomponents/dashboard-ui/offering-components/table'
 import { Alert, AlertDescription, AlertTitle } from '@/vcomponents/dashboard-ui/offering-components/alert'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/vcomponents/dashboard-ui/offering-components/chart'
+
 
 // Mock data - replace with actual data fetching logic
 const mockData = {
@@ -84,6 +85,7 @@ const mockData = {
 
 export default function OfferingDashboardComponent() {
   const [selectedOffering, setSelectedOffering] = useState('Offering 1')
+
 
   return (
     <div className="container mx-auto p-4 space-y-6">

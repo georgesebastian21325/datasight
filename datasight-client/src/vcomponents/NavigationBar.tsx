@@ -1,30 +1,46 @@
-'use client'
+'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { Menu } from 'lucide-react';
 import { Button } from "@/vcomponents/navigation-bar-components/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/vcomponents/navigation-bar-components/sheet";
+
 import Header from '@/app/components/global/header';
-import { useRouter } from 'next/navigation';
-import LoadingPage from '../app/components/global/LoadingPage';
+import SignOutModal from '@/app/components/modal/SignOutModal';
+import LoadingPage from './LoadingPage';
+
 import { useLoadingMessage } from "@/app/context/LoadingMessageContext";
+import { handleSignOut } from '@/lib/cognitoActions';
 
 export default function NavigationBar() {
-
   const router = useRouter();
+  const pathname = usePathname(); // Get the current path
   const [isLoading, setIsLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false); // Ensure this line is present
+  const [isOpen, setIsOpen] = useState(false);
   const { setMessage } = useLoadingMessage();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const navItems = [
     { name: 'Resources', href: '/dashboard/resources', message: 'Loading Resource Dashboard...' },
     { name: 'Services', href: '/dashboard/services', message: 'Loading Service Dashboard...' },
-    { name: 'Product', href: '/dashboard/products', message: 'Loading Product Dashboard...' },
-    { name: 'Offering', href: '/dashboard/offerings', message: 'Loading Offering Dashboard...' },
+    { name: 'Products', href: '/dashboard/products', message: 'Loading Product Dashboard...' },
+    { name: 'Offerings', href: '/dashboard/offerings', message: 'Loading Offering Dashboard...' },
     { name: 'Enterprise Architecture', href: '/enterprise-architecture', message: 'Loading Enterprise Architecture...' },
   ];
+
+  // Redirect to resource dashboard as the default page
+  useEffect(() => {
+    if (pathname === '/') {
+      setMessage('Loading Resource Dashboard...');
+      setIsLoading(true);
+      setTimeout(() => {
+        router.push('/dashboard/resources');
+        setIsLoading(false);
+      }, 3000); // Delay for loading page visibility
+    }
+  }, [pathname, router, setMessage]);
 
   // Navigation function with loading and custom message
   const navigateWithLoading = (path: string, message: string) => {
@@ -33,12 +49,17 @@ export default function NavigationBar() {
     setTimeout(() => {
       router.push(path);
       setIsLoading(false);
-    }, 1500); // Optional delay for loading page visibility
+    }, 10000); // Delay for loading page visibility
   };
 
+  // If loading, show the loading page instead of the navigation bar
+  if (isLoading) {
+    return <LoadingPage />;
+  }
+
   return (
-    <nav className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="mt-5 shadow-lg mb-12 rounded-xl lg:mx-[9rem]">
+      <div className="max-w-[91rem] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo placeholder */}
           <div className="flex-shrink-0 flex items-center">
@@ -51,32 +72,37 @@ export default function NavigationBar() {
               <button
                 key={item.name}
                 onClick={() => navigateWithLoading(item.href, item.message)}
-                className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 ease-in-out hover:scale-105"
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-in-out hover:scale-105 ${pathname === item.href
+                    ? 'bg-black text-white'  // Active style when on the page
+                    : 'text-gray-700 hover:text-white hover:bg-black' // Default style with hover effect
+                  }`}
               >
                 {item.name}
               </button>
             ))}
           </div>
 
-          {/* Loading page */}
-          {isLoading && <LoadingPage />}
-
           {/* Sign out button for desktop */}
           <div className="hidden sm:flex sm:items-center space-x-2">
-            <Button variant="outline">Sign Out</Button>
+            <Button onClick={() => setIsModalOpen(true)} variant="outline" className='hover:bg-red-500 hover:text-white'>Sign Out</Button>
           </div>
+          <SignOutModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)} // Close modal on cancel
+            onSignOut={handleSignOut} // Handle sign-out logic
+          />
 
           {/* Mobile menu button */}
-          <div className="sm:hidden flex items-center">
-            <Sheet >
+          <div className=" sm:hidden flex items-center">
+            <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative text-gray-700 hover:text-gray-900 focus:outline-none">
                   <span className="sr-only">Open main menu</span>
                   <Menu className="h-6 w-6" aria-hidden="true" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[250px] sm:w-[300px]">
-                <nav className="flex flex-col gap-4 mt-6 items-start ">
+              <SheetContent side="right" className="w-[500px] sm:w-[300px]">
+                <nav className="flex flex-col gap-4 mt-6 items-start">
                   {navItems.map((item) => (
                     <button
                       key={item.name}
@@ -84,14 +110,22 @@ export default function NavigationBar() {
                         setIsOpen(false);
                         navigateWithLoading(item.href, item.message);
                       }}
-                      className="px-3 py-2 rounded-md text-[0.8rem] text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 ease-in-out hover:scale-105"
+                      className={`px-3 py-2 rounded-md text-[0.8rem] text-base font-medium transition-all duration-200 ease-in-out hover:scale-105 ${pathname === item.href
+                          ? 'bg-black text-white'  // Active style when on the page
+                          : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' // Default style with hover effect
+                        }`}
                     >
                       {item.name}
                     </button>
                   ))}
-                  <Button variant="outline" onClick={() => setIsOpen(false)} className="w-full hover:bg-red-500 hover:text-white">
+                  <Button variant="outline" onClick={() => setIsOpen(false)} className=" hover:bg-red-500 hover:text-white">
                     Sign Out
                   </Button>
+                  <SignOutModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)} // Close modal on cancel
+                    onSignOut={handleSignOut} // Handle sign-out logic
+                  />
                 </nav>
               </SheetContent>
             </Sheet>
