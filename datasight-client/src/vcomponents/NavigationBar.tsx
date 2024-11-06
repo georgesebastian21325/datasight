@@ -1,28 +1,47 @@
-'use client'
+'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { Menu } from 'lucide-react';
 import { Button } from "@/vcomponents/navigation-bar-components/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/vcomponents/navigation-bar-components/sheet";
+
 import Header from '@/app/components/global/header';
-import { useRouter } from 'next/navigation';
-import LoadingPage from '../app/components/global/LoadingPage';
+import SignOutModal from '@/app/components/modal/SignOutModal';
+import LoadingPage from './LoadingPage';
+
 import { useLoadingMessage } from "@/app/context/LoadingMessageContext";
+import { handleSignOut } from '@/lib/cognitoActions';
+
 
 export default function NavigationBar() {
-
   const router = useRouter();
+  const pathname = usePathname(); // Get the current path
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const { setMessage } = useLoadingMessage();
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const navItems = [
     { name: 'Resources', href: '/dashboard/resources', message: 'Loading Resource Dashboard...' },
     { name: 'Services', href: '/dashboard/services', message: 'Loading Service Dashboard...' },
-    { name: 'Product', href: '/dashboard/products', message: 'Loading Product Dashboard...' },
-    { name: 'Offering', href: '/dashboard/offerings', message: 'Loading Offering Dashboard...' },
+    { name: 'Products', href: '/dashboard/products', message: 'Loading Product Dashboard...' },
+    { name: 'Offerings', href: '/dashboard/offerings', message: 'Loading Offering Dashboard...' },
     { name: 'Enterprise Architecture', href: '/enterprise-architecture', message: 'Loading Enterprise Architecture...' },
   ];
+
+  // Redirect to resource dashboard as the default page
+  useEffect(() => {
+    if (pathname === '/') {
+      setMessage('Loading Resource Dashboard...');
+      setIsLoading(true);
+      setTimeout(() => {
+        router.push('/dashboard/resources');
+        setIsLoading(false);
+      }, 3000); // Delay for loading page visibility
+    }
+  }, [pathname, router, setMessage]);
 
   // Navigation function with loading and custom message
   const navigateWithLoading = (path: string, message: string) => {
@@ -31,11 +50,16 @@ export default function NavigationBar() {
     setTimeout(() => {
       router.push(path);
       setIsLoading(false);
-    }, 1500); // Delay for loading page visibility
+    }, 10000); // Delay for loading page visibility
   };
 
+  // If loading, show the loading page instead of the navigation bar
+  if (isLoading) {
+    return <LoadingPage />;
+  }
+
   return (
-    <nav className="bg-white shadow-md">
+    <nav className="bg-white shadow-md mb-12">
       <div className="max-w-[91rem] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo placeholder */}
@@ -58,12 +82,16 @@ export default function NavigationBar() {
 
           {/* Sign out button for desktop */}
           <div className="hidden sm:flex sm:items-center space-x-2">
-            <Button variant="outline">Sign Out</Button>
+            <Button onClick={() => setIsModalOpen(true)}  variant="outline">Sign Out</Button>
           </div>
-
+          <SignOutModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)} // Close modal on cancel
+            onSignOut={handleSignOut} // Handle sign-out logic
+          /> 
           {/* Mobile menu button */}
           <div className="sm:hidden flex items-center">
-            <Sheet >
+            <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative text-gray-700 hover:text-gray-900 focus:outline-none">
                   <span className="sr-only">Open main menu</span>
@@ -71,7 +99,7 @@ export default function NavigationBar() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[250px] sm:w-[300px]">
-                <nav className="flex flex-col gap-4 mt-6 items-start ">
+                <nav className="flex flex-col gap-4 mt-6 items-start">
                   {navItems.map((item) => (
                     <button
                       key={item.name}
@@ -87,6 +115,11 @@ export default function NavigationBar() {
                   <Button variant="outline" onClick={() => setIsOpen(false)} className="w-full hover:bg-red-500 hover:text-white">
                     Sign Out
                   </Button>
+                  <SignOutModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)} // Close modal on cancel
+                    onSignOut={handleSignOut} // Handle sign-out logic
+                  />
                 </nav>
               </SheetContent>
             </Sheet>

@@ -13,7 +13,7 @@ export default function Header() {
 	return (
 		<div>
 			<div className="flex items-center justify-center">
-				<Link href="/home-page" onClick={handleLogoClick}>
+				<Link href="/dashboard/resources" onClick={handleLogoClick}>
 					<Image
 						src={CompanyLogo}
 						alt="company logo"

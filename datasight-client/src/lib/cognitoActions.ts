@@ -77,7 +77,7 @@ export async function handleSignIn(
   prevState: string | undefined,
   formData: FormData
 ) {
-  let redirectLink = "/home-page";
+  let redirectLink = '/dashboard/resources'
   try {
     const { isSignedIn, nextStep } = await signIn({
       username: String(formData.get("email")),
@@ -86,8 +86,8 @@ export async function handleSignIn(
   } catch (error) {
     return getErrorMessage(error);
   }
-
   redirect(redirectLink);
+
 }
 
 export async function handleSignOut() {
@@ -96,6 +96,7 @@ export async function handleSignOut() {
   } catch (error) {
     console.log(getErrorMessage(error));
   }
+
 }
 
 export async function handleResetPassword(

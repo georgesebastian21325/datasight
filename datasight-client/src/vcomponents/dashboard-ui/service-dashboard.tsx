@@ -101,21 +101,7 @@ const mockData = {
 }
 
 export default function ServiceDashboardComponent() {
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // Set a timeout to simulate loading delay
-    const timeout = setTimeout(() => {
-      setIsLoading(false);
-    }, 5000); // Adjust delay as needed
-
-    return () => clearTimeout(timeout); // Cleanup timeout on component unmount
-  }, []);
-
-  // Show loading screen if loading, otherwise show the dashboard content
-  if (isLoading) {
-    return <LoadingPage />;
-  }
 
   return (
     <div className="container mx-auto p-4 space-y-8">
