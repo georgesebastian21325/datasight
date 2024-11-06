@@ -49,21 +49,6 @@ export default function LoadingScreen() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <div className="w-full max-w-3xl mx-auto px-4">
-        <motion.div
-          className="flex justify-center mb-8"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Image
-            src={CompanyLogo}
-            alt="Logo"
-            width={200}
-            height={80}
-            className="h-20 w-auto"
-            priority
-          />
-        </motion.div>
 
         <svg width="400" height="300" viewBox="0 0 400 300" className="mx-auto">
           <defs>

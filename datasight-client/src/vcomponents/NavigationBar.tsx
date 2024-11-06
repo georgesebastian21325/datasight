@@ -1,8 +1,6 @@
 'use client'
 
 import { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
 import { Menu } from 'lucide-react';
 import { Button } from "@/vcomponents/navigation-bar-components/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/vcomponents/navigation-bar-components/sheet";
@@ -15,7 +13,7 @@ export default function NavigationBar() {
 
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false); // Ensure this line is present
+  const [isOpen, setIsOpen] = useState(false);
   const { setMessage } = useLoadingMessage();
 
   const navItems = [
@@ -33,7 +31,7 @@ export default function NavigationBar() {
     setTimeout(() => {
       router.push(path);
       setIsLoading(false);
-    }, 1500); // Optional delay for loading page visibility
+    }, 1500); // Delay for loading page visibility
   };
 
   return (
@@ -57,9 +55,6 @@ export default function NavigationBar() {
               </button>
             ))}
           </div>
-
-          {/* Loading page */}
-          {isLoading && <LoadingPage />}
 
           {/* Sign out button for desktop */}
           <div className="hidden sm:flex sm:items-center space-x-2">
