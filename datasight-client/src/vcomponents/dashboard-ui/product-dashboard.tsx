@@ -1,5 +1,7 @@
 'use client'
 
+import { useState, useEffect } from "react"
+
 import { AlertCircle, DollarSign, Percent } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/vcomponents/dashboard-ui/product-components/card'
 import { Alert, AlertDescription, AlertTitle } from '@/vcomponents/dashboard-ui/product-components/alert'
@@ -7,6 +9,8 @@ import { Progress } from '@/vcomponents/dashboard-ui/product-components/progress
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/vcomponents/dashboard-ui/product-components/table'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/vcomponents/dashboard-ui/product-components/chart'
 import { Bar, BarChart, Line, LineChart, ResponsiveContainer, Scatter, ScatterChart, XAxis, YAxis } from 'recharts'
+
+import LoadingPage from "../LoadingPage"
 
 // Mock data (replace with actual data fetching logic)
 const mockData = {
@@ -98,6 +102,23 @@ const mockData = {
 }
 
 export default function ProductLayerDashboard() {
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Set a timeout to simulate loading delay
+    const timeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 5000); // Adjust delay as needed
+
+    return () => clearTimeout(timeout); // Cleanup timeout on component unmount
+  }, []);
+
+  // Show loading screen if loading, otherwise show the dashboard content
+  if (isLoading) {
+    return <LoadingPage />;
+  }
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="mb-4 text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820] ">Product Layer Dashboard</h1>
