@@ -195,7 +195,7 @@ export const YearlyStackedUsageCharts: React.FC<{
 						>
 							<CartesianGrid strokeDasharray="3 3" />
 							<XAxis dataKey="year" />
-							<YAxis />
+							<YAxis domain={[0, 100]} />
 							<Tooltip />
 							<Legend />
 							{dailyData[0] &&

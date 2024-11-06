@@ -153,7 +153,7 @@ export function WeeklyUsageChart({
 						<LineChart data={records}>
 							<CartesianGrid strokeDasharray="3 3" />
 							<XAxis dataKey="week" />
-							<YAxis />
+							<YAxis domain={[0, 100]} />
 							<Tooltip />
 							<Legend />
 							<Line
