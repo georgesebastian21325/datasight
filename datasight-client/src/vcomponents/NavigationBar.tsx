@@ -84,7 +84,7 @@ export default function NavigationBar() {
 
           {/* Sign out button for desktop */}
           <div className="hidden sm:flex sm:items-center space-x-2">
-            <Button onClick={() => setIsModalOpen(true)} variant="outline">Sign Out</Button>
+            <Button onClick={() => setIsModalOpen(true)} variant="outline" className='hover:bg-red-500 hover:text-white'>Sign Out</Button>
           </div>
           <SignOutModal
             isOpen={isModalOpen}
