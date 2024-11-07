@@ -1,11 +1,15 @@
 'use client'
 
+import { useState, useEffect } from "react"
+
 import { Alert, AlertDescription, AlertTitle } from "@/vcomponents/dashboard-ui/service-components/alert"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/vcomponents/dashboard-ui/service-components/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/vcomponents/dashboard-ui/service-components/table"
 import { Bar, BarChart, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/service-components/chart"
 import { AlertCircle, TrendingDown, TrendingUp } from "lucide-react"
+
+import LoadingPage from "../LoadingPage"
 
 // Mock data (same as before)
 const mockData = {
@@ -97,6 +101,8 @@ const mockData = {
 }
 
 export default function ServiceDashboardComponent() {
+
+
   return (
     <div className="container mx-auto p-4 space-y-8">
       <h1 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820] ">Service Layer Dashboard</h1>
