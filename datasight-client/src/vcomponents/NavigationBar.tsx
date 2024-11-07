@@ -118,7 +118,7 @@ export default function NavigationBar() {
                       {item.name}
                     </button>
                   ))}
-                  <Button variant="outline" onClick={() => setIsOpen(false)} className=" hover:bg-red-500 hover:text-white">
+                  <Button  onClick={() => setIsOpen(false)} className=" hover:bg-red-500 hover:text-white">
                     Sign Out
                   </Button>
                   <SignOutModal

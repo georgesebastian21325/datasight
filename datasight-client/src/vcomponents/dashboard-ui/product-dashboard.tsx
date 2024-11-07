@@ -193,7 +193,7 @@ export default function ProductLayerDashboard() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Revenue vs. Cost Comparison per Product</CardTitle>
+              <CardTitle> Product Revenue Contribution to Total Revenue </CardTitle>
             </CardHeader>
             <CardContent>
               <ChartContainer config={{}} className="h-[300px]">
