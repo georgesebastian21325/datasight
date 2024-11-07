@@ -1,15 +1,13 @@
 "use client"
 
-import React from 'react'
 import { useState, useEffect } from 'react'
-import { Bar, BarChart, Scatter, ScatterChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/vcomponents/dashboard-ui/resource-components/card"
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
+import { Card, CardContent, CardHeader, CardTitle } from "@/vcomponents/dashboard-ui/resource-components/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart"
-import { AlertCircle, ArrowDown, ArrowUp } from "lucide-react"
 
-import LoadingPage from '../LoadingPage'
+import { fetchTotalResourceCost, fetchTotalResourceRevenue, formatCustom } from './resource-functions'
 
-// Mock data - replace with your actual data
+
 const resourceData = {
   totalCost: 5000000,
   averageUtilization: 75,
@@ -86,16 +84,38 @@ const resourceData = {
   ],
 }
 
+
 export default function ResourceDashboardComponent() {
   const [isLoading, setIsLoading] = useState(true);
 
+  const [totalResourceCost, setTotalResourceCost] = useState<string | null>(null)
+  const [totalResourceRevenue, setTotalResourceRevenue] = useState<string | null>(null)
 
+  useEffect(() => {
+    async function fetchData() {
+      const cost = await fetchTotalResourceCost();
+      if (cost !== null) {
+        setTotalResourceCost(formatCustom(cost));
+      }
+    }
+    
+    fetchData();
+  }, []);
 
+  useEffect(() => {
+    async function fetchData() {
+        const revenue = await fetchTotalResourceRevenue();
+        if (revenue !== null) {
+            setTotalResourceRevenue(formatCustom(revenue));
+        }
+    }
+
+    fetchData();
+  }, [])
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820]  ">Resource Layer Dashboard</h1>
-      
       {/* 1. Key Metrics Overview */}
       <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
         <Card className='bg-brand-blue text-white'>
@@ -115,7 +135,7 @@ export default function ResourceDashboardComponent() {
             </svg>
           </CardHeader>
           <CardContent className='text-white'>
-            <div className="text-2xl font-bold">${resourceData.totalCost.toLocaleString()}</div>
+            <div className="text-2xl font-bold">$ {totalResourceCost}</div>
           </CardContent>
         </Card>
         <Card className='bg-black text-white '>
@@ -135,7 +155,7 @@ export default function ResourceDashboardComponent() {
             </svg>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${resourceData.totalRevenue.toLocaleString()}</div>
+            <div className="text-2xl font-bold">$ {totalResourceRevenue}</div>
           </CardContent>
         </Card>
       </div>
@@ -251,3 +271,4 @@ export default function ResourceDashboardComponent() {
     </div>
   )
 }
+
