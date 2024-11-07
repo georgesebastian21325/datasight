@@ -355,7 +355,7 @@ export default function EntityGraphs() {
 							>
 								Cost Comparison
 							</button> */}
-							<button
+							{/* <button
 								onClick={() =>
 									setActiveTab("revenueOvertime")
 								}
@@ -366,7 +366,7 @@ export default function EntityGraphs() {
 								}`}
 							>
 								Revenue Trend
-							</button>
+							</button> */}
 						</div>
 						<div className="chart-container">
 							{renderChart()}
