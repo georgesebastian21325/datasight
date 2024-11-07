@@ -193,4 +193,5 @@ export default function NavigationBar() {
 			</div>
 		</nav>
 	);
+
 }
