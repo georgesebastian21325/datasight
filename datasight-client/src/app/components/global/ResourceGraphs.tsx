@@ -52,7 +52,13 @@ export function ResourceGraphs({
 									<LineChart data={records}>
 										<CartesianGrid strokeDasharray="3 3" />
 										<XAxis dataKey="week" />
-										<YAxis />
+										<YAxis
+											domain={
+												metricType.includes("_ms")
+													? [0, 150]
+													: [0, 100]
+											}
+										/>
 										<Tooltip />
 										<Legend />
 										<Line

@@ -153,7 +153,7 @@ export function WeeklyUsageChart({
 						<LineChart data={records}>
 							<CartesianGrid strokeDasharray="3 3" />
 							<XAxis dataKey="week" />
-							<YAxis />
+							<YAxis domain={[0, 100]} />
 							<Tooltip />
 							<Legend />
 							<Line
@@ -208,42 +208,6 @@ export function WeeklyCostChart({
 	);
 }
 
-export function UsageVsCostScatterPlot({
-	data,
-}: UsageVsCostScatterPlotProps) {
-	return (
-		<div>
-			<h3 className="font-bold">
-				Usage vs Cost Scatter Plot
-			</h3>
-			<ResponsiveContainer
-				width="100%"
-				height={400}
-			>
-				<ScatterChart>
-					<CartesianGrid strokeDasharray="3 3" />
-					<XAxis
-						dataKey="avg_usage"
-						name="Usage"
-						unit="%"
-					/>
-					<YAxis
-						dataKey="avg_cost"
-						name="Cost"
-						unit="$"
-					/>
-					<Tooltip cursor={{ strokeDasharray: "3 3" }} />
-					<Scatter
-						name="Usage vs Cost"
-						data={data}
-						fill="#8884d8"
-					/>
-				</ScatterChart>
-			</ResponsiveContainer>
-		</div>
-	);
-}
-
 export function ResourceTypeCostBarChart({
 	data,
 }: ResourceTypeCostBarChartProps) {
@@ -262,7 +226,7 @@ export function ResourceTypeCostBarChart({
 					<YAxis />
 					<Tooltip />
 					<Bar
-						dataKey="avg_cost"
+						dataKey="avg_usage"
 						fill="#82ca9d"
 					/>
 				</BarChart>
