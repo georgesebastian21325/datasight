@@ -5,7 +5,7 @@ import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 
 import { Card, CardContent, CardHeader, CardTitle } from "@/vcomponents/dashboard-ui/resource-components/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart"
 
-import { fetchTotalResourceCost, fetchTotalResourceRevenue, formatCustom } from './resource-functions'
+import { fetchTotalResourceCost, fetchTotalResourceRevenue, formatCustom } from '../../app/server/resource-functions'
 
 
 const resourceData = {

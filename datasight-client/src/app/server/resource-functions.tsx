@@ -1,10 +1,4 @@
 
-interface ResourceTotalCost {
-    total_resource_cost: string;
-
-}
-
-
 async function fetchTotalResourceCost() {
     try {
         const response = await fetch('https://81lsv00jqf.execute-api.ap-southeast-2.amazonaws.com/development/getTotalResourceCost');
@@ -39,6 +33,8 @@ async function fetchTotalResourceRevenue() {
         return null;
     }
 }
+
+
 
 
 
