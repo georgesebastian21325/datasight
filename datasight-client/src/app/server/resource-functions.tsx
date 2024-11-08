@@ -1,4 +1,6 @@
 
+// Total Resource Cost
+
 async function fetchTotalResourceCost() {
     try {
         const response = await fetch('https://81lsv00jqf.execute-api.ap-southeast-2.amazonaws.com/development/getTotalResourceCost');
@@ -16,6 +18,8 @@ async function fetchTotalResourceCost() {
         return null;
     }
 }
+
+// Total Resource Revenue
 
 async function fetchTotalResourceRevenue() {
     try {
@@ -35,6 +39,36 @@ async function fetchTotalResourceRevenue() {
 }
 
 
+// Cost By Resource Type
+
+async function fetchCostByResourceType() {
+    type ResourceCostItem = {
+        resource_id: string;
+        resource_type: string;
+        total_resource_cost: string;
+    };
+
+    try {
+        const response = await fetch('https://81lsv00jqf.execute-api.ap-southeast-2.amazonaws.com/development/getCostByResourceType');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        // Convert `total_resource_cost` to a number for each item
+        const formattedData = bodyData.map((item: ResourceCostItem )=> ({
+            ...item,
+            total_resource_cost: parseFloat(item.total_resource_cost)
+        }));
+
+        return formattedData;
+
+    } catch (error) {
+        console.error('Fetch Error:', error);
+        return null;
+    }
+}
+
 
 
 
@@ -45,5 +79,6 @@ function formatCustom(number: number): string {
 export {
     fetchTotalResourceCost,
     fetchTotalResourceRevenue,
+    fetchCostByResourceType,
     formatCustom
 }

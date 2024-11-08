@@ -1,25 +1,15 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie } from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle } from "@/vcomponents/dashboard-ui/resource-components/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart"
 
-import { fetchTotalResourceCost, fetchTotalResourceRevenue, formatCustom } from '../../app/server/resource-functions'
+import { fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType, formatCustom } from '../../app/server/resource-functions'
+import CustomPieChart from './resource-components/CustomPieChart'
 
 
 const resourceData = {
-  totalCost: 5000000,
-  averageUtilization: 75,
-  totalRevenue: 7500000,
-  obsolescenceAlerts: 12,
-  costByType: [
-    { resource_type: 'Computers', total_resource_cost: 500000 },
-    { resource_type: 'Servers', total_resource_cost: 1000000 },
-    { resource_type: 'Network Equipment', total_resource_cost: 750000 },
-    { resource_type: 'Storage Devices', total_resource_cost: 300000 },
-    { resource_type: 'Cloud Infrastructure', total_resource_cost: 1200000 },
-  ],
   topCostliestResources: [
     { resource_id: 'SRV001', total_resource_cost: 150000, resource_type: 'Servers' },
     { resource_id: 'CLD002', total_resource_cost: 140000, resource_type: 'Cloud Infrastructure' },
@@ -84,34 +74,40 @@ const resourceData = {
   ],
 }
 
+type ResourceCostItem = {
+  resource_id: string;
+  resource_type: string;
+  total_resource_cost: string;
+};
+
 
 export default function ResourceDashboardComponent() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [totalResourceCost, setTotalResourceCost] = useState<string | null>(null)
   const [totalResourceRevenue, setTotalResourceRevenue] = useState<string | null>(null)
+  const [costByResourceType, setCostByResourceType] = useState<ResourceCostItem[]>([]);
 
   useEffect(() => {
     async function fetchData() {
       const cost = await fetchTotalResourceCost();
+      const revenue = await fetchTotalResourceRevenue();
+      const costByResourceType = await fetchCostByResourceType();
+
       if (cost !== null) {
         setTotalResourceCost(formatCustom(cost));
       }
+
+      if (revenue !== null) {
+        setTotalResourceRevenue(formatCustom(revenue));
+      }
+      setCostByResourceType(costByResourceType); // Store in state
+
     }
-    
+
     fetchData();
   }, []);
 
-  useEffect(() => {
-    async function fetchData() {
-        const revenue = await fetchTotalResourceRevenue();
-        if (revenue !== null) {
-            setTotalResourceRevenue(formatCustom(revenue));
-        }
-    }
-
-    fetchData();
-  }, [])
 
   return (
     <div className="container mx-auto p-4">
@@ -167,17 +163,7 @@ export default function ResourceDashboardComponent() {
             <CardTitle>Cost by Resource Type</CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={resourceData.costByType} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis dataKey="resource_type" type="category" />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="total_resource_cost" fill="var(--color-cost)" />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+              <CustomPieChart data={costByResourceType} />
           </CardContent>
         </Card>
         <div className="grid grid-cols-1 gap-4">
