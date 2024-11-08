@@ -9,7 +9,7 @@ const RESOURCE_COLORS = {
     "Computer": "#556B2F",
     "Network Equipment": "#4682B4",
     "Server": "#6A5ACD",
-    "Storage Device": "#2F4F4F",
+    "Storage Devices": "#2F4F4F",
     "Virtual Infrastructure": "#8B008B"
 };
 

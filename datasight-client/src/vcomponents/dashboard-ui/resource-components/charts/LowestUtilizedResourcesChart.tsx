@@ -3,13 +3,13 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, Re
 import { ChartContainer, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart";
 
 const RESOURCE_COLORS = {
-    "Backup and Recovery System": "#4B0082",
+    "Backup and Recovery Systems": "#4B0082",
     "Cloud Infrastructure": "#2E8B57",
     "Communication Infrastructure": "#B8860B",
     "Computer": "#556B2F",
     "Network Equipment": "#4682B4",
     "Server": "#6A5ACD",
-    "Storage Device": "#2F4F4F",
+    "Storage Devices": "#2F4F4F",
     "Virtual Infrastructure": "#8B008B"
 };
 
@@ -39,17 +39,18 @@ function HighestUtilizedResourcesChart({ data }) {
                         width={200} // Increase width for longer labels
                     />
                     <ChartTooltip
-                        formatter={(value, name, props) => [
-                            `${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                        ]}
+                        formatter={(value) => `${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %`}
                     />
                     <Legend verticalAlign="top" />
                     <Bar
                         dataKey="average_usage_percentage"
                         barSize={15}
                     >
-                        {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={RESOURCE_COLORS[entry.resource_type]} />
+                        {formattedData.map((entry, index) => (
+                            <Cell
+                                key={`cell-${index}`}
+                                fill={RESOURCE_COLORS[entry.resource_type] || "#8884d8"} // Use a default color if undefined
+                            />
                         ))}
                     </Bar>
                 </BarChart>

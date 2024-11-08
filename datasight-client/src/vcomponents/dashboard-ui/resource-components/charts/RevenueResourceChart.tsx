@@ -4,7 +4,7 @@ import { ChartContainer, ChartTooltipContent } from "@/vcomponents/dashboard-ui/
 
 // Define mapping for resource types and their colors based on prefixes
 const RESOURCE_MAPPING = {
-    "BRS": { type: "Backup and Recovery System", color: "#4B0082" },     // Purple
+    "BRS": { type: "Backup and Recovery Systems", color: "#4B0082" },     // Purple
     "CI": { type: "Cloud Infrastructure", color: "#2E8B57" },            // Green
     "INFRA": { type: "Communication Infrastructure", color: "#B8860B" }, // Gold
     "C": { type: "Computer", color: "#556B2F" },                         // Dark Olive Green
