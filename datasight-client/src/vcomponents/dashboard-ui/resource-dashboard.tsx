@@ -5,18 +5,12 @@ import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieCha
 import { Card, CardContent, CardHeader, CardTitle } from "@/vcomponents/dashboard-ui/resource-components/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart"
 
-import { fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType, formatCustom } from '../../app/server/resource-functions'
-import CustomPieChart from './resource-components/CustomPieChart'
+import { fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType, fetchTopCostliestResources, formatCustom } from '../../app/server/resource-functions'
+import CostByResourceTypeChart from './resource-components/charts/CostByResourceTypeChart'
+import CostliestResourceChart from './resource-components/charts/CostliestResourceChart'
 
 
 const resourceData = {
-  topCostliestResources: [
-    { resource_id: 'SRV001', total_resource_cost: 150000, resource_type: 'Servers' },
-    { resource_id: 'CLD002', total_resource_cost: 140000, resource_type: 'Cloud Infrastructure' },
-    { resource_id: 'NET003', total_resource_cost: 130000, resource_type: 'Network Equipment' },
-    { resource_id: 'SRV004', total_resource_cost: 120000, resource_type: 'Servers' },
-    { resource_id: 'CMP005', total_resource_cost: 110000, resource_type: 'Computers' },
-  ],
   topRevenueResources: [
     { resource_id: 'SRV001', resource_revenue: 300000, resource_type: 'Servers' },
     { resource_id: 'CLD002', resource_revenue: 280000, resource_type: 'Cloud Infrastructure' },
@@ -80,6 +74,12 @@ type ResourceCostItem = {
   total_resource_cost: string;
 };
 
+type CostliestItem = {
+  resource_id: string;
+  resource_type: string;
+  total_resource_cost: string;
+}
+
 
 export default function ResourceDashboardComponent() {
   const [isLoading, setIsLoading] = useState(true);
@@ -87,12 +87,14 @@ export default function ResourceDashboardComponent() {
   const [totalResourceCost, setTotalResourceCost] = useState<string | null>(null)
   const [totalResourceRevenue, setTotalResourceRevenue] = useState<string | null>(null)
   const [costByResourceType, setCostByResourceType] = useState<ResourceCostItem[]>([]);
+  const [costliestResource, setCostliestResource] = useState<CostliestItem[]>([]);
 
   useEffect(() => {
     async function fetchData() {
       const cost = await fetchTotalResourceCost();
       const revenue = await fetchTotalResourceRevenue();
       const costByResourceType = await fetchCostByResourceType();
+      const costliestResource = await fetchTopCostliestResources();
 
       if (cost !== null) {
         setTotalResourceCost(formatCustom(cost));
@@ -103,6 +105,7 @@ export default function ResourceDashboardComponent() {
       }
 
       setCostByResourceType(costByResourceType);
+      setCostliestResource(costliestResource);
 
     }
 
@@ -164,7 +167,7 @@ export default function ResourceDashboardComponent() {
             <CardTitle>Cost by Resource Type</CardTitle>
           </CardHeader>
           <CardContent>
-              <CustomPieChart data={costByResourceType} />
+            <CostByResourceTypeChart data={costByResourceType} />
           </CardContent>
         </Card>
         <div className="grid grid-cols-1 gap-4">
@@ -173,14 +176,7 @@ export default function ResourceDashboardComponent() {
               <CardTitle>Top 5 Costliest Resources</CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-2">
-                {resourceData.topCostliestResources.map((resource, index) => (
-                  <li key={index} className="flex justify-between items-center">
-                    <span>{resource.resource_id} ({resource.resource_type})</span>
-                    <span className="font-semibold">${resource.total_resource_cost.toLocaleString()}</span>
-                  </li>
-                ))}
-              </ul>
+              <CostliestResourceChart data={costliestResource} />
             </CardContent>
           </Card>
           <Card>

@@ -1,8 +1,6 @@
-import { useState, useEffect } from 'react';
+
 import { PieChart, Pie, Tooltip as ChartTooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart";
-
-import { formatCustom } from '@/app/server/resource-functions';
 
 
 const COLORS = [
@@ -13,18 +11,18 @@ const COLORS = [
 
 const renderCustomLabel = ({ name, value }) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-function CustomPieChart({ data }) {
+function CostByResourceTypeChart({ data }) {
     return (
-        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
+        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[410px]">
+            <ResponsiveContainer width="100%" height="200%" >
                 <PieChart>
                     <Pie
                         data={data}
                         dataKey="total_resource_cost"
                         nameKey="resource_type"
-                        cx="60%"
+                        cx="45%"
                         cy="60%"
-                        outerRadius={120}
+                        outerRadius={150}
                         label={renderCustomLabel} // Use custom label function here
                         labelLine={{ stroke: '#8884d8', strokeWidth: 1 }} // Make label lines more visible
                     >
@@ -34,10 +32,9 @@ function CustomPieChart({ data }) {
                     </Pie>
                     <ChartTooltip content={<ChartTooltipContent />} />
                     <Legend verticalAlign="bottom" height={36} wrapperStyle={{
-                        bottom: -80, // Adjusts the distance from the bottom of the container
-                        left: '60%', // Centers horizontally
+                        bottom: -85, // Adjusts the distance from the bottom of the container
+                        left: '45%', // Centers horizontally
                         transform: 'translateX(-50%)', // Centers the legend accurately
-                        marginTop: '20px' // Adds space between the chart and legend
                     }} />
                 </PieChart>
             </ResponsiveContainer>
@@ -45,4 +42,4 @@ function CustomPieChart({ data }) {
     );
 }
 
-export default CustomPieChart;
+export default CostByResourceTypeChart;
