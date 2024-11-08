@@ -110,7 +110,7 @@ export default function ServiceDashboardComponent() {
       {/* 1. Key Service Metrics Overview */}
       <section>
         <h2 className="text-2xl font-semibold mb-4">Key Service Metrics Overview</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
           <Card>
             <CardHeader>
               <CardTitle>Total Service Cost</CardTitle>
@@ -125,28 +125,6 @@ export default function ServiceDashboardComponent() {
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold">${mockData.totalServiceRevenue.toLocaleString()}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Average Service Utilization</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{mockData.averageServiceUtilization}%</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>High-Cost Services</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Warning</AlertTitle>
-                <AlertDescription>
-                  {mockData.highCostServices} services with unusually high costs detected.
-                </AlertDescription>
-              </Alert>
             </CardContent>
           </Card>
         </div>

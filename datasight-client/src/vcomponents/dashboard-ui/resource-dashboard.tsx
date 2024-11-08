@@ -6,16 +6,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/vcomponents/dashboar
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart"
 
 import { fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType, fetchTopCostliestResources, 
-         fetchTopRevenueGeneratingResources, formatCustom, fetchAverageUtilizationResource, fetchHighestUtilizedResources, 
-         fetchLowestUtilizedResources 
-        } from '../../app/server/resource-functions'
+         fetchTopRevenueGeneratingResources, formatCustom, fetchAverageUtilizationResource, 
+         fetchHighestUtilizedResources, fetchLowestUtilizedResources 
+        } from '../../app/server/resources-functions'
 
-import CostByResourceTypeChart from '../../app/components/charts/CostByResourceTypeChart'
-import CostliestResourceChart from '../../app/components/charts/CostliestResourceChart'
-import RevenueResourceChart from '../../app/components/charts/RevenueResourceChart'
-import AverageUtilizationChart from '../../app/components/charts/AverageUtilizationChart';
-import HighestUtilizedResourcesChart from '../../app/components/charts/HighestUtilizedResourcesChart'
-import LowestUtlizedResourcesChart from '../../app/components/charts/LowestUtilizedResourcesChart'
+import CostByResourceTypeChart from '../../app/components/dashboard-charts/resources-charts/CostByResourceTypeChart'
+import CostliestResourceChart from '../../app/components/dashboard-charts/resources-charts/CostliestResourceChart'
+import RevenueResourceChart from '../../app/components/dashboard-charts/resources-charts/RevenueResourceChart'
+import AverageUtilizationChart from '../../app/components/dashboard-charts/resources-charts/AverageUtilizationChart';
+import HighestUtilizedResourcesChart from '../../app/components/dashboard-charts/resources-charts/HighestUtilizedResourcesChart'
+import LowestUtlizedResourcesChart from '../../app/components/dashboard-charts/resources-charts/LowestUtilizedResourcesChart'
 
 
 type ResourceCostItem = {
