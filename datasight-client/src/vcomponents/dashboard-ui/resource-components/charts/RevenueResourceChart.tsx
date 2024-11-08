@@ -35,7 +35,7 @@ function RevenueResourceChart({ data }) {
         });
 
     return (
-        <ChartContainer config={{ cost: { label: "Total Resource Revenue", color: "hsl(var(--chart-1))" } }} className="h-[300px]">
+        <ChartContainer config={{ cost: { label: "Total Resource Revenue", color: "hsl(var(--chart-1))" } }} className="h-[200px] w-[600px]">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     data={formattedData}
