@@ -46,7 +46,7 @@ function CostliestResourceChart({ data }) {
                     <Legend verticalAlign="top" />
                     <Bar
                         dataKey="total_resource_cost"
-                        barSize={20}
+                        barSize={15}
                     >
                         {data.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={RESOURCE_COLORS[entry.resource_type]} />

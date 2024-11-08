@@ -58,7 +58,7 @@ function RevenueResourceChart({ data }) {
                     <Legend verticalAlign="top" />
                     <Bar
                         dataKey="total_resource_revenue"
-                        barSize={20}
+                        barSize={15}
                     >
                         {formattedData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />

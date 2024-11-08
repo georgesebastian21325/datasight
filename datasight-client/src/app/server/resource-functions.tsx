@@ -121,13 +121,42 @@ async function fetchTopRevenueGeneratingResources() {
             total_resource_cost: parseFloat(item.total_resource_cost)
         }));
 
-        console.log('Costliest Resources', formattedData);
+        console.log('Top Resource Generating Revenue', formattedData);
 
         return formattedData;
 
     } catch (error) {
         console.error('Fetch Error:', error);
         return null;
+    }
+}
+
+async function fetchAverageUtilizationResource() {
+    type AverageUtilizationItems = {
+        resource_type: string;
+        average_usage_percentage: string;
+    };
+
+    try {
+        const response = await fetch('https://81lsv00jqf.execute-api.ap-southeast-2.amazonaws.com/development/getAverageUtilizationResources');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        // Ensure the correct field name `average_usage_percentage` is used
+        const formattedData = bodyData.map((item: AverageUtilizationItems) => ({
+            ...item,
+            average_usage_percentage: parseFloat(item.average_usage_percentage)
+        }));
+
+        console.log('Average Utilization Per Resource:', formattedData);
+
+        return formattedData;
+
+    } catch (error) {
+        console.error('Fetch Error:', error);
+        return [];
     }
 }
 
@@ -144,5 +173,6 @@ export {
     fetchCostByResourceType,
     fetchTopCostliestResources,
     fetchTopRevenueGeneratingResources,
+    fetchAverageUtilizationResource,
     formatCustom
 }
