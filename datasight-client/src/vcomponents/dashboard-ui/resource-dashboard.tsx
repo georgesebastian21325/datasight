@@ -5,7 +5,10 @@ import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieCha
 import { Card, CardContent, CardHeader, CardTitle } from "@/vcomponents/dashboard-ui/resource-components/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart"
 
-import { fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType, fetchTopCostliestResources, fetchTopRevenueGeneratingResources, formatCustom, fetchAverageUtilizationResource, fetchHighestUtilizedResources, fetchLowestUtilizedResources } from '../../app/server/resource-functions'
+import { fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType, fetchTopCostliestResources, 
+         fetchTopRevenueGeneratingResources, formatCustom, fetchAverageUtilizationResource, fetchHighestUtilizedResources, 
+         fetchLowestUtilizedResources 
+        } from '../../app/server/resource-functions'
 
 import CostByResourceTypeChart from './resource-components/charts/CostByResourceTypeChart'
 import CostliestResourceChart from './resource-components/charts/CostliestResourceChart'
