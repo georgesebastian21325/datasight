@@ -101,6 +101,36 @@ async function fetchTopCostliestResources() {
     }
 }
 
+async function fetchTopRevenueGeneratingResources() {
+    type ResourceCostItem = {
+        resource_id: string;
+        resource_type: string;
+        total_resource_cost: string;
+    };
+
+    try {
+        const response = await fetch('https://81lsv00jqf.execute-api.ap-southeast-2.amazonaws.com/development/getRevenueGeneratingResources');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        // Convert `total_resource_cost` to a number for each item
+        const formattedData = bodyData.map((item: ResourceCostItem) => ({
+            ...item,
+            total_resource_cost: parseFloat(item.total_resource_cost)
+        }));
+
+        console.log('Costliest Resources', formattedData);
+
+        return formattedData;
+
+    } catch (error) {
+        console.error('Fetch Error:', error);
+        return null;
+    }
+}
+
 
 
 
@@ -113,5 +143,6 @@ export {
     fetchTotalResourceRevenue,
     fetchCostByResourceType,
     fetchTopCostliestResources,
+    fetchTopRevenueGeneratingResources,
     formatCustom
 }

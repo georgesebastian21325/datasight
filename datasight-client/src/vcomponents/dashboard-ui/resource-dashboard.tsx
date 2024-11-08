@@ -5,9 +5,10 @@ import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieCha
 import { Card, CardContent, CardHeader, CardTitle } from "@/vcomponents/dashboard-ui/resource-components/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart"
 
-import { fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType, fetchTopCostliestResources, formatCustom } from '../../app/server/resource-functions'
+import { fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType, fetchTopCostliestResources, fetchTopRevenueGeneratingResources, formatCustom } from '../../app/server/resource-functions'
 import CostByResourceTypeChart from './resource-components/charts/CostByResourceTypeChart'
 import CostliestResourceChart from './resource-components/charts/CostliestResourceChart'
+import RevenueResourceChart from './resource-components/charts/RevenueResourceChart'
 
 
 const resourceData = {
@@ -80,6 +81,11 @@ type CostliestItem = {
   total_resource_cost: string;
 }
 
+type RevenueItem = {
+  resource_id: string;
+  total_resource_revenue: string;
+}
+
 
 export default function ResourceDashboardComponent() {
   const [isLoading, setIsLoading] = useState(true);
@@ -88,6 +94,7 @@ export default function ResourceDashboardComponent() {
   const [totalResourceRevenue, setTotalResourceRevenue] = useState<string | null>(null)
   const [costByResourceType, setCostByResourceType] = useState<ResourceCostItem[]>([]);
   const [costliestResource, setCostliestResource] = useState<CostliestItem[]>([]);
+  const [revenueResource, setRevenueResource] = useState<RevenueItem []>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -95,6 +102,7 @@ export default function ResourceDashboardComponent() {
       const revenue = await fetchTotalResourceRevenue();
       const costByResourceType = await fetchCostByResourceType();
       const costliestResource = await fetchTopCostliestResources();
+      const revenueResource = await fetchTopRevenueGeneratingResources();
 
       if (cost !== null) {
         setTotalResourceCost(formatCustom(cost));
@@ -106,6 +114,7 @@ export default function ResourceDashboardComponent() {
 
       setCostByResourceType(costByResourceType);
       setCostliestResource(costliestResource);
+      setRevenueResource(revenueResource);
 
     }
 
@@ -184,14 +193,7 @@ export default function ResourceDashboardComponent() {
               <CardTitle>Top 5 Revenue-Generating Resources</CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-2">
-                {resourceData.topRevenueResources.map((resource, index) => (
-                  <li key={index} className="flex justify-between items-center">
-                    <span>{resource.resource_id} ({resource.resource_type})</span>
-                    <span className="font-semibold">${resource.resource_revenue.toLocaleString()}</span>
-                  </li>
-                ))}
-              </ul>
+              <RevenueResourceChart data={revenueResource} />
             </CardContent>
           </Card>
         </div>
@@ -204,17 +206,7 @@ export default function ResourceDashboardComponent() {
             <CardTitle>Average Utilization by Resource Type</CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={{ utilization: { label: "Average Usage Percentage", color: "hsl(var(--chart-1))" } }} className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={resourceData.utilizationByType} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis dataKey="resource_type" type="category" />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="average_usage_percentage" fill="var(--color-utilization)" />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+            
           </CardContent>
         </Card>
         <div className="grid grid-cols-1 gap-4">
