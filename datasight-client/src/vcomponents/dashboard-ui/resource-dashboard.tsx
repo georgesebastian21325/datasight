@@ -10,12 +10,12 @@ import { fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceT
          fetchLowestUtilizedResources 
         } from '../../app/server/resource-functions'
 
-import CostByResourceTypeChart from './resource-components/charts/CostByResourceTypeChart'
-import CostliestResourceChart from './resource-components/charts/CostliestResourceChart'
-import RevenueResourceChart from './resource-components/charts/RevenueResourceChart'
-import AverageUtilizationChart from './resource-components/charts/AverageUtilizationChart';
-import HighestUtilizedResourcesChart from './resource-components/charts/HighestUtilizedResourcesChart'
-import LowestUtlizedResourcesChart from './resource-components/charts/LowestUtilizedResourcesChart'
+import CostByResourceTypeChart from '../../app/components/charts/CostByResourceTypeChart'
+import CostliestResourceChart from '../../app/components/charts/CostliestResourceChart'
+import RevenueResourceChart from '../../app/components/charts/RevenueResourceChart'
+import AverageUtilizationChart from '../../app/components/charts/AverageUtilizationChart';
+import HighestUtilizedResourcesChart from '../../app/components/charts/HighestUtilizedResourcesChart'
+import LowestUtlizedResourcesChart from '../../app/components/charts/LowestUtilizedResourcesChart'
 
 
 type ResourceCostItem = {
