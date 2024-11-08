@@ -34,7 +34,7 @@ function CustomPieChart({ data }) {
                     </Pie>
                     <ChartTooltip content={<ChartTooltipContent />} />
                     <Legend verticalAlign="bottom" height={36} wrapperStyle={{
-                        bottom: -100, // Adjusts the distance from the bottom of the container
+                        bottom: -80, // Adjusts the distance from the bottom of the container
                         left: '60%', // Centers horizontally
                         transform: 'translateX(-50%)', // Centers the legend accurately
                         marginTop: '20px' // Adds space between the chart and legend
