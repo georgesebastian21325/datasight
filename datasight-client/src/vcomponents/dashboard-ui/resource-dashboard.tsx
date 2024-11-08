@@ -101,7 +101,8 @@ export default function ResourceDashboardComponent() {
       if (revenue !== null) {
         setTotalResourceRevenue(formatCustom(revenue));
       }
-      setCostByResourceType(costByResourceType); // Store in state
+
+      setCostByResourceType(costByResourceType);
 
     }
 
@@ -158,7 +159,7 @@ export default function ResourceDashboardComponent() {
 
       {/* 2. Performance and Financial Insights */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <Card className='bg-gray-50'>
+        <Card>
           <CardHeader>
             <CardTitle>Cost by Resource Type</CardTitle>
           </CardHeader>
