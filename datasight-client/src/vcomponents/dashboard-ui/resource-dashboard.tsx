@@ -5,55 +5,15 @@ import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieCha
 import { Card, CardContent, CardHeader, CardTitle } from "@/vcomponents/dashboard-ui/resource-components/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart"
 
-import { fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType, fetchTopCostliestResources, fetchTopRevenueGeneratingResources, formatCustom, fetchAverageUtilizationResource } from '../../app/server/resource-functions'
+import { fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType, fetchTopCostliestResources, fetchTopRevenueGeneratingResources, formatCustom, fetchAverageUtilizationResource, fetchHighestUtilizedResources, fetchLowestUtilizedResources } from '../../app/server/resource-functions'
 
 import CostByResourceTypeChart from './resource-components/charts/CostByResourceTypeChart'
 import CostliestResourceChart from './resource-components/charts/CostliestResourceChart'
 import RevenueResourceChart from './resource-components/charts/RevenueResourceChart'
 import AverageUtilizationChart from './resource-components/charts/AverageUtilizationChart';
+import HighestUtilizedResourcesChart from './resource-components/charts/HighestUtilizedResourcesChart'
+import LowestUtlizedResourcesChart from './resource-components/charts/LowestUtilizedResourcesChart'
 
-
-const resourceData = {
-  highestUtilizedResources: [
-    { resource_id: 'SRV001', total_usage_percentage: 95, resource_type: 'Servers' },
-    { resource_id: 'CLD002', total_usage_percentage: 92, resource_type: 'Cloud Infrastructure' },
-    { resource_id: 'NET003', total_usage_percentage: 88, resource_type: 'Network Equipment' },
-    { resource_id: 'SRV004', total_usage_percentage: 87, resource_type: 'Servers' },
-    { resource_id: 'CMP005', total_usage_percentage: 85, resource_type: 'Computers' },
-  ],
-  lowestUtilizedResources: [
-    { resource_id: 'STR001', total_usage_percentage: 30, resource_type: 'Storage Devices' },
-    { resource_id: 'CMP002', total_usage_percentage: 35, resource_type: 'Computers' },
-    { resource_id: 'NET003', total_usage_percentage: 40, resource_type: 'Network Equipment' },
-    { resource_id: 'SRV004', total_usage_percentage: 45, resource_type: 'Servers' },
-    { resource_id: 'CLD005', total_usage_percentage: 50, resource_type: 'Cloud Infrastructure' },
-  ],
-  overCapacityResources: 8,
-  averageMaintenanceCost: 25000,
-  obsolescenceRisk: [
-    { resource_type: 'Computers', count: 5 },
-    { resource_type: 'Servers', count: 3 },
-    { resource_type: 'Network Equipment', count: 2 },
-    { resource_type: 'Storage Devices', count: 1 },
-    { resource_type: 'Cloud Infrastructure', count: 1 },
-  ],
-  ageVsMaintenance: [
-    { age: 1, total_maintenance_cost: 5000 },
-    { age: 2, total_maintenance_cost: 10000 },
-    { age: 3, total_maintenance_cost: 15000 },
-    { age: 4, total_maintenance_cost: 25000 },
-    { age: 5, total_maintenance_cost: 40000 },
-  ],
-  riskWeightedCost: 3000000,
-  resourcePerformanceIndex: 1.5,
-  topRiskResources: [
-    { resource_id: 'SRV001', risk_score: 0.9, resource_type: 'Servers' },
-    { resource_id: 'NET002', risk_score: 0.85, resource_type: 'Network Equipment' },
-    { resource_id: 'CMP003', risk_score: 0.8, resource_type: 'Computers' },
-    { resource_id: 'STR004', risk_score: 0.75, resource_type: 'Storage Devices' },
-    { resource_id: 'CLD005', risk_score: 0.7, resource_type: 'Cloud Infrastructure' },
-  ],
-}
 
 type ResourceCostItem = {
   resource_id: string;
@@ -77,6 +37,17 @@ type AverageUtilizationItems = {
   average_usage_percentage: string;
 }
 
+type HighestUtilizedItems = {
+  resource_type: string;
+  average_usage_percentage: string;
+}
+
+type LowestUtilizedItems = {
+  resource_id: string;
+  resource_type: string;
+  average_usage_percentage: string;
+}
+
 
 export default function ResourceDashboardComponent() {
   const [totalResourceCost, setTotalResourceCost] = useState<string | null>(null)
@@ -85,6 +56,8 @@ export default function ResourceDashboardComponent() {
   const [costliestResource, setCostliestResource] = useState<CostliestItem[]>([]);
   const [revenueResource, setRevenueResource] = useState<RevenueItem[]>([]);
   const [averageUtilization, setAverageUtilization] = useState<AverageUtilizationItems []> ([]);
+  const [highestUtilization, setHighestUtilization] = useState<HighestUtilizedItems []> ([]);
+  const [lowestUtilization, setLowestUtilization] = useState <LowestUtilizedItems []> ([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -94,6 +67,8 @@ export default function ResourceDashboardComponent() {
       const costliestResource = await fetchTopCostliestResources();
       const revenueResource = await fetchTopRevenueGeneratingResources();
       const aveUtilizationResource = await fetchAverageUtilizationResource();
+      const highestUtilizedResources = await fetchHighestUtilizedResources();
+      const lowestUtilizedResources = await fetchLowestUtilizedResources();
 
       if (cost !== null) {
         setTotalResourceCost(formatCustom(cost));
@@ -107,6 +82,8 @@ export default function ResourceDashboardComponent() {
       setCostliestResource(costliestResource);
       setRevenueResource(revenueResource);
       setAverageUtilization(aveUtilizationResource);
+      setHighestUtilization(highestUtilizedResources)
+      setLowestUtilization(lowestUtilizedResources)
 
     }
 
@@ -193,7 +170,7 @@ export default function ResourceDashboardComponent() {
 
       {/* 3. Capacity and Utilization Insights */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <Card className='bg-gray-50'>
+        <Card>
           <CardHeader>
             <CardTitle>Average Utilization by Resource Type</CardTitle>
           </CardHeader>
@@ -202,12 +179,12 @@ export default function ResourceDashboardComponent() {
           </CardContent>
         </Card>
         <div className="grid grid-cols-1 gap-4">
-          <Card>
+          <Card >
             <CardHeader>
               <CardTitle>Highest Utilized Resources</CardTitle>
             </CardHeader>
             <CardContent>
-
+              <HighestUtilizedResourcesChart data={highestUtilization} />
             </CardContent>
           </Card>
           <Card>
@@ -215,14 +192,7 @@ export default function ResourceDashboardComponent() {
               <CardTitle>Lowest Utilized Resources</CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-2">
-                {resourceData.lowestUtilizedResources.map((resource, index) => (
-                  <li key={index} className="flex justify-between items-center">
-                    <span>{resource.resource_id} ({resource.resource_type})</span>
-                    <span className="font-semibold">{resource.total_usage_percentage}%</span>
-                  </li>
-                ))}
-              </ul>
+              <LowestUtlizedResourcesChart data={lowestUtilization} />
             </CardContent>
           </Card>
         </div>

@@ -32,7 +32,7 @@ function CostByResourceTypeChart({ data }) {
                     </Pie>
                     <ChartTooltip content={<ChartTooltipContent />} />
                     <Legend verticalAlign="bottom" height={36} wrapperStyle={{
-                        bottom: -8, // Adjusts the distance from the bottom of the container
+                        bottom: -50, // Adjusts the distance from the bottom of the container
                         left: '45%', // Centers horizontally
                         transform: 'translateX(-50%)', // Centers the legend accurately
                     }} />
