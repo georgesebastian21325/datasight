@@ -10,17 +10,26 @@ const SERVICE_COLORS = {
     "SVC0005": "#2C3E50"  // Dark teal
 };
 
+const RESOURCE_COLORS = {
+    "Backup and Recovery System": "#4B0082",
+    "Cloud Infrastructure": "#2E8B57",
+    "Communication Infrastructure": "#B8860B",
+    "Computer": "#556B2F",
+    "Network Equipment": "#4682B4",
+    "Server": "#6A5ACD",
+    "Storage Device": "#2F4F4F",
+    "Virtual Infrastructure": "#8B008B"
+};
 
-
-function CostPerService({ data }) {
-    // Combine resource_id with resource_type for display in the y-axis
+function RevenueGeneratingServicesChart({ data }) {
+    // Combine service_id, resource_id, and resource_type for display in the y-axis
     const formattedData = data.map(item => ({
         ...item,
-        displayLabel: `${item.service_id}`
+        displayLabel: `${item.service_id} - ${item.resource_type} (${item.resource_id})`
     }));
 
     return (
-        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[350px] w-[600px]">
+        <ChartContainer config={{ cost: { label: "Total Service Revenue", color: "hsl(var(--chart-1))" } }} className="h-[350px] w-[600px]">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     data={formattedData}
@@ -34,21 +43,23 @@ function CostPerService({ data }) {
                     />
                     <YAxis
                         type="category"
-                        dataKey="displayLabel" // Display resource_type and resource_id on y-axis
-                        width={70} // Increase width for longer labels
+                        dataKey="displayLabel" // Display combined service_id, resource_type, and resource_id on y-axis
+                        width={160} // Increase width for longer labels
                     />
                     <ChartTooltip
                         formatter={(value, name, props) => [
-                            `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                            `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                            `${props.payload.resource_type} (${props.payload.resource_id})`
                         ]}
+                        labelFormatter={(label) => `Service: ${label.split(" - ")[0]}`}
                     />
                     <Legend verticalAlign="top" />
                     <Bar
-                        dataKey="total_service_cost"
+                        dataKey="total_service_revenue"
                         barSize={30}
                     >
-                        {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={SERVICE_COLORS[entry.service_id]} />
+                        {formattedData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={RESOURCE_COLORS[entry.resource_type]} />
                         ))}
                     </Bar>
                 </BarChart>
@@ -57,4 +68,4 @@ function CostPerService({ data }) {
     );
 }
 
-export default CostPerService;
+export default RevenueGeneratingServicesChart;

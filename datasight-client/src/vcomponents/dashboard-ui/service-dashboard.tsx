@@ -9,9 +9,10 @@ import { Bar, BarChart, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis, Ca
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/service-components/chart"
 import { AlertCircle, TrendingDown, TrendingUp } from "lucide-react"
 
-import { fetchTotalServiceCost, fetchTotalServiceRevenue, fetchCostPerService, formatCustom } from "@/app/server/services-function"
+import { fetchTotalServiceCost, fetchTotalServiceRevenue, fetchCostPerService, fetchRevenueGeneratingServices, formatCustom } from "@/app/server/services-function"
 
 import CostPerServiceChart from "@/app/components/dashboard-charts/services-charts/CostPerServiceChart"
+import RevenueGeneratingServicesChart from "@/app/components/dashboard-charts/services-charts/RevenueGeneratingServicesChart"
 
 // Mock data (same as before)
 const mockData = {
@@ -106,10 +107,18 @@ type ServiceCostItem = {
   total_service_cost: string;
 }
 
+type ServiceRevenueItems = {
+  service_id: string;
+  total_service_revenue: string;
+  resource_id: string;
+  resource_type: string;
+}
+
 export default function ServiceDashboardComponent() {
   const [totalServiceCost, setTotalServiceCost] = useState<string | null>(null);
   const [totalServiceRevenue, setTotalServiceRevenue] = useState<string| null>(null);
   const [costPerService, setCostPerService] = useState<ServiceCostItem[]>([]);
+  const [revenuePerService, setRevenuePerService] = useState <ServiceRevenueItems []>([]);
 
 
 
@@ -118,6 +127,7 @@ export default function ServiceDashboardComponent() {
       const serviceCost = await fetchTotalServiceCost();
       const serviceRevenue = await fetchTotalServiceRevenue();
       const costByService = await fetchCostPerService();
+      const revenueByService = await fetchRevenueGeneratingServices();
 
       if (serviceCost !== null) {
         setTotalServiceCost(formatCustom(serviceCost));
@@ -128,6 +138,7 @@ export default function ServiceDashboardComponent() {
       }
 
       setCostPerService(costByService);
+      setRevenuePerService(revenueByService);
 
     }
 
@@ -165,7 +176,7 @@ export default function ServiceDashboardComponent() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <Card>
             <CardHeader>
-              <CardTitle>Service Cost by Category</CardTitle>
+              <CardTitle className='text-lg font-bold'>Service Cost by Category</CardTitle>
             </CardHeader>
             <CardContent>
               <CostPerServiceChart data={costPerService} />
@@ -173,25 +184,10 @@ export default function ServiceDashboardComponent() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Top 5 Costliest Services</CardTitle>
+              <CardTitle className='text-lg font-bold'> Top 5 Revenue-Generating Services with Associated Resources </CardTitle>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Service</TableHead>
-                    <TableHead>Cost</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockData.topCostliestServices.map((service, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{service.name}</TableCell>
-                      <TableCell>${service.cost.toLocaleString()}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <RevenueGeneratingServicesChart data={revenuePerService} />
             </CardContent>
           </Card>
           <Card>

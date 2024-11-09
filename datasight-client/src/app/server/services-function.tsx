@@ -65,6 +65,38 @@ async function fetchCostPerService() {
 }
 
 
+async function fetchRevenueGeneratingServices() {
+    type ServiceRevenueItems = {
+        service_id: string;
+        total_service_revenue: string;
+        resource_id: string;
+        resource_type: string;
+    };
+
+    try {
+        const response = await fetch('https://ugdwdejp73.execute-api.ap-southeast-2.amazonaws.com/development/getRevenueGeneratingServices');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        // Convert `total_resource_cost` to a number for each item
+        const formattedData = bodyData.map((item: ServiceRevenueItems) => ({
+            ...item,
+            total_service_revenue: parseFloat(item.total_service_revenue)
+        }));
+
+        console.log('Revenue Per Service Associated with Resources', formattedData);
+
+        return formattedData;
+
+    } catch (error) {
+        console.error('Fetch Error:', error);
+        return null;
+    }
+}
+
+
 
 
 function formatCustom(number: number): string {
@@ -76,5 +108,6 @@ export {
     fetchTotalServiceCost,
     fetchTotalServiceRevenue,
     fetchCostPerService,
+    fetchRevenueGeneratingServices,
     formatCustom
 }
