@@ -9,7 +9,7 @@ import { Bar, BarChart, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis, Ca
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/service-components/chart"
 import { AlertCircle, TrendingDown, TrendingUp } from "lucide-react"
 
-import LoadingPage from "../LoadingPage"
+import { fetchTotalServiceCost, formatCustom } from "@/app/server/services-function"
 
 // Mock data (same as before)
 const mockData = {
@@ -101,7 +101,21 @@ const mockData = {
 }
 
 export default function ServiceDashboardComponent() {
+  const [totalServiceCost, setTotalServiceCost] = useState<string | null>(null);
 
+
+  useEffect(() => {
+    async function fetchData() {
+      const serviceCost = await fetchTotalServiceCost();
+
+      if (serviceCost !== null) {
+        setTotalServiceCost(formatCustom(serviceCost));
+        console.log(serviceCost);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   return (
     <div className="container mx-auto p-4 space-y-8">
@@ -116,7 +130,7 @@ export default function ServiceDashboardComponent() {
               <CardTitle>Total Service Cost</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold">${mockData.totalServiceCost.toLocaleString()}</p>
+              <p className="text-3xl font-bold">${totalServiceCost}</p>
             </CardContent>
           </Card>
           <Card>

@@ -64,8 +64,8 @@ export default function ResourceDashboardComponent() {
 
   useEffect(() => {
     async function fetchData() {
-      const cost = await fetchTotalResourceCost();
-      const revenue = await fetchTotalResourceRevenue();
+      const resourceCost = await fetchTotalResourceCost();
+      const resourceRevenue = await fetchTotalResourceRevenue();
       const costByResourceType = await fetchCostByResourceType();
       const costliestResource = await fetchTopCostliestResources();
       const revenueResource = await fetchTopRevenueGeneratingResources();
@@ -73,12 +73,12 @@ export default function ResourceDashboardComponent() {
       const highestUtilizedResources = await fetchHighestUtilizedResources();
       const lowestUtilizedResources = await fetchLowestUtilizedResources();
 
-      if (cost !== null) {
-        setTotalResourceCost(formatCustom(cost));
+      if (resourceCost !== null) {
+        setTotalResourceCost(formatCustom(resourceCost));
       }
 
-      if (revenue !== null) {
-        setTotalResourceRevenue(formatCustom(revenue));
+      if (resourceRevenue !== null) {
+        setTotalResourceRevenue(formatCustom(resourceRevenue));
       }
 
       setCostByResourceType(costByResourceType);
