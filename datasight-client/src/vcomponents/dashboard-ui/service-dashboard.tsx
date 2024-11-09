@@ -9,7 +9,7 @@ import { Bar, BarChart, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis, Ca
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/service-components/chart"
 import { AlertCircle, TrendingDown, TrendingUp } from "lucide-react"
 
-import { fetchTotalServiceCost, formatCustom } from "@/app/server/services-function"
+import { fetchTotalServiceCost, fetchTotalServiceRevenue, formatCustom } from "@/app/server/services-function"
 
 // Mock data (same as before)
 const mockData = {
@@ -102,15 +102,20 @@ const mockData = {
 
 export default function ServiceDashboardComponent() {
   const [totalServiceCost, setTotalServiceCost] = useState<string | null>(null);
+  const [totalServiceRevenue, setTotalServiceRevenue] = useState<string| null>(null);
 
 
   useEffect(() => {
     async function fetchData() {
       const serviceCost = await fetchTotalServiceCost();
+      const serviceRevenue = await fetchTotalServiceRevenue();
 
       if (serviceCost !== null) {
         setTotalServiceCost(formatCustom(serviceCost));
-        console.log(serviceCost);
+      }
+
+      if (serviceRevenue !== null) {
+        setTotalServiceRevenue(formatCustom(serviceRevenue));
       }
     }
 
@@ -125,12 +130,12 @@ export default function ServiceDashboardComponent() {
       <section>
         <h2 className="text-2xl font-semibold mb-4">Key Service Metrics Overview</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-          <Card>
+          <Card className='bg-brand-blue text-white'>
             <CardHeader>
-              <CardTitle>Total Service Cost</CardTitle>
+              <CardTitle className='text-sm font-medium'>Total Service Cost</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold">${totalServiceCost}</p>
+              <p className="text-2xl font-bold">$ {totalServiceCost}</p>
             </CardContent>
           </Card>
           <Card>
@@ -138,7 +143,7 @@ export default function ServiceDashboardComponent() {
               <CardTitle>Total Service Revenue</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold">${mockData.totalServiceRevenue.toLocaleString()}</p>
+              <p className="text-3xl font-bold">$ {totalServiceRevenue}</p>
             </CardContent>
           </Card>
         </div>

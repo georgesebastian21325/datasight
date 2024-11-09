@@ -17,6 +17,25 @@ async function fetchTotalServiceCost() {
     }
 }
 
+async function fetchTotalServiceRevenue() {
+    try {
+        const response = await fetch('https://ugdwdejp73.execute-api.ap-southeast-2.amazonaws.com/development/getTotalServiceRevenue');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+        const totalServiceRevenue = parseFloat(bodyData[0].total_service_revenue);
+
+
+        console.log('Total Resource Cost:', totalServiceRevenue);
+        return totalServiceRevenue; // Return the fetched data
+    } catch (error) {
+        console.error('Fetch error:', error);
+        return null;
+    }
+}
+
+
 function formatCustom(number: number): string {
     return number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
@@ -24,5 +43,6 @@ function formatCustom(number: number): string {
 
 export {
     fetchTotalServiceCost,
+    fetchTotalServiceRevenue,
     formatCustom
 }
