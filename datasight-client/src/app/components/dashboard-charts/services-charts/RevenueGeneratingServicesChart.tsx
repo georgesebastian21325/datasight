@@ -29,7 +29,7 @@ function RevenueGeneratingServicesChart({ data }) {
     }));
 
     return (
-        <ChartContainer config={{ cost: { label: "Total Service Revenue", color: "hsl(var(--chart-1))" } }} className="h-[350px] w-[600px]">
+        <ChartContainer config={{ cost: { label: "Total Service Revenue", color: "hsl(var(--chart-1))" } }} className="h-[350px] w-[px]">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     data={formattedData}
@@ -44,7 +44,7 @@ function RevenueGeneratingServicesChart({ data }) {
                     <YAxis
                         type="category"
                         dataKey="displayLabel" // Display combined service_id, resource_type, and resource_id on y-axis
-                        width={160} // Increase width for longer labels
+                        width={150} // Increase width for longer labels
                     />
                     <ChartTooltip
                         formatter={(value, name, props) => [
