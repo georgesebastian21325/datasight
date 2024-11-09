@@ -9,10 +9,12 @@ import { Bar, BarChart, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis, Ca
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/service-components/chart"
 import { AlertCircle, TrendingDown, TrendingUp } from "lucide-react"
 
-import { fetchTotalServiceCost, fetchTotalServiceRevenue, fetchCostPerService, fetchRevenueGeneratingServices, formatCustom } from "@/app/server/services-function"
+import { fetchTotalServiceCost, fetchTotalServiceRevenue, fetchCostPerService, fetchRevenueGeneratingServices, compareCostAndRevenue, formatCustom } from "@/app/server/services-function"
 
 import CostPerServiceChart from "@/app/components/dashboard-charts/services-charts/CostPerServiceChart"
 import RevenueGeneratingServicesChart from "@/app/components/dashboard-charts/services-charts/RevenueGeneratingServicesChart"
+import CompareRevenueCostServicesChart from "@/app/components/dashboard-charts/services-charts/CompareRevenueCostServicesChart"
+
 
 // Mock data (same as before)
 const mockData = {
@@ -114,11 +116,18 @@ type ServiceRevenueItems = {
   resource_type: string;
 }
 
+type CostRevenueServiceItems = {
+  service_id: string;
+  total_service_cost: string;
+  total_service_revenue: string;
+}
+
 export default function ServiceDashboardComponent() {
   const [totalServiceCost, setTotalServiceCost] = useState<string | null>(null);
   const [totalServiceRevenue, setTotalServiceRevenue] = useState<string| null>(null);
   const [costPerService, setCostPerService] = useState<ServiceCostItem[]>([]);
   const [revenuePerService, setRevenuePerService] = useState <ServiceRevenueItems []>([]);
+  const [costRevenueService, setCostRevenueService] = useState <CostRevenueServiceItems []>([]);
 
 
 
@@ -128,6 +137,7 @@ export default function ServiceDashboardComponent() {
       const serviceRevenue = await fetchTotalServiceRevenue();
       const costByService = await fetchCostPerService();
       const revenueByService = await fetchRevenueGeneratingServices();
+      const comparedCostRevenueService = await compareCostAndRevenue(); 
 
       if (serviceCost !== null) {
         setTotalServiceCost(formatCustom(serviceCost));
@@ -139,7 +149,7 @@ export default function ServiceDashboardComponent() {
 
       setCostPerService(costByService);
       setRevenuePerService(revenueByService);
-
+      setCostRevenueService(comparedCostRevenueService);
     }
 
     fetchData();
@@ -192,28 +202,9 @@ export default function ServiceDashboardComponent() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Top Revenue-Generating Services</CardTitle>
+              <CardTitle className='text-lg font-bold'> Cost Vs. Revenue </CardTitle>
             </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Service</TableHead>
-                    <TableHead>Revenue</TableHead>
-                    <TableHead>Resources</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockData.topRevenueServices.map((service, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{service.name}</TableCell>
-                      <TableCell>${service.revenue.toLocaleString()}</TableCell>
-                      <TableCell>{service.resources}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
+            <CompareRevenueCostServicesChart data={costRevenueService} />
           </Card>
           <Card>
             <CardHeader>

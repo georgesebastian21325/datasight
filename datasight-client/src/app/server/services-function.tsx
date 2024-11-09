@@ -96,6 +96,35 @@ async function fetchRevenueGeneratingServices() {
     }
 }
 
+async function compareCostAndRevenue() {
+    type CostRevenueServiceItems = {
+        service_id: string;
+        total_service_cost: string;
+        total_service_revenue: string;
+    }
+
+    try {
+        const response = await fetch('https://ugdwdejp73.execute-api.ap-southeast-2.amazonaws.com/development/getRevenuCostServices');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        const formattedData = bodyData.map((item: CostRevenueServiceItems) => ({
+            ...item,
+            total_service_cost: parseFloat(item.total_service_cost),
+            total_service_revenue: parseFloat(item.total_service_revenue)
+        }));
+
+        console.log('Cost and Revenue', formattedData);
+
+        return formattedData;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+
+}
 
 
 
@@ -109,5 +138,6 @@ export {
     fetchTotalServiceRevenue,
     fetchCostPerService,
     fetchRevenueGeneratingServices,
+    compareCostAndRevenue,
     formatCustom
 }
