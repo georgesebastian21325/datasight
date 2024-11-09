@@ -9,12 +9,12 @@ import { Bar, BarChart, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis, Ca
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/service-components/chart"
 import { AlertCircle, TrendingDown, TrendingUp } from "lucide-react"
 
-import { fetchTotalServiceCost, fetchTotalServiceRevenue, formatCustom } from "@/app/server/services-function"
+import { fetchTotalServiceCost, fetchTotalServiceRevenue, fetchCostPerService, formatCustom } from "@/app/server/services-function"
+
+import CostPerServiceChart from "@/app/components/dashboard-charts/services-charts/CostPerServiceChart"
 
 // Mock data (same as before)
 const mockData = {
-  totalServiceCost: 1250000,
-  totalServiceRevenue: 2000000,
   averageServiceUtilization: 75,
   highCostServices: 3,
   serviceCostByCategory: [
@@ -100,15 +100,24 @@ const mockData = {
   ],
 }
 
+
+type ServiceCostItem = {
+  service_id: string;
+  total_service_cost: string;
+}
+
 export default function ServiceDashboardComponent() {
   const [totalServiceCost, setTotalServiceCost] = useState<string | null>(null);
   const [totalServiceRevenue, setTotalServiceRevenue] = useState<string| null>(null);
+  const [costPerService, setCostPerService] = useState<ServiceCostItem[]>([]);
+
 
 
   useEffect(() => {
     async function fetchData() {
       const serviceCost = await fetchTotalServiceCost();
       const serviceRevenue = await fetchTotalServiceRevenue();
+      const costByService = await fetchCostPerService();
 
       if (serviceCost !== null) {
         setTotalServiceCost(formatCustom(serviceCost));
@@ -117,6 +126,9 @@ export default function ServiceDashboardComponent() {
       if (serviceRevenue !== null) {
         setTotalServiceRevenue(formatCustom(serviceRevenue));
       }
+
+      setCostPerService(costByService);
+
     }
 
     fetchData();
@@ -128,7 +140,6 @@ export default function ServiceDashboardComponent() {
 
       {/* 1. Key Service Metrics Overview */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4">Key Service Metrics Overview</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
           <Card className='bg-brand-blue text-white'>
             <CardHeader>
@@ -138,12 +149,12 @@ export default function ServiceDashboardComponent() {
               <p className="text-2xl font-bold">$ {totalServiceCost}</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className='bg-black text-white'>
             <CardHeader>
-              <CardTitle>Total Service Revenue</CardTitle>
+              <CardTitle className='text-sm font-medium'>Total Service Revenue</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold">$ {totalServiceRevenue}</p>
+              <p className="text-2xl font-bold">$ {totalServiceRevenue}</p>
             </CardContent>
           </Card>
         </div>
@@ -151,29 +162,13 @@ export default function ServiceDashboardComponent() {
 
       {/* 2. Financial Performance */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4">Financial Performance</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <Card>
             <CardHeader>
               <CardTitle>Service Cost by Category</CardTitle>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={{
-                cost: {
-                  label: "Cost",
-                  color: "hsl(var(--chart-1))",
-                },
-              }} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={mockData.serviceCostByCategory} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" />
-                    <YAxis dataKey="category" type="category" />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="cost" fill="var(--color-cost)" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartContainer>
+              <CostPerServiceChart data={costPerService} />
             </CardContent>
           </Card>
           <Card>
