@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer, Legend, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer, Legend, Cell, LabelList } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart";
 
 // Define mapping for resource types and their colors based on prefixes
@@ -60,6 +60,14 @@ function RevenueResourceChart({ data }) {
                         dataKey="total_resource_revenue"
                         barSize={15}
                     >
+                        <LabelList
+                            dataKey="total_resource_revenue"
+                            position="insideRight"
+                            formatter={(value) =>
+                                value > 2000000 ? `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ''
+                            }
+                            style={{ fontSize: 12, fill: "#FFFFFF" }}
+                        />
                         {formattedData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}

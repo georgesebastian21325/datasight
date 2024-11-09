@@ -13,7 +13,7 @@ const RESOURCE_COLORS = {
     "Virtual Infrastructure": "#8B008B"
 };
 
-function HighestUtilizedResourcesChart({ data }) {
+function LowestUtilizedResourcesChart({ data }) {
     // Combine resource_id with resource_type for display in the y-axis
     const formattedData = data.map(item => ({
         ...item,
@@ -28,6 +28,18 @@ function HighestUtilizedResourcesChart({ data }) {
                     layout="vertical" // Horizontal bar chart
                     margin={{ top: 5 }}
                 >
+                    <defs>
+                        {/* Define the gradient for usage from green to yellow to red */}
+                        <linearGradient id="usageGradient" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="green" />
+                            <stop offset="40%" stopColor="green" />
+                            <stop offset="50%" stopColor="yellow" />
+                            <stop offset="60%" stopColor="yellow" />
+                            <stop offset="80%" stopColor="red" />
+                            <stop offset="100%" stopColor="red" />
+                        </linearGradient>
+                    </defs>
+
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
                         type="number"
@@ -49,7 +61,7 @@ function HighestUtilizedResourcesChart({ data }) {
                         {formattedData.map((entry, index) => (
                             <Cell
                                 key={`cell-${index}`}
-                                fill={RESOURCE_COLORS[entry.resource_type] || "#8884d8"} // Use a default color if undefined
+                                fill={entry.average_usage_percentage > 0 ? "url(#usageGradient)" : RESOURCE_COLORS[entry.resource_type] || "#8884d8"} // Apply gradient or fallback color
                             />
                         ))}
                     </Bar>
@@ -59,4 +71,4 @@ function HighestUtilizedResourcesChart({ data }) {
     );
 }
 
-export default HighestUtilizedResourcesChart;
+export default LowestUtilizedResourcesChart;

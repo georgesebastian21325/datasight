@@ -30,7 +30,7 @@ function AverageUtilizationChart({ data }) {
                     {/* Reference lines at 50%, 75%, and 100% */}
                     <ReferenceLine y={100} stroke="red" strokeDasharray="3 3" strokeWidth={3} label={{ position: "insideTopRight", fill: "#555"}} />
                     <ReferenceLine y={75} stroke="orange" strokeDasharray="3 3" strokeWidth={3}  label={{ position: "insideTopRight", fill: "#555" }} />
-                    <ReferenceLine y={50} stroke="green" strokeDasharray="3 3" strokeWidth={2}  label={{ position: "insideTopRight", fill: "#555" }} />
+                    <ReferenceLine y={50} stroke="green" strokeDasharray="3 3" strokeWidth={3}  label={{ position: "insideTopRight", fill: "#555" }} />
 
                     <YAxis
                         type="number"

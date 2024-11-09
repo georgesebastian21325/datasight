@@ -2,17 +2,6 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer, Legend, Cell } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart";
 
-const RESOURCE_COLORS = {
-    "Backup and Recovery System": "#4B0082",
-    "Cloud Infrastructure": "#2E8B57",
-    "Communication Infrastructure": "#B8860B",
-    "Computer": "#556B2F",
-    "Network Equipment": "#4682B4",
-    "Server": "#6A5ACD",
-    "Storage Device": "#2F4F4F",
-    "Virtual Infrastructure": "#8B008B"
-};
-
 function HighestUtilizedResourcesChart({ data }) {
     // Combine resource_id with resource_type for display in the y-axis
     const formattedData = data.map(item => ({
@@ -28,6 +17,18 @@ function HighestUtilizedResourcesChart({ data }) {
                     layout="vertical" // Horizontal bar chart
                     margin={{ top: 5 }}
                 >
+                    <defs>
+                        {/* Define a gradient for high usage (Green to Yellow to Red) */}
+                        <linearGradient id="highUsageGradient" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="green" />
+                            <stop offset="40%" stopColor="green" />
+                            <stop offset="50%" stopColor="yellow" />
+                            <stop offset="60%" stopColor="yellow" />
+                            <stop offset="80%" stopColor="red" />
+                            <stop offset="100%" stopColor="red" />
+                        </linearGradient>
+                    </defs>
+
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
                         type="number"
@@ -39,7 +40,7 @@ function HighestUtilizedResourcesChart({ data }) {
                         width={200} // Increase width for longer labels
                     />
                     <ChartTooltip
-                        formatter={(value, name, props) => [
+                        formatter={(value) => [
                             `${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                         ]}
                     />
@@ -48,8 +49,11 @@ function HighestUtilizedResourcesChart({ data }) {
                         dataKey="average_usage_percentage"
                         barSize={15}
                     >
-                        {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={RESOURCE_COLORS[entry.resource_type]} />
+                        {formattedData.map((entry, index) => (
+                            <Cell
+                                key={`cell-${index}`}
+                                fill={`url(#${entry.average_usage_percentage > 50 ? 'highUsageGradient' : 'lowUsageGradient'})`}
+                            />
                         ))}
                     </Bar>
                 </BarChart>

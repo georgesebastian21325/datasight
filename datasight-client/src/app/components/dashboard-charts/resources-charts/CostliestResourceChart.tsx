@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer, Legend, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer, Legend, Cell, LabelList } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart";
 
 const RESOURCE_COLORS = {
@@ -39,17 +39,21 @@ function CostliestResourceChart({ data }) {
                         width={200} // Increase width for longer labels
                     />
                     <ChartTooltip
-                        formatter={(value, name, props) => [
-                            `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                        ]}
+                        formatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                     />
                     <Legend verticalAlign="top" />
                     <Bar
                         dataKey="total_resource_cost"
                         barSize={15}
                     >
+                        <LabelList
+                            dataKey="total_resource_cost"
+                            position="insideRight"
+                            formatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                            style={{ fontSize: 12, fill: "#FFFFFF" }}
+                        />
                         {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={RESOURCE_COLORS[entry.resource_type]} />
+                            <Cell key={`cell-${index}`} fill={RESOURCE_COLORS[entry.resource_type] || "#8884d8"} />
                         ))}
                     </Bar>
                 </BarChart>
