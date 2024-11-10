@@ -20,7 +20,7 @@ function AverageServiceUtilizationChart({ data }) {
 
 
     return (
-        <ChartContainer config={{ cost: { label: "Average Utilization by Resource Type", color: "hsl(var(--chart-1))" } }} className="h-[450px] w-[600px] py-12">
+        <ChartContainer config={{ cost: { label: "Average Utilization by Resource Type", color: "hsl(var(--chart-1))" } }} className="h-[450px] w-[600px]">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data} layout="horizontal" margin={{ top: 20, right: 0, bottom: 20, left: 0 }}
                     barCategoryGap="20%" >

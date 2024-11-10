@@ -41,6 +41,14 @@ async function fetchCostPerService() {
         total_service_cost: string;
     };
 
+    // Custom formatting function to format the number as 000,000,000
+    function formatCustom(value: number): string {
+        return value.toLocaleString('en-US', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
+    }
+
     try {
         const response = await fetch('https://ugdwdejp73.execute-api.ap-southeast-2.amazonaws.com/development/getCostPerService');
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
@@ -48,10 +56,10 @@ async function fetchCostPerService() {
         const data = await response.json();
         const bodyData = JSON.parse(data.body);
 
-        // Convert `total_resource_cost` to a number for each item
+        // Convert `total_service_cost` to a formatted string for each item
         const formattedData = bodyData.map((item: ServiceCostItem) => ({
             ...item,
-            total_resource_cost: parseFloat(item.total_service_cost)
+            total_service_cost: item.total_service_cost
         }));
 
         console.log('Cost By Service Type', formattedData);
@@ -63,6 +71,7 @@ async function fetchCostPerService() {
         return null;
     }
 }
+
 
 
 async function fetchRevenueGeneratingServices() {

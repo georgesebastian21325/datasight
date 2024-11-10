@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer, Legend, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer, Legend, Cell, LabelList } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart";
 
 const SERVICE_COLORS = {
@@ -34,7 +34,7 @@ function RevenueGeneratingServicesChart({ data }) {
                 <BarChart
                     data={formattedData}
                     layout="vertical" // Horizontal bar chart
-                    margin={{ top: 10 }}
+                    margin={{ top: 20 }}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
@@ -61,6 +61,12 @@ function RevenueGeneratingServicesChart({ data }) {
                         {formattedData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={RESOURCE_COLORS[entry.resource_type]} />
                         ))}
+                        <LabelList
+                            dataKey="total_service_revenue"
+                            position="right"
+                            formatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                            style={{ fontSize: 12, fill: "#333" }}
+                        />
                     </Bar>
                 </BarChart>
             </ResponsiveContainer>

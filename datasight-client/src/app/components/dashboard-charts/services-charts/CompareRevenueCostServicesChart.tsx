@@ -1,6 +1,8 @@
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer, Legend, Cell } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart";
 
+import { formatCustom } from '@/app/server/services-function';
+
 const SERVICE_COLORS = {
     "SVC0001": "#FF5733", // Bright orange-red
     "SVC0002": "#337AFF", // Bright blue
@@ -13,7 +15,7 @@ const SERVICE_COLORS = {
 export default function CompareRevenueCostServicesChart({ data }) {
     const formattedData = data.map(item => ({
         ...item,
-        displayLabel: `${item.service_id} ${item.total_service_cost}`
+        displayLabel: `${item.service_id} ${formatCustom(item.total_service_cost)}`
     }));
 
     return (

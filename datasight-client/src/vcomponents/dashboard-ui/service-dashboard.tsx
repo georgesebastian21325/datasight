@@ -104,7 +104,6 @@ export default function ServiceDashboardComponent() {
   const [revenuePerService, setRevenuePerService] = useState <ServiceRevenueItems []>([]);
   const [costRevenueService, setCostRevenueService] = useState <CostRevenueServiceItems []>([]);
   const [serviceUtilization, setServiceUtilization] = useState <ServiceUtilizationItems []>([]);
-  const [serviceUtilTrend, setServiceUtilTrend] = useState<ServiceUtilizationTrendItems []>([]);
 
 
   useEffect(() => {
@@ -115,7 +114,7 @@ export default function ServiceDashboardComponent() {
       const revenueByServiceData = await fetchRevenueGeneratingServices();
       const comparedCostRevenueServiceData = await compareCostAndRevenue(); 
       const serviceUtilizationByCategoryData = await fetchServiceUtilizationByCategory();
-      const serviceUtilizationTrendData = await fetchServiceUtilizationTrend();
+
 
       if (serviceCost !== null) {
         setTotalServiceCost(formatCustom(serviceCost));
@@ -129,7 +128,7 @@ export default function ServiceDashboardComponent() {
       setRevenuePerService(revenueByServiceData);
       setCostRevenueService(comparedCostRevenueServiceData);
       setServiceUtilization(serviceUtilizationByCategoryData);
-      setServiceUtilTrend(serviceUtilizationTrendData);
+
     }
 
     fetchData();
