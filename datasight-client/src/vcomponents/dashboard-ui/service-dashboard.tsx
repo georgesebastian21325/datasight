@@ -9,52 +9,19 @@ import { Bar, BarChart, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis, Ca
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/service-components/chart"
 import { AlertCircle, TrendingDown, TrendingUp } from "lucide-react"
 
-import LoadingPage from "../LoadingPage"
+import { fetchTotalServiceCost, fetchTotalServiceRevenue, fetchCostPerService, 
+         fetchRevenueGeneratingServices, compareCostAndRevenue, fetchServiceUtilizationByCategory, 
+         fetchServiceUtilizationTrend, formatCustom } from "../../app/api/dashboard-functions/services-function"
+
+import CostPerServiceChart from "@/app/components/dashboard-charts/services-charts/CostPerServiceChart"
+import RevenueGeneratingServicesChart from "@/app/components/dashboard-charts/services-charts/RevenueGeneratingServicesChart"
+import CompareRevenueCostServicesChart from "@/app/components/dashboard-charts/services-charts/CompareRevenueCostServicesChart"
+import AverageServiceUtilizationChart from "@/app/components/dashboard-charts/services-charts/AverageServiceUtilizationChart"
+import ServiceUtilTrendChart from "@/app/components/dashboard-charts/services-charts/ServiceUtilTrendChart"
+
 
 // Mock data (same as before)
 const mockData = {
-  totalServiceCost: 1250000,
-  totalServiceRevenue: 2000000,
-  averageServiceUtilization: 75,
-  highCostServices: 3,
-  serviceCostByCategory: [
-    { category: "Category A", cost: 500000 },
-    { category: "Category B", cost: 350000 },
-    { category: "Category C", cost: 250000 },
-    { category: "Category D", cost: 150000 },
-  ],
-  topCostliestServices: [
-    { name: "Service 1", cost: 300000 },
-    { name: "Service 2", cost: 250000 },
-    { name: "Service 3", cost: 200000 },
-    { name: "Service 4", cost: 150000 },
-    { name: "Service 5", cost: 100000 },
-  ],
-  topRevenueServices: [
-    { name: "Service A", revenue: 500000, resources: "Resource X, Resource Y" },
-    { name: "Service B", revenue: 400000, resources: "Resource Z" },
-    { name: "Service C", revenue: 350000, resources: "Resource W, Resource V" },
-    { name: "Service D", revenue: 300000, resources: "Resource U" },
-    { name: "Service E", revenue: 250000, resources: "Resource T, Resource S" },
-  ],
-  revenueVsCost: [
-    { name: "Service 1", cost: 300000, revenue: 500000 },
-    { name: "Service 2", cost: 250000, revenue: 400000 },
-    { name: "Service 3", cost: 200000, revenue: 350000 },
-    { name: "Service 4", cost: 150000, revenue: 300000 },
-    { name: "Service 5", cost: 100000, revenue: 250000 },
-  ],
-  serviceUtilizationByCategory: [
-    { category: "Category A", utilization: 85 },
-    { category: "Category B", utilization: 70 },
-    { category: "Category C", utilization: 60 },
-    { category: "Category D", utilization: 50 },
-  ],
-  underutilizedServices: [
-    { name: "Service X", utilization: 15 },
-    { name: "Service Y", utilization: 18 },
-    { name: "Service Z", utilization: 19 },
-  ],
   serviceUtilizationTrends: [
     { month: "Jan", Service1: 70, Service2: 65, Service3: 60, Service4: 55, Service5: 50 },
     { month: "Feb", Service1: 75, Service2: 68, Service3: 62, Service4: 58, Service5: 52 },
@@ -100,8 +67,72 @@ const mockData = {
   ],
 }
 
-export default function ServiceDashboardComponent() {
 
+type ServiceCostItem = {
+  service_id: string;
+  total_service_cost: string;
+}
+
+type ServiceRevenueItems = {
+  service_id: string;
+  total_service_revenue: string;
+  resource_id: string;
+  resource_type: string;
+}
+
+type CostRevenueServiceItems = {
+  service_id: string;
+  total_service_cost: string;
+  total_service_revenue: string;
+}
+
+type ServiceUtilizationItems = {
+  service_id: string;
+  avg_service_utilization: string;
+}
+
+type ServiceUtilizationTrendItems = {
+  service_id: string;
+  date: string;
+  avg_daily_service_utilization: string;
+}
+
+export default function ServiceDashboardComponent() {
+  const [totalServiceCost, setTotalServiceCost] = useState<string | null>(null);
+  const [totalServiceRevenue, setTotalServiceRevenue] = useState<string| null>(null);
+  const [costPerService, setCostPerService] = useState<ServiceCostItem[]>([]);
+  const [revenuePerService, setRevenuePerService] = useState <ServiceRevenueItems []>([]);
+  const [costRevenueService, setCostRevenueService] = useState <CostRevenueServiceItems []>([]);
+  const [serviceUtilization, setServiceUtilization] = useState <ServiceUtilizationItems []>([]);
+
+
+  useEffect(() => {
+    async function fetchData() {
+      const serviceCost = await fetchTotalServiceCost();
+      const serviceRevenue = await fetchTotalServiceRevenue();
+      const costByServiceData = await fetchCostPerService();
+      const revenueByServiceData = await fetchRevenueGeneratingServices();
+      const comparedCostRevenueServiceData = await compareCostAndRevenue(); 
+      const serviceUtilizationByCategoryData = await fetchServiceUtilizationByCategory();
+
+
+      if (serviceCost !== null) {
+        setTotalServiceCost(formatCustom(serviceCost));
+      }
+
+      if (serviceRevenue !== null) {
+        setTotalServiceRevenue(formatCustom(serviceRevenue));
+      }
+
+      setCostPerService(costByServiceData);
+      setRevenuePerService(revenueByServiceData);
+      setCostRevenueService(comparedCostRevenueServiceData);
+      setServiceUtilization(serviceUtilizationByCategoryData);
+
+    }
+
+    fetchData();
+  }, []);
 
   return (
     <div className="container mx-auto p-4 space-y-8">
@@ -109,22 +140,21 @@ export default function ServiceDashboardComponent() {
 
       {/* 1. Key Service Metrics Overview */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4">Key Service Metrics Overview</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-          <Card>
+          <Card className='bg-brand-blue text-white'>
             <CardHeader>
-              <CardTitle>Total Service Cost</CardTitle>
+              <CardTitle className='text-sm font-medium'>Total Service Cost</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold">${mockData.totalServiceCost.toLocaleString()}</p>
+              <p className="text-2xl font-bold">$ {totalServiceCost}</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className='bg-black text-white'>
             <CardHeader>
-              <CardTitle>Total Service Revenue</CardTitle>
+              <CardTitle className='text-sm font-medium'>Total Service Revenue</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold">${mockData.totalServiceRevenue.toLocaleString()}</p>
+              <p className="text-2xl font-bold">$ {totalServiceRevenue}</p>
             </CardContent>
           </Card>
         </div>
@@ -132,411 +162,45 @@ export default function ServiceDashboardComponent() {
 
       {/* 2. Financial Performance */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4">Financial Performance</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Service Cost by Category</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={{
-                cost: {
-                  label: "Cost",
-                  color: "hsl(var(--chart-1))",
-                },
-              }} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={mockData.serviceCostByCategory} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" />
-                    <YAxis dataKey="category" type="category" />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="cost" fill="var(--color-cost)" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Top 5 Costliest Services</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Service</TableHead>
-                    <TableHead>Cost</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockData.topCostliestServices.map((service, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{service.name}</TableCell>
-                      <TableCell>${service.cost.toLocaleString()}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Top Revenue-Generating Services</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Service</TableHead>
-                    <TableHead>Revenue</TableHead>
-                    <TableHead>Resources</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockData.topRevenueServices.map((service, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{service.name}</TableCell>
-                      <TableCell>${service.revenue.toLocaleString()}</TableCell>
-                      <TableCell>{service.resources}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Revenue vs. Cost Comparison per Service</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={{
-                cost: {
-                  label: "Cost",
-                  color: "hsl(var(--chart-1))",
-                },
-                revenue: {
-                  label: "Revenue",
-                  color: "hsl(var(--chart-2))",
-                },
-              }} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <ScatterChart>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" dataKey="cost" name="Cost" unit="$" />
-                    <YAxis type="number" dataKey="revenue" name="Revenue" unit="$" />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Scatter name="Services" data={mockData.revenueVsCost} fill="var(--color-cost)" />
-                  </ScatterChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <div className="grid grid-cols-1 gap-4"> 
+            <Card>
+              <CardHeader>
+                <CardTitle className='text-lg font-bold'>Service Cost by Category</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CostPerServiceChart data={costPerService} />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className='text-lg font-bold'> Revenue vs. Cost Comparison per Service</CardTitle>
+              </CardHeader>
+              <CompareRevenueCostServicesChart data={costRevenueService} />
+            </Card>
+          </div>
+          <div className="grid grid-cols-1 gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className='text-lg font-bold'> Top 5 Revenue-Generating Services with Associated Resources </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <RevenueGeneratingServicesChart data={revenuePerService} />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className='text-lg font-bold'>Average Service Utilization</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AverageServiceUtilizationChart data={serviceUtilization} />
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </section>
 
       {/* 3. Service Utilization Insights */}
-      <section>
-        <h2 className="text-2xl font-semibold mb-4">Service Utilization Insights</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Service Utilization by Category</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={{
-                utilization: {
-                  label: "Utilization",
-                  color: "hsl(var(--chart-1))",
-                },
-              }} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={mockData.serviceUtilizationByCategory}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="category" />
-                    <YAxis />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="utilization" fill="var(--color-utilization)" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Underutilized Services</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Alert>
-                <TrendingDown className="h-4 w-4" />
-                <AlertTitle>Low Utilization</AlertTitle>
-                <AlertDescription>
-                  The following services have utilization  rates below 20%:
-                </AlertDescription>
-              </Alert>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Service</TableHead>
-                    <TableHead>Utilization</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockData.underutilizedServices.map((service, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{service.name}</TableCell>
-                      <TableCell>{service.utilization}%</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Service Utilization Trends</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={{
-                Service1: {
-                  label: "Service 1",
-                  color: "hsl(var(--chart-1))",
-                },
-                Service2: {
-                  label: "Service 2",
-                  color: "hsl(var(--chart-2))",
-                },
-                Service3: {
-                  label: "Service 3",
-                  color: "hsl(var(--chart-3))",
-                },
-                Service4: {
-                  label: "Service 4",
-                  color: "hsl(var(--chart-4))",
-                },
-                Service5: {
-                  label: "Service 5",
-                  color: "hsl(var(--chart-5))",
-                },
-              }} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={mockData.serviceUtilizationTrends}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Line type="monotone" dataKey="Service1" stroke="var(--color-Service1)" />
-                    <Line type="monotone" dataKey="Service2" stroke="var(--color-Service2)" />
-                    <Line type="monotone" dataKey="Service3" stroke="var(--color-Service3)" />
-                    <Line type="monotone" dataKey="Service4" stroke="var(--color-Service4)" />
-                    <Line type="monotone" dataKey="Service5" stroke="var(--color-Service5)" />
-                  </LineChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* 4. Cost and Revenue Attribution by Resource */}
-      <section>
-        <h2 className="text-2xl font-semibold mb-4">Cost and Revenue Attribution by Resource</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Resource-Attributed Cost per Service</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={{
-                ResourceA: {
-                  label: "Resource A",
-                  color: "hsl(var(--chart-1))",
-                },
-                ResourceB: {
-                  label: "Resource B",
-                  color: "hsl(var(--chart-2))",
-                },
-                ResourceC: {
-                  label: "Resource C",
-                  color: "hsl(var(--chart-3))",
-                },
-                ResourceD: {
-                  label: "Resource D",
-                  color: "hsl(var(--chart-4))",
-                },
-                ResourceE: {
-                  label: "Resource E",
-                  color: "hsl(var(--chart-5))",
-                },
-              }} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={mockData.resourceAttributedCost}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="service" />
-                    <YAxis />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="ResourceA" stackId="a" fill="var(--color-ResourceA)" />
-                    <Bar dataKey="ResourceB" stackId="a" fill="var(--color-ResourceB)" />
-                    <Bar dataKey="ResourceC" stackId="a" fill="var(--color-ResourceC)" />
-                    <Bar dataKey="ResourceD" stackId="a" fill="var(--color-ResourceD)" />
-                    <Bar dataKey="ResourceE" stackId="a" fill="var(--color-ResourceE)" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Resource-Attributed Revenue per Service</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={{
-                ResourceX: {
-                  label: "Resource X",
-                  color: "hsl(var(--chart-1))",
-                },
-                ResourceY: {
-                  label: "Resource Y",
-                  color: "hsl(var(--chart-2))",
-                },
-                ResourceZ: {
-                  label: "Resource Z",
-                  color: "hsl(var(--chart-3))",
-                },
-                ResourceW: {
-                  label: "Resource W",
-                  color: "hsl(var(--chart-4))",
-                },
-              }} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={mockData.resourceAttributedRevenue}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="service" />
-                    <YAxis />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="ResourceX" stackId="a" fill="var(--color-ResourceX)" />
-                    <Bar dataKey="ResourceY" stackId="a" fill="var(--color-ResourceY)" />
-                    <Bar dataKey="ResourceZ" stackId="a" fill="var(--color-ResourceZ)" />
-                    <Bar dataKey="ResourceW" stackId="a" fill="var(--color-ResourceW)" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Top 5 Costly Resource-Service Connections</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Service</TableHead>
-                    <TableHead>Resource</TableHead>
-                    <TableHead>Cost</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockData.costlyResourceServiceConnections.map((connection, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{connection.service}</TableCell>
-                      <TableCell>{connection.resource}</TableCell>
-                      <TableCell>${connection.cost.toLocaleString()}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* 5. Risk and Obsolescence Analysis */}
-      <section>
-        <h2 className="text-2xl font-semibold mb-4">Risk and Obsolescence Analysis</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Service Cost at Risk</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>High Risk</AlertTitle>
-                <AlertDescription>
-                  Total service cost at risk: ${mockData.serviceCostAtRisk.toLocaleString()}
-                </AlertDescription>
-              </Alert>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Service Revenue Stability</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={{
-                ServiceA: {
-                  label: "Service A",
-                  color: "hsl(var(--chart-1))",
-                },
-                ServiceB: {
-                  label: "Service B",
-                  color: "hsl(var(--chart-2))",
-                },
-                ServiceC: {
-                  label: "Service C",
-                  color: "hsl(var(--chart-3))",
-                },
-                ServiceD: {
-                  label: "Service D",
-                  color: "hsl(var(--chart-4))",
-                },
-                ServiceE: {
-                  label: "Service E",
-                  color: "hsl(var(--chart-5))",
-                },
-              }} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={mockData.serviceRevenueStability}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Line type="monotone" dataKey="ServiceA" stroke="var(--color-ServiceA)" />
-                    <Line type="monotone" dataKey="ServiceB" stroke="var(--color-ServiceB)" />
-                    <Line type="monotone" dataKey="ServiceC" stroke="var(--color-ServiceC)" />
-                    <Line type="monotone" dataKey="ServiceD" stroke="var(--color-ServiceD)" />
-                    <Line type="monotone" dataKey="ServiceE" stroke="var(--color-ServiceE)" />
-                  </LineChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Obsolescence Impact</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={{
-                count: {
-                  label: "Count",
-                  color: "hsl(var(--chart-1))",
-                },
-              }} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={mockData.obsolescenceImpact}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="service" />
-                    <YAxis />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="count" fill="var(--color-count)" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
     </div>
   )
 }

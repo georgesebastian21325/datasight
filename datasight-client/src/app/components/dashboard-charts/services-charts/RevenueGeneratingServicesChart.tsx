@@ -2,6 +2,14 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer, Legend, Cell, LabelList } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart";
 
+const SERVICE_COLORS = {
+    "SVC0001": "#3D2B1F", // Dark brown
+    "SVC0002": "#2F4858", // Dark slate blue
+    "SVC0003": "#4A235A", // Dark purple
+    "SVC0004": "#1B4F72", // Dark steel blue
+    "SVC0005": "#2C3E50"  // Dark teal
+};
+
 const RESOURCE_COLORS = {
     "Backup and Recovery System": "#4B0082",
     "Cloud Infrastructure": "#2E8B57",
@@ -13,20 +21,20 @@ const RESOURCE_COLORS = {
     "Virtual Infrastructure": "#8B008B"
 };
 
-function CostliestResourceChart({ data }) {
-    // Combine resource_id with resource_type for display in the y-axis
+function RevenueGeneratingServicesChart({ data }) {
+    // Combine service_id, resource_id, and resource_type for display in the y-axis
     const formattedData = data.map(item => ({
         ...item,
-        displayLabel: `${item.resource_type} (${item.resource_id})`
+        displayLabel: `${item.service_id} - ${item.resource_type} (${item.resource_id})`
     }));
 
     return (
-        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[200px] w-[600px]">
+        <ChartContainer config={{ cost: { label: "Total Service Revenue", color: "hsl(var(--chart-1))" } }} className="h-[470px] w-[600px]">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     data={formattedData}
                     layout="vertical" // Horizontal bar chart
-                    margin={{ top: 5 }}
+                    margin={{ top: 20 }}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
@@ -35,26 +43,30 @@ function CostliestResourceChart({ data }) {
                     />
                     <YAxis
                         type="category"
-                        dataKey="displayLabel" // Display resource_type and resource_id on y-axis
-                        width={200} // Increase width for longer labels
+                        dataKey="displayLabel" // Display combined service_id, resource_type, and resource_id on y-axis
+                        width={150} // Increase width for longer labels
                     />
                     <ChartTooltip
-                        formatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                        formatter={(value, name, props) => [
+                            `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                            `${props.payload.resource_type} (${props.payload.resource_id})`
+                        ]}
+                        labelFormatter={(label) => `Service: ${label.split(" - ")[0]}`}
                     />
                     <Legend verticalAlign="top" />
                     <Bar
-                        dataKey="total_resource_cost"
-                        barSize={15}
+                        dataKey="total_service_revenue"
+                        barSize={20}
                     >
-                        <LabelList
-                            dataKey="total_resource_cost"
-                            position="insideRight"
-                            formatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-                            style={{ fontSize: 12, fill: "#FFFFFF" }}
-                        />
-                        {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={RESOURCE_COLORS[entry.resource_type] || "#8884d8"} />
+                        {formattedData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={RESOURCE_COLORS[entry.resource_type]} />
                         ))}
+                        <LabelList
+                            dataKey="total_service_revenue"
+                            position="right"
+                            formatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                            style={{ fontSize: 12, fill: "#333" }}
+                        />
                     </Bar>
                 </BarChart>
             </ResponsiveContainer>
@@ -62,4 +74,4 @@ function CostliestResourceChart({ data }) {
     );
 }
 
-export default CostliestResourceChart;
+export default RevenueGeneratingServicesChart;

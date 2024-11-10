@@ -23,17 +23,20 @@ function AverageUtilizationChart({ data }) {
     return (
         <ChartContainer config={{ cost: { label: "Average Utilization by Resource Type", color: "hsl(var(--chart-1))" } }} className="h-[450px] w-[600px] py-12">
             <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={formattedData} layout="horizontal" margin={{ left: 20 }}>
+                <BarChart data={formattedData} layout="horizontal" margin={{ top: 20, right: 0, bottom: 20, left: 0 }}
+                    barCategoryGap="20%" >
                     <CartesianGrid strokeDasharray="3 3" />
 
-                    {/* Reference lines at 0% and 100% */}
-                    <ReferenceLine y={100} stroke="red" strokeDasharray="3 3" label={{ value: "100%", position: "insideTopRight", fill: "#555" }} />
+                    {/* Reference lines at 50%, 75%, and 100% */}
+                    <ReferenceLine y={100} stroke="red" strokeDasharray="3 3" strokeWidth={3} label={{ position: "insideTopRight", fill: "#555"}} />
+                    <ReferenceLine y={75} stroke="orange" strokeDasharray="3 3" strokeWidth={3}  label={{ position: "insideTopRight", fill: "#555" }} />
+                    <ReferenceLine y={50} stroke="green" strokeDasharray="3 3" strokeWidth={3}  label={{ position: "insideTopRight", fill: "#555" }} />
 
                     <YAxis
                         type="number"
                         domain={[0, 100]}
                         tickFormatter={(value) => `${value}%`}
-                        tick={{ fontSize: 12, fill: "#333" }} // Increased font size for readability
+                        tick={{ fontSize: 12, fill: "#333" }}
                     />
                     <XAxis dataKey="resource_type" type="category" hide={true} /> {/* Hide X-axis labels */}
                     <Tooltip formatter={(value) => `${value}%`} contentStyle={{ fontSize: 12, color: "#333" }} />
@@ -44,7 +47,7 @@ function AverageUtilizationChart({ data }) {
                         wrapperStyle={{
                             bottom: -50,
                             left: '45%',
-                            transform: 'translateX(-41%)',
+                            transform: 'translateX(-41%)'
                         }}
                         payload={Object.keys(RESOURCE_COLORS).map((key) => ({
                             value: key,

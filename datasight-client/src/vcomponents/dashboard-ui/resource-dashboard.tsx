@@ -8,7 +8,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents
 import { fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType, fetchTopCostliestResources, 
          fetchTopRevenueGeneratingResources, formatCustom, fetchAverageUtilizationResource, 
          fetchHighestUtilizedResources, fetchLowestUtilizedResources 
-        } from '../../app/server/resources-functions'
+        } from '../../app/api/dashboard-functions/resources-functions'
 
 import CostByResourceTypeChart from '../../app/components/dashboard-charts/resources-charts/CostByResourceTypeChart'
 import CostliestResourceChart from '../../app/components/dashboard-charts/resources-charts/CostliestResourceChart'
@@ -64,8 +64,8 @@ export default function ResourceDashboardComponent() {
 
   useEffect(() => {
     async function fetchData() {
-      const cost = await fetchTotalResourceCost();
-      const revenue = await fetchTotalResourceRevenue();
+      const resourceCost = await fetchTotalResourceCost();
+      const resourceRevenue = await fetchTotalResourceRevenue();
       const costByResourceType = await fetchCostByResourceType();
       const costliestResource = await fetchTopCostliestResources();
       const revenueResource = await fetchTopRevenueGeneratingResources();
@@ -73,12 +73,12 @@ export default function ResourceDashboardComponent() {
       const highestUtilizedResources = await fetchHighestUtilizedResources();
       const lowestUtilizedResources = await fetchLowestUtilizedResources();
 
-      if (cost !== null) {
-        setTotalResourceCost(formatCustom(cost));
+      if (resourceCost !== null) {
+        setTotalResourceCost(formatCustom(resourceCost));
       }
 
-      if (revenue !== null) {
-        setTotalResourceRevenue(formatCustom(revenue));
+      if (resourceRevenue !== null) {
+        setTotalResourceRevenue(formatCustom(resourceRevenue));
       }
 
       setCostByResourceType(costByResourceType);
