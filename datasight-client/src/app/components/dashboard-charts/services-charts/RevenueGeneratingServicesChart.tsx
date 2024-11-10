@@ -56,7 +56,7 @@ function RevenueGeneratingServicesChart({ data }) {
                     <Legend verticalAlign="top" />
                     <Bar
                         dataKey="total_service_revenue"
-                        barSize={30}
+                        barSize={20}
                     >
                         {formattedData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={RESOURCE_COLORS[entry.resource_type]} />

@@ -17,10 +17,10 @@ export default function CompareRevenueCostServicesChart({ data }) {
     }));
 
     return (
-        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[190px] w-[600px] py-4">
+        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[500px] w-[600px] py-4 ">
             <ResponsiveContainer width="100%" height="100%">
                 <ScatterChart
-                    margin={{ top: 15, left: 50 }}
+                    margin={{ top: 5, left: 50 }}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis

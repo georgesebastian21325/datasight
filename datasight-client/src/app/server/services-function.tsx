@@ -155,6 +155,39 @@ async function fetchServiceUtilizationByCategory () {
 
 }
 
+async function fetchServiceUtilizationTrend() {
+    type ServiceUtilizationTrendItems = {
+        service_id: string;
+        date: string;
+        avg_daily_service_utilization: string;
+    }
+
+    try {
+        const response = await fetch('https://ugdwdejp73.execute-api.ap-southeast-2.amazonaws.com/development/getServiceUtilizationTrend');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        const formattedData = bodyData
+            .map((item: ServiceUtilizationTrendItems) => ({
+                ...item,
+                date: new Date(item.date).toISOString().split("T")[0], // Format date as "YYYY-MM-DD"
+                avg_daily_service_utilization: parseFloat(item.avg_daily_service_utilization)
+            }))
+            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()); // Sort by date in ascending order
+
+        console.log('Service Utilization Trend', formattedData);
+
+        return formattedData;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+
+
 
 function formatCustom(number: number): string {
     return number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -168,5 +201,6 @@ export {
     fetchRevenueGeneratingServices,
     compareCostAndRevenue,
     fetchServiceUtilizationByCategory,
+    fetchServiceUtilizationTrend,
     formatCustom
 }

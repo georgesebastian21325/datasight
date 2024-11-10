@@ -19,7 +19,7 @@ function CostPerService({ data }) {
     }));
 
     return (
-        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[190px] w-[600px]">
+        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[500px] w-[600px]">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     data={formattedData}
