@@ -8,7 +8,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents
 import { fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType, fetchTopCostliestResources, 
          fetchTopRevenueGeneratingResources, formatCustom, fetchAverageUtilizationResource, 
          fetchHighestUtilizedResources, fetchLowestUtilizedResources 
-        } from '../../app/server/resources-functions'
+        } from '../../app/api/dashboard-functions/resources-functions'
 
 import CostByResourceTypeChart from '../../app/components/dashboard-charts/resources-charts/CostByResourceTypeChart'
 import CostliestResourceChart from '../../app/components/dashboard-charts/resources-charts/CostliestResourceChart'

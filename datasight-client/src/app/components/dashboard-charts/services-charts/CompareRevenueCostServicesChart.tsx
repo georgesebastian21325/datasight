@@ -1,7 +1,7 @@
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer, Legend, Cell } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart";
 
-import { formatCustom } from '@/app/server/services-function';
+import { formatCustom } from '../../../api/dashboard-functions/services-function';
 
 const SERVICE_COLORS = {
     "SVC0001": "#FF5733", // Bright orange-red

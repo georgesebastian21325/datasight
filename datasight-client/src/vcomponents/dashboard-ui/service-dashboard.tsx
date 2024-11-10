@@ -11,7 +11,7 @@ import { AlertCircle, TrendingDown, TrendingUp } from "lucide-react"
 
 import { fetchTotalServiceCost, fetchTotalServiceRevenue, fetchCostPerService, 
          fetchRevenueGeneratingServices, compareCostAndRevenue, fetchServiceUtilizationByCategory, 
-         fetchServiceUtilizationTrend, formatCustom } from "@/app/server/services-function"
+         fetchServiceUtilizationTrend, formatCustom } from "../../app/api/dashboard-functions/services-function"
 
 import CostPerServiceChart from "@/app/components/dashboard-charts/services-charts/CostPerServiceChart"
 import RevenueGeneratingServicesChart from "@/app/components/dashboard-charts/services-charts/RevenueGeneratingServicesChart"

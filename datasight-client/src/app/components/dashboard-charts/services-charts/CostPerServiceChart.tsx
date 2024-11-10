@@ -2,7 +2,7 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer, Legend, Cell, LabelList } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart";
 
-import { formatCustom } from '@/app/server/services-function';
+import { formatCustom } from '../../../api/dashboard-functions/services-function';
 
 const SERVICE_COLORS = {
     "SVC0001": "#3D2B1F", // Dark brown
