@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer, Legend, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer, Legend, Cell, LabelList } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart";
 
 const RESOURCE_COLORS = {
@@ -20,26 +20,21 @@ function LowestUtilizedResourcesChart({ data }) {
         displayLabel: `${item.resource_type} (${item.resource_id})`
     }));
 
+    // Function to determine color based on average usage percentage
+    const getColor = (percentage) => {
+        if (percentage >= 95) return "red";           // Overutilized
+        if (percentage >= 75 && percentage < 95) return "yellow"; // Balanced
+        return "green";                               // Underutilized
+    };
+
     return (
         <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[200px] w-[600px]">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     data={formattedData}
                     layout="vertical" // Horizontal bar chart
-                    margin={{ top: 5 }}
+                    margin={{ top: 5, right: 20 }}
                 >
-                    <defs>
-                        {/* Define the gradient for usage from green to yellow to red */}
-                        <linearGradient id="usageGradient" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="green" />
-                            <stop offset="40%" stopColor="green" />
-                            <stop offset="50%" stopColor="yellow" />
-                            <stop offset="60%" stopColor="yellow" />
-                            <stop offset="80%" stopColor="red" />
-                            <stop offset="100%" stopColor="red" />
-                        </linearGradient>
-                    </defs>
-
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
                         type="number"
@@ -54,16 +49,19 @@ function LowestUtilizedResourcesChart({ data }) {
                         formatter={(value) => `${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %`}
                     />
                     <Legend verticalAlign="top" />
-                    <Bar
-                        dataKey="average_usage_percentage"
-                        barSize={15}
-                    >
+                    <Bar dataKey="average_usage_percentage" barSize={15}>
                         {formattedData.map((entry, index) => (
                             <Cell
                                 key={`cell-${index}`}
-                                fill={entry.average_usage_percentage > 0 ? "url(#usageGradient)" : RESOURCE_COLORS[entry.resource_type] || "#8884d8"} // Apply gradient or fallback color
+                                fill={getColor(entry.average_usage_percentage)} // Apply color based on usage percentage
                             />
                         ))}
+                        <LabelList
+                            dataKey="average_usage_percentage"
+                            position="right"
+                            formatter={(value) => `${value.toFixed(2)}%`}
+                            style={{ fontSize: 12, fill: "#333" }}
+                        />
                     </Bar>
                 </BarChart>
             </ResponsiveContainer>
