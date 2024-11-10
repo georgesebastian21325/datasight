@@ -17,7 +17,7 @@ export default function CompareRevenueCostServicesChart({ data }) {
     }));
 
     return (
-        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[300px] w-[600px]">
+        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[190px] w-[600px] py-4">
             <ResponsiveContainer width="100%" height="100%">
                 <ScatterChart
                     margin={{ top: 15, left: 50 }}

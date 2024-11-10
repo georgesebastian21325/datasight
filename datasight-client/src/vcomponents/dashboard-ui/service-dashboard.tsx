@@ -9,11 +9,12 @@ import { Bar, BarChart, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis, Ca
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/service-components/chart"
 import { AlertCircle, TrendingDown, TrendingUp } from "lucide-react"
 
-import { fetchTotalServiceCost, fetchTotalServiceRevenue, fetchCostPerService, fetchRevenueGeneratingServices, compareCostAndRevenue, formatCustom } from "@/app/server/services-function"
+import { fetchTotalServiceCost, fetchTotalServiceRevenue, fetchCostPerService, fetchRevenueGeneratingServices, compareCostAndRevenue, fetchServiceUtilizationByCategory, formatCustom } from "@/app/server/services-function"
 
 import CostPerServiceChart from "@/app/components/dashboard-charts/services-charts/CostPerServiceChart"
 import RevenueGeneratingServicesChart from "@/app/components/dashboard-charts/services-charts/RevenueGeneratingServicesChart"
 import CompareRevenueCostServicesChart from "@/app/components/dashboard-charts/services-charts/CompareRevenueCostServicesChart"
+import AverageServiceUtilizationChart from "@/app/components/dashboard-charts/services-charts/AverageServiceUtilizationChart"
 
 
 // Mock data (same as before)
@@ -122,13 +123,18 @@ type CostRevenueServiceItems = {
   total_service_revenue: string;
 }
 
+type ServiceUtilizationItems = {
+  service_id: string;
+  avg_service_utilization: string;
+}
+
 export default function ServiceDashboardComponent() {
   const [totalServiceCost, setTotalServiceCost] = useState<string | null>(null);
   const [totalServiceRevenue, setTotalServiceRevenue] = useState<string| null>(null);
   const [costPerService, setCostPerService] = useState<ServiceCostItem[]>([]);
   const [revenuePerService, setRevenuePerService] = useState <ServiceRevenueItems []>([]);
   const [costRevenueService, setCostRevenueService] = useState <CostRevenueServiceItems []>([]);
-
+  const [serviceUtilization, setServiceUtilization] = useState <ServiceUtilizationItems []>([]);
 
 
   useEffect(() => {
@@ -138,6 +144,7 @@ export default function ServiceDashboardComponent() {
       const costByService = await fetchCostPerService();
       const revenueByService = await fetchRevenueGeneratingServices();
       const comparedCostRevenueService = await compareCostAndRevenue(); 
+      const serviceUtilizationByCategory = await fetchServiceUtilizationByCategory();
 
       if (serviceCost !== null) {
         setTotalServiceCost(formatCustom(serviceCost));
@@ -150,6 +157,7 @@ export default function ServiceDashboardComponent() {
       setCostPerService(costByService);
       setRevenuePerService(revenueByService);
       setCostRevenueService(comparedCostRevenueService);
+      setServiceUtilization(serviceUtilizationByCategory);
     }
 
     fetchData();
@@ -183,15 +191,23 @@ export default function ServiceDashboardComponent() {
 
       {/* 2. Financial Performance */}
       <section>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className='text-lg font-bold'>Service Cost by Category</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CostPerServiceChart data={costPerService} />
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <div className="grid grid-cols-1 gap-4"> 
+            <Card>
+              <CardHeader>
+                <CardTitle className='text-lg font-bold'>Service Cost by Category</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CostPerServiceChart data={costPerService} />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className='text-lg font-bold'> Revenue vs. Cost Comparison per Service</CardTitle>
+              </CardHeader>
+              <CompareRevenueCostServicesChart data={costRevenueService} />
+            </Card>
+          </div>
           <Card>
             <CardHeader>
               <CardTitle className='text-lg font-bold'> Top 5 Revenue-Generating Services with Associated Resources </CardTitle>
@@ -200,67 +216,18 @@ export default function ServiceDashboardComponent() {
               <RevenueGeneratingServicesChart data={revenuePerService} />
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className='text-lg font-bold'> Cost Vs. Revenue </CardTitle>
-            </CardHeader>
-            <CompareRevenueCostServicesChart data={costRevenueService} />
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Revenue vs. Cost Comparison per Service</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={{
-                cost: {
-                  label: "Cost",
-                  color: "hsl(var(--chart-1))",
-                },
-                revenue: {
-                  label: "Revenue",
-                  color: "hsl(var(--chart-2))",
-                },
-              }} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <ScatterChart>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" dataKey="cost" name="Cost" unit="$" />
-                    <YAxis type="number" dataKey="revenue" name="Revenue" unit="$" />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Scatter name="Services" data={mockData.revenueVsCost} fill="var(--color-cost)" />
-                  </ScatterChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
         </div>
       </section>
 
       {/* 3. Service Utilization Insights */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4">Service Utilization Insights</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <Card>
             <CardHeader>
-              <CardTitle>Service Utilization by Category</CardTitle>
+              <CardTitle>Average Service Utilization</CardTitle>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={{
-                utilization: {
-                  label: "Utilization",
-                  color: "hsl(var(--chart-1))",
-                },
-              }} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={mockData.serviceUtilizationByCategory}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="category" />
-                    <YAxis />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="utilization" fill="var(--color-utilization)" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartContainer>
+              <AverageServiceUtilizationChart data={serviceUtilization} />
             </CardContent>
           </Card>
           <Card>

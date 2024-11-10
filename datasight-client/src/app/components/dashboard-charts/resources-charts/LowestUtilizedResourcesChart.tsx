@@ -49,7 +49,7 @@ function LowestUtilizedResourcesChart({ data }) {
                         formatter={(value) => `${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %`}
                     />
                     <Legend verticalAlign="top" />
-                    <Bar dataKey="average_usage_percentage" barSize={15}>
+                    <Bar dataKey="average_usage_percentage" barSize={20}>
                         {formattedData.map((entry, index) => (
                             <Cell
                                 key={`cell-${index}`}

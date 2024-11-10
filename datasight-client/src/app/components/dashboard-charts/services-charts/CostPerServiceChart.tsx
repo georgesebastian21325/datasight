@@ -19,7 +19,7 @@ function CostPerService({ data }) {
     }));
 
     return (
-        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[350px] w-[600px]">
+        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[190px] w-[600px]">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     data={formattedData}
@@ -44,7 +44,7 @@ function CostPerService({ data }) {
                     <Legend verticalAlign="top" />
                     <Bar
                         dataKey="total_service_cost"
-                        barSize={30}
+                        barSize={20}
                     >
                         {data.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={SERVICE_COLORS[entry.service_id]} />
