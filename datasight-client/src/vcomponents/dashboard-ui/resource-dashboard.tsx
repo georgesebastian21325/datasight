@@ -1,14 +1,12 @@
-"use client"
+'use client'
 
 import { useState, useEffect } from 'react'
-import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie } from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle } from "@/vcomponents/dashboard-ui/resource-components/card"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart"
-
-import { fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType, fetchTopCostliestResources, 
-         fetchTopRevenueGeneratingResources, formatCustom, fetchAverageUtilizationResource, 
-         fetchHighestUtilizedResources, fetchLowestUtilizedResources 
-        } from '../../app/api/dashboard-functions/resources-functions'
+import {
+  fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType, fetchTopCostliestResources,
+  fetchTopRevenueGeneratingResources, formatCustom, fetchAverageUtilizationResource,
+  fetchHighestUtilizedResources, fetchLowestUtilizedResources
+} from '../../app/api/dashboard-functions/resources-functions'
 
 import CostByResourceTypeChart from '../../app/components/dashboard-charts/resources-charts/CostByResourceTypeChart'
 import CostliestResourceChart from '../../app/components/dashboard-charts/resources-charts/CostliestResourceChart'
@@ -53,17 +51,19 @@ type LowestUtilizedItems = {
 
 
 export default function ResourceDashboardComponent() {
+  const [loading, setLoading] = useState(true);  // Loading state
   const [totalResourceCost, setTotalResourceCost] = useState<string | null>(null)
   const [totalResourceRevenue, setTotalResourceRevenue] = useState<string | null>(null)
   const [costByResourceType, setCostByResourceType] = useState<ResourceCostItem[]>([]);
   const [costliestResource, setCostliestResource] = useState<CostliestItem[]>([]);
   const [revenueResource, setRevenueResource] = useState<RevenueItem[]>([]);
-  const [averageUtilization, setAverageUtilization] = useState<AverageUtilizationItems []> ([]);
-  const [highestUtilization, setHighestUtilization] = useState<HighestUtilizedItems []> ([]);
-  const [lowestUtilization, setLowestUtilization] = useState <LowestUtilizedItems []> ([]);
+  const [averageUtilization, setAverageUtilization] = useState<AverageUtilizationItems[]>([]);
+  const [highestUtilization, setHighestUtilization] = useState<HighestUtilizedItems[]>([]);
+  const [lowestUtilization, setLowestUtilization] = useState<LowestUtilizedItems[]>([]);
 
   useEffect(() => {
     async function fetchData() {
+      setLoading(true);  // Start loading
       const resourceCost = await fetchTotalResourceCost();
       const resourceRevenue = await fetchTotalResourceRevenue();
       const costByResourceType = await fetchCostByResourceType();
@@ -85,9 +85,9 @@ export default function ResourceDashboardComponent() {
       setCostliestResource(costliestResource);
       setRevenueResource(revenueResource);
       setAverageUtilization(aveUtilizationResource);
-      setHighestUtilization(highestUtilizedResources)
-      setLowestUtilization(lowestUtilizedResources)
-
+      setHighestUtilization(highestUtilizedResources);
+      setLowestUtilization(lowestUtilizedResources);
+      setLoading(false);  // Stop loading after data is fetched
     }
 
     fetchData();
@@ -96,76 +96,54 @@ export default function ResourceDashboardComponent() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820]  ">Resource Layer Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820]">Resource Layer Dashboard</h1>
+
       {/* 1. Key Metrics Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-        <Card className='bg-brand-blue text-white'>
+      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 mb-8 ">
+        <Card className={`${loading ? 'skeleton bg-blue-950' : 'bg-brand-blue '} text-white`}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium ">Total Resource Cost</CardTitle>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              className="h-4 w-4 text-muted-foreground"
-            >
-              <path className='text-white' d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </svg>
-          </CardHeader>
-          <CardContent className='text-white'>
-            <div className="text-2xl font-bold">$ {totalResourceCost}</div>
-          </CardContent>
-        </Card>
-        <Card className='bg-black text-white '>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className='text-lg font-bold'>Total Revenue from Resources</CardTitle>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              className="h-4 w-4 text-muted-foreground"
-            >
-              <path className='text-white' d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </svg>
+            <CardTitle className="text-sm font-medium">Total Resource Cost</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$ {totalResourceRevenue}</div>
+            <div className="text-2xl font-bold">{loading ? '...' : `$ ${totalResourceCost}`}</div>
+          </CardContent>
+        </Card>
+
+        <Card className={`${loading ? 'skeleton' : ''} bg-black text-white` }>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Revenue from Resources</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{loading ? '...' : `$ ${totalResourceRevenue}`}</div>
           </CardContent>
         </Card>
       </div>
 
       {/* 2. Performance and Financial Insights */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <Card>
+        <Card className={`${loading ? 'animate-pulse' : ''}`}>
           <CardHeader>
             <CardTitle className='text-lg font-bold'>Cost by Resource Type</CardTitle>
           </CardHeader>
           <CardContent>
-            <CostByResourceTypeChart data={costByResourceType} />
+            {loading ? <div className="h-48"></div> : <CostByResourceTypeChart data={costByResourceType} />}
           </CardContent>
         </Card>
         <div className="grid grid-cols-1 gap-4">
-          <Card>
+          <Card className={`${loading ? 'animate-pulse' : ''}`}>
             <CardHeader>
               <CardTitle className='text-lg font-bold'>Top 5 Costliest Resources</CardTitle>
             </CardHeader>
             <CardContent>
-              <CostliestResourceChart data={costliestResource} />
+              {loading ? <div className="h-48"></div> : <CostliestResourceChart data={costliestResource} />}
             </CardContent>
           </Card>
-          <Card>
+          <Card className={`${loading ? 'animate-pulse' : ''}`}>
             <CardHeader>
               <CardTitle className='text-lg font-bold'>Top 5 Revenue-Generating Resources</CardTitle>
             </CardHeader>
             <CardContent>
-              <RevenueResourceChart data={revenueResource} />
+              {loading ? <div className="h-48"></div> : <RevenueResourceChart data={revenueResource} />}
             </CardContent>
           </Card>
         </div>
@@ -173,29 +151,29 @@ export default function ResourceDashboardComponent() {
 
       {/* 3. Capacity and Utilization Insights */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <Card>
+        <Card className={`${loading ? 'animate-pulse' : ''}`}>
           <CardHeader>
             <CardTitle className='text-lg font-bold'>Average Utilization by Resource Type</CardTitle>
           </CardHeader>
           <CardContent>
-            <AverageUtilizationChart data={averageUtilization} />
+            {loading ? <div className="h-48"></div> : <AverageUtilizationChart data={averageUtilization} />}
           </CardContent>
         </Card>
         <div className="grid grid-cols-1 gap-4">
-          <Card >
+          <Card className={`${loading ? 'animate-pulse' : ''}`}>
             <CardHeader>
               <CardTitle className='text-lg font-bold'>Highest Utilized Resources</CardTitle>
             </CardHeader>
             <CardContent>
-              <HighestUtilizedResourcesChart data={highestUtilization} />
+              {loading ? <div className="h-48"></div> : <HighestUtilizedResourcesChart data={highestUtilization} />}
             </CardContent>
           </Card>
-          <Card>
+          <Card className={`${loading ? 'animate-pulse' : ''}`}>
             <CardHeader>
               <CardTitle className='text-lg font-bold'>Lowest Utilized Resources</CardTitle>
             </CardHeader>
             <CardContent>
-              <LowestUtlizedResourcesChart data={lowestUtilization} />
+              {loading ? <div className="h-48"></div> : <LowestUtlizedResourcesChart data={lowestUtilization} />}
             </CardContent>
           </Card>
         </div>
@@ -203,4 +181,3 @@ export default function ResourceDashboardComponent() {
     </div>
   )
 }
-
