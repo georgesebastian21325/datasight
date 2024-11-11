@@ -66,7 +66,7 @@ export default function Page() {
 			</div> */}
 			<NavigationBar />
 			{/* Right side - Enterprise Mapping */}
-			<div className="mx-auto overflow-auto p-4 pt-16 h-screen w-[80%]">
+			<div className="mx-auto p-4 pt-16 h-screen w-[90%]">
 				<h2 className="text-2xl font-bold mb-1 gradient-text">
 					Enterprise Architecture
 				</h2>
@@ -84,8 +84,8 @@ export default function Page() {
 				</div>
 
 				{/* Always show the dashed container */}
-				<div className="flex items-center justify-center w-full h-[calc(100%-80px)] border-2 border-dashed border-gray-300 rounded-lg ">
-					<div className="w-full h-50 min-w-[1200px]">
+				<div className="flex items-center justify-center w-full h-[calc(100%-80px)]  border-2 border-dashed border-gray-300 rounded-lg">
+					<div className="w-full min-w-[1200px]">
 						{" "}
 						{/* Ensure full width */}
 						{/* Conditionally render the mapping data or the loading state */}
