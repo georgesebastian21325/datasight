@@ -10,6 +10,7 @@ import { useGlobalState } from "../context/GlobalStateContext"; // Import the gl
 
 import EntityGraphs from "../entity-graphs/entity-graphs";
 import NavigationBar from "../components/global/NavigationBar";
+import GenerateOptimizedMappingBtn from "../components/button/GenerateOptimizedMappingBtn";
 
 export default function Page() {
 	const [loading, setLoading] = useState(false);
@@ -25,6 +26,16 @@ export default function Page() {
 
 		setTimeout(() => {
 			setLoading(false);
+		}, 2000);
+	};
+
+	const handleGenerateOptimizedMapping = () => {
+		setError(null);
+		// setLoading(true);
+		// setShowMapping(true);
+
+		setTimeout(() => {
+			// setLoading(false);
 		}, 2000);
 	};
 
@@ -80,6 +91,11 @@ export default function Page() {
 				<div className="flex space-x-4 mb-4">
 					<GenerateMappingBtn
 						onGenerateMapping={handleGenerateMapping}
+					/>
+					<GenerateOptimizedMappingBtn
+						onGenerateOptimizedMapping={
+							handleGenerateOptimizedMapping
+						}
 					/>
 				</div>
 
