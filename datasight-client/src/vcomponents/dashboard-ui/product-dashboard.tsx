@@ -114,6 +114,11 @@ export default function ProductLayerDashboard() {
       if (totalProductCostData !== null) {
         setTotalProductCost(formatCustom(totalProductCostData));
       }
+
+      if(totalProductRevenueData !== null) {
+        setTotalProductRevenue(formatCustom(totalProductRevenueData));
+      }
+
     }
 
     fetchData();
@@ -140,7 +145,7 @@ export default function ProductLayerDashboard() {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">${mockData.totalProductRevenue.toLocaleString()}</div>
+              <div className="text-2xl font-bold">$ {totalProductRevenue}</div>
             </CardContent>
           </Card>
         </div>

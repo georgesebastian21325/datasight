@@ -9,7 +9,7 @@ async function fetchTotalProductCost() {
         const totalProductCost = parseFloat(bodyData[0].total_product_cost);
 
 
-        console.log('Total Resource Cost:', totalProductCost);
+        console.log('Total Product Cost:', totalProductCost);
         return totalProductCost; // Return the fetched data
     } catch (error) {
         console.error('Fetch error:', error);
@@ -19,16 +19,16 @@ async function fetchTotalProductCost() {
 
 async function fetchTotalProductRevenue() {
     try {
-        const response = await fetch('https://ud2luybs5l.execute-api.ap-southeast-2.amazonaws.com/development/getTotalProductCost');
+        const response = await fetch('https://ud2luybs5l.execute-api.ap-southeast-2.amazonaws.com/development/getTotalProductRevenue');
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
         const data = await response.json();
         const bodyData = JSON.parse(data.body);
-        const totalProductCost = parseFloat(bodyData[0].total_product_cost);
+        const totalProductRevenue = parseFloat(bodyData[0].total_product_revenue);
 
 
-        console.log('Total Resource Cost:', totalProductCost);
-        return totalProductCost; // Return the fetched data
+        console.log('Total Product Revenue:', totalProductRevenue);
+        return totalProductRevenue; // Return the fetched data
     } catch (error) {
         console.error('Fetch error:', error);
         return null;
