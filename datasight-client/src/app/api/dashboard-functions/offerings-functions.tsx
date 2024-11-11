@@ -30,6 +30,37 @@ async function fetchOfferingCost() {
     }
 }
 
+async function fetchOfferingRevenue() {
+    type OfferingRevenueItems = {
+        offering_id: string;
+        total_offering_revenue: string;
+    };
+
+    try {
+        const response = await fetch('https://u4cav55e95.execute-api.ap-southeast-2.amazonaws.com/development/getOfferingRevenues');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        // Convert `total_resource_cost` to a number for each item
+        const formattedData = bodyData.map((item: OfferingRevenueItems) => ({
+            ...item,
+            total_resource_cost: parseFloat(item.total_offering_revenue)
+        }));
+
+        console.log('Total Offering Revenue', formattedData);
+
+        return formattedData;
+
+    } catch (error) {
+        console.error('Fetch Error:', error);
+        return null;
+    }
+}
+
+
 export {
-    fetchOfferingCost
+    fetchOfferingCost,
+    fetchOfferingRevenue
 }

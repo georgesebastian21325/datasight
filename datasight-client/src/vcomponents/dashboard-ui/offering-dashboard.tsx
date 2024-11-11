@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react'
 import { DollarSign } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/vcomponents/dashboard-ui/offering-components/card'
 
-import { fetchOfferingCost } from '@/app/api/dashboard-functions/offerings-functions'
+import { fetchOfferingCost, fetchOfferingRevenue } from '@/app/api/dashboard-functions/offerings-functions'
 
 import OfferingCostChart from '@/app/components/dashboard-charts/offerings-charts/OfferingsCostChart'
+import OfferingRevenueChart from '@/app/components/dashboard-charts/offerings-charts/OfferingRevenueChart'
 
 
 
@@ -15,15 +16,21 @@ type OfferingCostItems = {
   total_offering_cost: string;
 }
 
-export default function OfferingDashboardComponent() {
-  const [offeringCost, setOfferingCost] = useState < OfferingCostItems[]>([]);
+type OfferingRevenueItems = {
+  offering_id: string;
+  total_offering_revenue: string;
+}
 
+export default function OfferingDashboardComponent() {
+  const [offeringCost, setOfferingCost] = useState<OfferingCostItems[]>([]);
+  const [offeringRevenue, setOfferingRevenue] = useState<OfferingRevenueItems[]>([]);
 
   useEffect(() => {
-    async function fetchData(){
+    async function fetchData() {
       const offeringCostData = await fetchOfferingCost();
+      const offeringRevenueData = await fetchOfferingRevenue();
       setOfferingCost(offeringCostData);
-
+      setOfferingRevenue(offeringRevenueData);
     }
 
     fetchData();
@@ -37,14 +44,23 @@ export default function OfferingDashboardComponent() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Offering Cost</CardTitle>
+            <CardTitle className="text-xl font-bold">Total Offering Cost</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <OfferingCostChart data={offeringCost} />
           </CardContent>
         </Card>
-        </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-xl font-bold">Total Offering Revenue</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <OfferingRevenueChart data={offeringRevenue} />
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

@@ -1,17 +1,17 @@
 import { useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-export default function OfferingCostChart({ data }) {
+export default function OfferingRevenueChart({ data }) {
     // Calculate the total cost across all offerings
-    const totalCost = useMemo(() => {
-        return data.reduce((acc, item) => acc + Number(item.total_offering_cost), 0);
+    const totalRevenue = useMemo(() => {
+        return data.reduce((acc, item) => acc + Number(item.total_offering_revenue), 0);
     }, [data]);
 
     return (
         <div className="chart-container">
             {/* Display the total cost formatted as 000,000,000.00 */}
             <h2 className="text-sm">
-                Current Cost: <span className='font-bold text-red-500'>  $ {totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                Current Revenue: <span className='font-bold text-green-900'>  $ {totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </h2>
 
             <ResponsiveContainer width="100%" height={400} className="py-5">
@@ -23,7 +23,7 @@ export default function OfferingCostChart({ data }) {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
                         type="number"
-                        dataKey="total_offering_cost"
+                        dataKey="total_offering_revenue"
                         tickFormatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                     />
                     <YAxis
@@ -35,7 +35,7 @@ export default function OfferingCostChart({ data }) {
                         formatter={(value) => `$${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                         cursor={{ fill: '#f5f5f5' }}
                     />
-                    <Bar dataKey="total_offering_cost" fill="red" barSize={20} />
+                    <Bar dataKey="total_offering_revenue" fill="green" barSize={20} />
                 </BarChart>
             </ResponsiveContainer>
         </div>
