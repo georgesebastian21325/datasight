@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
 
 export default function OfferingCostChart({ data }) {
 
@@ -35,17 +35,26 @@ export default function OfferingCostChart({ data }) {
                         type="number"
                         dataKey="total_offering_cost"
                         tickFormatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                        style={{ fontSize: '12px', fontWeight: 'bold', fill: 'black' }}
                     />
                     <YAxis
                         type="category"
                         dataKey="offering_id"
                         width={80}
+                        style={{ fontSize: '12px', fontWeight: 'bold', fill: 'black' }}
                     />
                     <Tooltip
                         formatter={(value) => `$${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                         cursor={{ fill: '#f5f5f5' }}
                     />
-                    <Bar dataKey="total_offering_cost" fill="red" barSize={20} />
+                    <Bar dataKey="total_offering_cost" fill="red" barSize={20}>
+                        <LabelList
+                            dataKey="total_offering_cost"
+                            position="insideRight"
+                            formatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                            style={{ fontSize: '12px', fontWeight: 'bold', fill: 'white' }}
+                        />
+                    </Bar>
                 </BarChart>
             </ResponsiveContainer>
         </div>

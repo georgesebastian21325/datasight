@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react'
 import { DollarSign } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/vcomponents/dashboard-ui/offering-components/card'
 
-import { fetchOfferingCost, fetchOfferingRevenue } from '@/app/api/dashboard-functions/offerings-functions'
+import { fetchOfferingCost, fetchOfferingRevenue, fetchOfferingProductionCostContribution, fetchOfferingProductRevenueContribution } from '@/app/api/dashboard-functions/offerings-functions'
 
 import OfferingCostChart from '@/app/components/dashboard-charts/offerings-charts/OfferingsCostChart'
 import OfferingRevenueChart from '@/app/components/dashboard-charts/offerings-charts/OfferingRevenueChart'
-
+import OfferingProductCostContributionChart from '@/app/components/dashboard-charts/offerings-charts/OfferingProductCostContributionChart'
+import OfferingProductRevenuetContributionChart from '@/app/components/dashboard-charts/offerings-charts/OfferingProductRevenueContribution'
 
 
 type OfferingCostItems = {
@@ -21,16 +22,38 @@ type OfferingRevenueItems = {
   total_offering_revenue: string;
 }
 
+type OfferingProductContributionCostItems = {
+  offering_id: string;
+  product_id: string;
+  product_contribution_to_offering_cost: string;
+};
+
+type OfferingProductContributionRevenueItems = {
+  offering_id: string;
+  product_id: string;
+  product_contribution_to_offering_revenue: string;
+}
+
+
 export default function OfferingDashboardComponent() {
   const [offeringCost, setOfferingCost] = useState<OfferingCostItems[]>([]);
   const [offeringRevenue, setOfferingRevenue] = useState<OfferingRevenueItems[]>([]);
+  const [offeringProdCostContribution, setOfferingProdCostContribution] = useState<OfferingProductContributionCostItems[]>([]);
+  const [offeringProdRevenueContribution, setOfferingProdRevenueContribution] = useState<OfferingProductContributionRevenueItems[]>([]);
+
+
 
   useEffect(() => {
     async function fetchData() {
       const offeringCostData = await fetchOfferingCost();
       const offeringRevenueData = await fetchOfferingRevenue();
+      const offeringProdCostContributionData = await fetchOfferingProductionCostContribution();
+      const offeringProdRevenueContributionData = await fetchOfferingProductRevenueContribution();
+
       setOfferingCost(offeringCostData);
       setOfferingRevenue(offeringRevenueData);
+      setOfferingProdCostContribution(offeringProdCostContributionData);
+      setOfferingProdRevenueContribution(offeringProdRevenueContributionData);
     }
 
     fetchData();
@@ -58,6 +81,26 @@ export default function OfferingDashboardComponent() {
           </CardHeader>
           <CardContent>
             <OfferingRevenueChart data={offeringRevenue} />
+          </CardContent>
+        </Card>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4"> 
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-xl font-bold">Product-Attributed Cost Per Offering</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <OfferingProductCostContributionChart data={offeringProdCostContribution} />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-xl font-bold">Product-Attributed Revenue Per Offering</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <OfferingProductRevenuetContributionChart data={offeringProdRevenueContribution} />
           </CardContent>
         </Card>
       </div>
