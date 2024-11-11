@@ -85,7 +85,7 @@ export default function NavigationBar() {
 	}
 
 	return (
-		<nav className="mt-5 shadow-lg mb-12 rounded-xl lg:mx-[9rem]">
+		<nav className="mt-5 shadow-lg mb-12 rounded-xl max-w-[1370px] mx-auto">
 			<div className="max-w-[91rem] mx-auto px-4 sm:px-6 lg:px-8 py-2">
 				<div className="flex justify-between items-center h-16">
 					{/* Logo placeholder */}
@@ -193,5 +193,4 @@ export default function NavigationBar() {
 			</div>
 		</nav>
 	);
-
 }

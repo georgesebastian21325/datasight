@@ -9,6 +9,7 @@ import DataMappingLoadingState from "../components/global/DataMappingLoadingStat
 import { useGlobalState } from "../context/GlobalStateContext"; // Import the global state
 
 import EntityGraphs from "../entity-graphs/entity-graphs";
+import NavigationBar from "../components/global/NavigationBar";
 
 export default function Page() {
 	const [loading, setLoading] = useState(false);
@@ -34,9 +35,9 @@ export default function Page() {
 	const closeModal = () => setIsFileUploadModalOpen(false);
 
 	return (
-		<div className="flex flex-col lg:flex-row h-screen relative">
-			<div className="w-full lg:w-1/5 h-full overflow-auto border-r border-gray-200 p-4 flex flex-col">
-				{/* Logo */}
+		<div className="flex flex-col h-screen ">
+			{/* <div className="w-full lg:w-1/5 h-full overflow-auto border-r border-gray-200 p-4 flex flex-col">
+
 				<div className="mb-8">
 					<Header />
 				</div>
@@ -62,10 +63,10 @@ export default function Page() {
 				<button className="mt-12 py-2 mb-12 lg:mt-auto lg:mb-4 lg:px-6 lg:py-2 bg-yellow-500 hover:bg-gray-900 text-white rounded">
 					Present With AI
 				</button>
-			</div>
-
+			</div> */}
+			<NavigationBar />
 			{/* Right side - Enterprise Mapping */}
-			<div className="w-full lg:w-4/5 h-full overflow-auto p-4 pt-16">
+			<div className="mx-auto overflow-auto p-4 pt-16 h-screen w-[80%]">
 				<h2 className="text-2xl font-bold mb-1 gradient-text">
 					Enterprise Architecture
 				</h2>
