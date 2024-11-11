@@ -1,10 +1,16 @@
 'use client'
 
+import { useState, useEffect } from 'react'
+
 import { DollarSign } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/vcomponents/dashboard-ui/product-components/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/vcomponents/dashboard-ui/product-components/table'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/vcomponents/dashboard-ui/product-components/chart'
 import { Bar, BarChart, ResponsiveContainer, Scatter, ScatterChart, XAxis, YAxis } from 'recharts'
+
+import { fetchTotalProductCost, fetchTotalProductRevenue } from '../../app/api/dashboard-functions/products-functions'
+
+import { formatCustom } from '@/app/api/dashboard-functions/resources-functions'
 
 
 // Mock data (replace with actual data fetching logic)
@@ -97,7 +103,21 @@ const mockData = {
 }
 
 export default function ProductLayerDashboard() {
+  const [totalProductCost, setTotalProductCost] = useState<string | null>(null)
+  const [totalProductRevenue, setTotalProductRevenue] = useState<string | null>(null)
 
+  useEffect(() => {
+    async function fetchData() {
+      const totalProductCostData = await fetchTotalProductCost();
+      const totalProductRevenueData = await fetchTotalProductRevenue();
+
+      if (totalProductCostData !== null) {
+        setTotalProductCost(formatCustom(totalProductCostData));
+      }
+    }
+
+    fetchData();
+  }, [])
 
   return (
     <div className="container mx-auto p-4">
@@ -111,7 +131,7 @@ export default function ProductLayerDashboard() {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">${mockData.totalProductCost.toLocaleString()}</div>
+              <div className="text-2xl font-bold">$ {totalProductCost}</div>
             </CardContent>
           </Card>
           <Card>
