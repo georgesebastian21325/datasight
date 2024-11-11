@@ -1,38 +1,30 @@
 import { useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const data = [
-    { offering_id: "OFF003", total_offering_cost: 4212452.492388888 },
-    { offering_id: "OFF004", total_offering_cost: 3106052.0787555547 },
-    { offering_id: "OFF001", total_offering_cost: 2394266.6394499997 },
-    { offering_id: "OFF002", total_offering_cost: 2394266.6394499997 },
-    { offering_id: "OFF005", total_offering_cost: 1702413.3670055552 },
-];
-
-export default function OfferingCostChart() {
+export default function OfferingCostChart({ data }) {
     // Calculate the total cost across all offerings
     const totalCost = useMemo(() => {
-        return data.reduce((acc, item) => acc + item.total_offering_cost, 0);
+        return data.reduce((acc, item) => acc + Number(item.total_offering_cost), 0);
     }, [data]);
 
     return (
         <div className="chart-container">
-            {/* Display the total cost */}
+            {/* Display the total cost formatted as 000,000,000.00 */}
             <h2 className="text-2xl font-bold mb-4">
                 Total Offering Cost: ${totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </h2>
 
-            <ResponsiveContainer width="100%" height={400}>
+            <ResponsiveContainer width="100%" height={400} className="py-5">
                 <BarChart
                     layout="vertical"
                     data={data}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                    margin={{ top: 10, right: 30, left: 20 }}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
                         type="number"
                         dataKey="total_offering_cost"
-                        tickFormatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                        tickFormatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                     />
                     <YAxis
                         type="category"
@@ -40,9 +32,10 @@ export default function OfferingCostChart() {
                         width={80}
                     />
                     <Tooltip
-                        formatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                        formatter={(value) => `$${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                        cursor={{ fill: '#f5f5f5' }}
                     />
-                    <Bar dataKey="total_offering_cost" fill="#337AFF" barSize={20} />
+                    <Bar dataKey="total_offering_cost" fill="red" barSize={20} />
                 </BarChart>
             </ResponsiveContainer>
         </div>

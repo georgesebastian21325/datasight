@@ -1,3 +1,6 @@
+
+
+
 async function fetchOfferingCost() {
     type OfferingCostItems = {
         offering_id: string;

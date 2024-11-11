@@ -22,11 +22,12 @@ export default function OfferingDashboardComponent() {
   useEffect(() => {
     async function fetchData(){
       const offeringCostData = await fetchOfferingCost();
-
       setOfferingCost(offeringCostData);
 
     }
-  })
+
+    fetchData();
+  }, [])
 
 
   return (
@@ -40,9 +41,8 @@ export default function OfferingDashboardComponent() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-
+            <OfferingCostChart data={offeringCost} />
           </CardContent>
-          <OfferingCostChart />
         </Card>
         </div>
     </div>
