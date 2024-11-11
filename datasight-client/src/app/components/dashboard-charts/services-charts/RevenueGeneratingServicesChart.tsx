@@ -29,12 +29,12 @@ function RevenueGeneratingServicesChart({ data }) {
     }));
 
     return (
-        <ChartContainer config={{ cost: { label: "Total Service Revenue", color: "hsl(var(--chart-1))" } }} className="h-[470px] w-[600px]">
+        <ChartContainer config={{ cost: { label: "Total Service Revenue", color: "hsl(var(--chart-1))" } }} className="h-[420px] w-[560px]">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     data={formattedData}
                     layout="vertical" // Horizontal bar chart
-                    margin={{ top: 20 }}
+                    margin={{ top: 30 }}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
@@ -56,7 +56,7 @@ function RevenueGeneratingServicesChart({ data }) {
                     <Legend verticalAlign="top" />
                     <Bar
                         dataKey="total_service_revenue"
-                        barSize={20}
+                        barSize={40}
                     >
                         {formattedData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={RESOURCE_COLORS[entry.resource_type]} />
