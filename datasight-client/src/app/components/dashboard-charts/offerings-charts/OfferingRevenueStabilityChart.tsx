@@ -11,7 +11,7 @@ export default function OfferingRevenueStabilityChart({ data }) {
         .filter(item => item.offering_id === selectedOffering)
         .map(item => ({
             ...item,
-            date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
             daily_offering_revenue: Number(item.daily_offering_revenue),
         }));
 

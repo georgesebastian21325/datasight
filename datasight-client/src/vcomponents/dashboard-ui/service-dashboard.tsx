@@ -3,9 +3,6 @@
 import { useState, useEffect } from "react"
 import { Alert, AlertDescription, AlertTitle } from "@/vcomponents/dashboard-ui/service-components/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/vcomponents/dashboard-ui/service-components/card"
-import { Bar, BarChart, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/vcomponents/dashboard-ui/service-components/chart"
-import { AlertCircle, TrendingDown, TrendingUp } from "lucide-react"
 
 import {
   fetchTotalServiceCost, fetchTotalServiceRevenue, fetchCostPerService,
@@ -57,6 +54,7 @@ export default function ServiceDashboardComponent() {
   const [revenuePerService, setRevenuePerService] = useState<ServiceRevenueItems[]>([]);
   const [costRevenueService, setCostRevenueService] = useState<CostRevenueServiceItems[]>([]);
   const [serviceUtilization, setServiceUtilization] = useState<ServiceUtilizationItems[]>([]);
+  const [serviceUtilizationTrend, setServiceUtilizationTrend] = useState<ServiceUtilizationTrendItems[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -67,6 +65,7 @@ export default function ServiceDashboardComponent() {
       const revenueByServiceData = await fetchRevenueGeneratingServices();
       const comparedCostRevenueServiceData = await compareCostAndRevenue();
       const serviceUtilizationByCategoryData = await fetchServiceUtilizationByCategory();
+      const serviceUtilizationTrendData = await fetchServiceUtilizationTrend();
 
       if (serviceCost !== null) {
         setTotalServiceCost(formatCustom(serviceCost));
@@ -80,6 +79,7 @@ export default function ServiceDashboardComponent() {
       setRevenuePerService(revenueByServiceData);
       setCostRevenueService(comparedCostRevenueServiceData);
       setServiceUtilization(serviceUtilizationByCategoryData);
+      setServiceUtilizationTrend(serviceUtilizationTrendData);
       setLoading(false);  // Stop loading after data is fetched
     }
 
@@ -151,6 +151,16 @@ export default function ServiceDashboardComponent() {
               </CardContent>
             </Card>
           </div>
+        </div>
+        <div className="grid grid-cols-1 gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className='text-lg font-bold'> Service Utilization Trend</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ServiceUtilTrendChart data={serviceUtilizationTrend} />
+            </CardContent>
+          </Card>
         </div>
       </section>
     </div>

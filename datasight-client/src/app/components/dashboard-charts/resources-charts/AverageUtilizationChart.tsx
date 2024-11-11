@@ -21,9 +21,9 @@ function AverageUtilizationChart({ data }) {
     }));
 
     return (
-        <ChartContainer config={{ cost: { label: "Average Utilization by Resource Type", color: "hsl(var(--chart-1))" } }} className="h-[450px] w-[600px] py-12">
+        <ChartContainer config={{ cost: { label: "Average Utilization by Resource Type", color: "hsl(var(--chart-1))" } }} className="h-[450px] w-[600px] py-[3rem]">
             <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={formattedData} layout="horizontal" margin={{ top: 20, right: 0, bottom: 20, left: 0 }}
+                <BarChart data={formattedData} layout="horizontal" margin={{ top: 5, right: 0, bottom: 20, left: 0 }}
                     barCategoryGap="20%" >
                     <CartesianGrid strokeDasharray="3 3" />
 
@@ -38,14 +38,22 @@ function AverageUtilizationChart({ data }) {
                         tickFormatter={(value) => `${value}%`}
                         tick={{ fontSize: 12, fill: "#333" }}
                     />
-                    <XAxis dataKey="resource_type" type="category" hide={true} /> {/* Hide X-axis labels */}
+                    <XAxis
+                        dataKey="resource_type"
+                        type="category"
+                        hide={false}
+                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }}
+                        angle={-20}
+                        textAnchor="end"
+                        dy={10}
+                    />
                     <Tooltip formatter={(value) => `${value}%`} contentStyle={{ fontSize: 12, color: "#333" }} />
 
                     <Legend
                         verticalAlign="bottom"
                         height={36}
                         wrapperStyle={{
-                            bottom: -50,
+                            bottom: -100,
                             left: '45%',
                             transform: 'translateX(-41%)'
                         }}

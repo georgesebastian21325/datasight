@@ -40,7 +40,7 @@ function AverageServiceUtilizationChart({ data }) {
                     <XAxis dataKey="service_id" type="category" hide={false} /> {/* Hide X-axis labels */}
                     <Tooltip formatter={(value) => `${value}%`} contentStyle={{ fontSize: 12, color: "#333" }} />
 
-                    <Bar dataKey="avg_service_utilization" barSize={20}>
+                    <Bar dataKey="avg_service_utilization" barSize={40}>
                         {data.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={SERVICE_COLORS[entry.service_id] || "#8884d8"} />
                         ))}
