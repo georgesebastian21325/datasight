@@ -121,7 +121,7 @@ export default function ResourceDashboardComponent() {
         </Card>
         <Card className='bg-black text-white '>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue from Resources</CardTitle>
+            <CardTitle className='text-lg font-bold'>Total Revenue from Resources</CardTitle>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -145,7 +145,7 @@ export default function ResourceDashboardComponent() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         <Card>
           <CardHeader>
-            <CardTitle>Cost by Resource Type</CardTitle>
+            <CardTitle className='text-lg font-bold'>Cost by Resource Type</CardTitle>
           </CardHeader>
           <CardContent>
             <CostByResourceTypeChart data={costByResourceType} />
@@ -154,7 +154,7 @@ export default function ResourceDashboardComponent() {
         <div className="grid grid-cols-1 gap-4">
           <Card>
             <CardHeader>
-              <CardTitle>Top 5 Costliest Resources</CardTitle>
+              <CardTitle className='text-lg font-bold'>Top 5 Costliest Resources</CardTitle>
             </CardHeader>
             <CardContent>
               <CostliestResourceChart data={costliestResource} />
@@ -162,7 +162,7 @@ export default function ResourceDashboardComponent() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Top 5 Revenue-Generating Resources</CardTitle>
+              <CardTitle className='text-lg font-bold'>Top 5 Revenue-Generating Resources</CardTitle>
             </CardHeader>
             <CardContent>
               <RevenueResourceChart data={revenueResource} />
@@ -175,7 +175,7 @@ export default function ResourceDashboardComponent() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         <Card>
           <CardHeader>
-            <CardTitle>Average Utilization by Resource Type</CardTitle>
+            <CardTitle className='text-lg font-bold'>Average Utilization by Resource Type</CardTitle>
           </CardHeader>
           <CardContent>
             <AverageUtilizationChart data={averageUtilization} />
@@ -184,7 +184,7 @@ export default function ResourceDashboardComponent() {
         <div className="grid grid-cols-1 gap-4">
           <Card >
             <CardHeader>
-              <CardTitle>Highest Utilized Resources</CardTitle>
+              <CardTitle className='text-lg font-bold'>Highest Utilized Resources</CardTitle>
             </CardHeader>
             <CardContent>
               <HighestUtilizedResourcesChart data={highestUtilization} />
@@ -192,7 +192,7 @@ export default function ResourceDashboardComponent() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Lowest Utilized Resources</CardTitle>
+              <CardTitle className='text-lg font-bold'>Lowest Utilized Resources</CardTitle>
             </CardHeader>
             <CardContent>
               <LowestUtlizedResourcesChart data={lowestUtilization} />

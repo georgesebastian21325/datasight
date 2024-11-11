@@ -35,7 +35,66 @@ async function fetchTotalProductRevenue() {
     }
 }
 
+async function fetchProductCostByCategory() {
+    type ProductCostItem = {
+        product_id: string;
+        total_product_cost: string;
+    };
+
+    try {
+        const response = await fetch('https://ud2luybs5l.execute-api.ap-southeast-2.amazonaws.com/development/getProductCostByCategory');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        // Convert `total_resource_cost` to a number for each item
+        const formattedData = bodyData.map((item: ProductCostItem) => ({
+            ...item,
+            total_resource_cost: parseFloat(item.total_product_cost)
+        }));
+
+        console.log('Cost By Product Type', formattedData);
+
+        return formattedData;
+
+    } catch (error) {
+        console.error('Fetch Error:', error);
+        return null;
+    }
+}
+
+async function fetchRevenueByProduct() {
+    type ProductCostItem = {
+        product_id: string;
+        total_product_cost: string;
+    };
+
+    try {
+        const response = await fetch('https://ud2luybs5l.execute-api.ap-southeast-2.amazonaws.com/development/getProductCostByCategory');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        // Convert `total_resource_cost` to a number for each item
+        const formattedData = bodyData.map((item: ProductCostItem) => ({
+            ...item,
+            total_resource_cost: parseFloat(item.total_product_cost)
+        }));
+
+        console.log('Revenue By Product Type', formattedData);
+
+        return formattedData;
+
+    } catch (error) {
+        console.error('Fetch Error:', error);
+        return null;
+    }
+}
+
 export  {
     fetchTotalProductCost, 
-    fetchTotalProductRevenue
+    fetchTotalProductRevenue, 
+    fetchProductCostByCategory
 }

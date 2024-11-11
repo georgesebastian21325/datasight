@@ -8,10 +8,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/vcomponents/dashboard-ui/product-components/chart'
 import { Bar, BarChart, ResponsiveContainer, Scatter, ScatterChart, XAxis, YAxis } from 'recharts'
 
-import { fetchTotalProductCost, fetchTotalProductRevenue } from '../../app/api/dashboard-functions/products-functions'
+import { fetchTotalProductCost, fetchTotalProductRevenue, fetchProductCostByCategory } from '../../app/api/dashboard-functions/products-functions'
+import { formatCustom } from '@/app/api/dashboard-functions/global-dashboard-functions'
 
-import { formatCustom } from '@/app/api/dashboard-functions/resources-functions'
-
+import CostByProductChart from '@/app/components/dashboard-charts/products-charts/CostByProductChart.tsx';
 
 // Mock data (replace with actual data fetching logic)
 const mockData = {
@@ -102,14 +102,22 @@ const mockData = {
   ],
 }
 
+type ProductCostItem = {
+  product_id: string;
+  total_product_cost: string;
+};
+
 export default function ProductLayerDashboard() {
   const [totalProductCost, setTotalProductCost] = useState<string | null>(null)
   const [totalProductRevenue, setTotalProductRevenue] = useState<string | null>(null)
+  const [costPerProduct, setCostPerProduct] = useState<ProductCostItem[]>([]);
+
 
   useEffect(() => {
     async function fetchData() {
       const totalProductCostData = await fetchTotalProductCost();
       const totalProductRevenueData = await fetchTotalProductRevenue();
+      const costPerProductData = await fetchProductCostByCategory();
 
       if (totalProductCostData !== null) {
         setTotalProductCost(formatCustom(totalProductCostData));
@@ -118,6 +126,8 @@ export default function ProductLayerDashboard() {
       if(totalProductRevenueData !== null) {
         setTotalProductRevenue(formatCustom(totalProductRevenueData));
       }
+
+      setCostPerProduct(costPerProductData);
 
     }
 
@@ -155,47 +165,15 @@ export default function ProductLayerDashboard() {
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>Product Cost by Category</CardTitle>
+              <CardTitle className='text-lg font-bold'>Cost Per Product</CardTitle>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={{}} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={mockData.productCostByCategory} layout="vertical">
-                    <XAxis type="number" />
-                    <YAxis dataKey="category" type="category" />
-                    <Bar dataKey="cost" fill="var(--chart-1)" />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartContainer>
+              <CostByProductChart data={costPerProduct} />
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Cost Per Products</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Product</TableHead>
-                    <TableHead>Cost</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockData.topCostliestProducts.map((product, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{product.name}</TableCell>
-                      <TableCell>${product.cost.toLocaleString()}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Revenue Per Product</CardTitle>
+              <CardTitle className='text-lg font-bold'>Revenue Per Product</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
@@ -218,7 +196,7 @@ export default function ProductLayerDashboard() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle> Product Revenue Contribution to Total Revenue </CardTitle>
+              <CardTitle className='text-lg font-bold'> Product Revenue Contribution to Total Revenue </CardTitle>
             </CardHeader>
             <CardContent>
               <ChartContainer config={{}} className="h-[300px]">
