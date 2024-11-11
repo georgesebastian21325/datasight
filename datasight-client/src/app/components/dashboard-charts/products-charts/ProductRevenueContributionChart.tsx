@@ -2,9 +2,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, Cell
 import { ChartContainer, ChartTooltipContent } from "@/vcomponents/dashboard-ui/service-components/chart";
 
 const PRODUCT_COLORS = [
-    "#4B0082", "#2E8B57", "#B8860B", "#556B2F", "#4682B4",
-    "#6A5ACD", "#2F4F4F", "#8B008B", "#8B4513", "#B22222",
-    "#2F2F2F", "#8B0000", "#A0522D", "#483D8B", "#2B2B2B"
+    "#4B0082", "#2E8B57", "#B8860B", "#556B2F", "#4682B4"
 ];
 
 function ProductRevenueContributionChart({ data }) {
@@ -14,6 +12,25 @@ function ProductRevenueContributionChart({ data }) {
         total_revenue: Number(entry.total_revenue),
         revenue_percentage: Number(entry.revenue_percentage),
     }));
+
+    // Sort processedData by product_id
+    processedData.sort((a, b) => a.product_id.localeCompare(b.product_id));
+
+    // Custom label function to show both revenue percentage and total revenue
+    const renderCustomLabel = ({ x, y, width, value, index }) => {
+        const entry = processedData[index];
+        return (
+            <text
+                x={x + width + 5} // Position to the right of the bar
+                y={y + 10}        // Adjust vertically
+                fill="#000"       // Label color
+                fontSize={12}
+                textAnchor="start"
+            >
+                {`${value.toFixed(2)}% ($${entry.total_revenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`}
+            </text>
+        );
+    };
 
     return (
         <ChartContainer config={{ cost: { label: "Product Revenue Contribution", color: "hsl(var(--chart-1))" } }} className="h-[410px] w-[600px]">
@@ -41,11 +58,7 @@ function ProductRevenueContributionChart({ data }) {
                         {processedData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={PRODUCT_COLORS[index % PRODUCT_COLORS.length]} />
                         ))}
-                        <LabelList
-                            dataKey="revenue_percentage"
-                            position="right"
-                            formatter={(value) => `${value.toFixed(2)}%`}
-                        />
+                        <LabelList dataKey="revenue_percentage" content={renderCustomLabel} />
                     </Bar>
                 </BarChart>
             </ResponsiveContainer>
