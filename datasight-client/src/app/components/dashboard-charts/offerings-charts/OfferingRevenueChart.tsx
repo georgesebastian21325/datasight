@@ -2,6 +2,16 @@ import { useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function OfferingRevenueChart({ data }) {
+
+    const sortedData = useMemo(() => {
+        return [...data]
+            .sort((a, b) => a.offering_id.localeCompare(b.offering_id))
+            .map(item => ({
+                ...item,
+                total_offering_revenue: Number(item.total_offering_revenue)
+            }));
+    }, [data]);
+
     // Calculate the total cost across all offerings
     const totalRevenue = useMemo(() => {
         return data.reduce((acc, item) => acc + Number(item.total_offering_revenue), 0);
@@ -17,7 +27,7 @@ export default function OfferingRevenueChart({ data }) {
             <ResponsiveContainer width="100%" height={400} className="py-5">
                 <BarChart
                     layout="vertical"
-                    data={data}
+                    data={sortedData}
                     margin={{ top: 10, right: 20, left: -30 }}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
