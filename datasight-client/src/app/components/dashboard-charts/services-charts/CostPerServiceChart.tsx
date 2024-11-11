@@ -23,7 +23,7 @@ function CostPerService({ data }) {
     const formatNumber = (value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 
     return (
-        <ChartContainer config={{ cost: { label: "Total Service Cost", color: "hsl(var(--chart-1))" } }} className="h-[500px] w-[650px]">
+        <ChartContainer config={{ cost: { label: "Total Service Cost", color: "hsl(var(--chart-1))" } }} className="h-[470px] w-[650px]">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     data={formattedData}
@@ -46,7 +46,7 @@ function CostPerService({ data }) {
                     <Legend verticalAlign="top" />
                     <Bar
                         dataKey="total_service_cost"
-                        barSize={20}
+                        barSize={40}
                     >
                         {data.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={SERVICE_COLORS[entry.service_id]} />

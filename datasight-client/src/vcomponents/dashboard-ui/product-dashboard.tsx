@@ -67,7 +67,7 @@ export default function ProductLayerDashboard() {
 
       <section className="mb-8">
         <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
-          <Card className={`${loading ? 'skeleton animate-pulse' : 'bg-black text-white'}`}>
+          <Card className={`${loading ? 'skeleton bg-black' : ''} bg-black text-white`}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Product Cost</CardTitle>
               <DollarSign className="h-4 w-4 text-white" />
@@ -76,7 +76,7 @@ export default function ProductLayerDashboard() {
               <div className="text-2xl font-bold">$ {loading ? '...' : totalProductCost}</div>
             </CardContent>
           </Card>
-          <Card className={`${loading ? 'skeleton animate-pulse' : 'bg-brand-blue text-white'}`}>
+          <Card className={`${loading ? 'skeleton bg-brand-blue' : ' '} bg-brand-blue text-white` }>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Product Revenue</CardTitle>
               <DollarSign className="h-4 w-4 text-white" />
