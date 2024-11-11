@@ -36,7 +36,8 @@ export default function OfferingRevenueStabilityChart({ data }) {
 
             {/* Line chart for the selected offering */}
             <ResponsiveContainer width="100%" height={400}>
-                <LineChart data={filteredData} margin={{ top: 10, right: 30, left: 0, bottom: 5 }}>
+                <LineChart data={filteredData} margin={{ top: 10, right: 30, left: 0, bottom: 5 }} style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }}
+>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" />
                     <YAxis tickFormatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`} />
