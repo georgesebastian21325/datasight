@@ -65,22 +65,22 @@ async function fetchProductCostByCategory() {
 }
 
 async function fetchRevenueByProduct() {
-    type ProductCostItem = {
+    type ProductRevenueItem = {
         product_id: string;
-        total_product_cost: string;
+        total_product_revenue: string;
     };
 
     try {
-        const response = await fetch('https://ud2luybs5l.execute-api.ap-southeast-2.amazonaws.com/development/getProductCostByCategory');
+        const response = await fetch('https://ud2luybs5l.execute-api.ap-southeast-2.amazonaws.com/development/getProductRevenueByCategory');
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
         const data = await response.json();
         const bodyData = JSON.parse(data.body);
 
         // Convert `total_resource_cost` to a number for each item
-        const formattedData = bodyData.map((item: ProductCostItem) => ({
+        const formattedData = bodyData.map((item: ProductRevenueItem) => ({
             ...item,
-            total_resource_cost: parseFloat(item.total_product_cost)
+            total_resource_cost: parseFloat(item.total_product_revenue)
         }));
 
         console.log('Revenue By Product Type', formattedData);
@@ -93,8 +93,39 @@ async function fetchRevenueByProduct() {
     }
 }
 
+async function fetchProductRevenueContribution() {
+    type ProductRevenueContributionItems = {
+        product_id: string;
+        total_revenue: string;
+        revenue_percentage: string;
+    };
+
+    try {
+        const response = await fetch('https://ud2luybs5l.execute-api.ap-southeast-2.amazonaws.com/development/getProductRevenueContribution');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        // Convert `total_resource_cost` to a number for each item
+        const formattedData = bodyData.map((item: ProductRevenueContributionItems) => ({
+            ...item
+        }));
+
+        console.log('Revenue Contribution Per Product', formattedData);
+
+        return formattedData;
+
+    } catch (error) {
+        console.error('Fetch Error:', error);
+        return null;
+    }
+}
+
 export  {
     fetchTotalProductCost, 
     fetchTotalProductRevenue, 
-    fetchProductCostByCategory
+    fetchProductCostByCategory,
+    fetchRevenueByProduct, 
+    fetchProductRevenueContribution
 }
