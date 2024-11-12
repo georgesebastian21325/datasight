@@ -94,7 +94,7 @@ export default function NavigationBar() {
 					</div>
 
 					{/* Desktop menu */}
-					<div className="hidden sm:flex sm:items-center space-x-4">
+					<div className="hidden sm:flex sm:items-center space-x-5">
 						{navItems.map((item) => (
 							<button
 								key={item.name}
@@ -113,10 +113,6 @@ export default function NavigationBar() {
 								{item.name}
 							</button>
 						))}
-					</div>
-
-					{/* Sign out button for desktop */}
-					<div className="hidden sm:flex sm:items-center space-x-2">
 						<Button
 							onClick={() => setIsModalOpen(true)}
 							variant="outline"
