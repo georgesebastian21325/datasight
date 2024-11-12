@@ -3,9 +3,9 @@ import ServiceDashboard from '../../../vcomponents/dashboard-ui/service-dashboar
 
 export default function page() {
     return (
-        <>
+        <div className="flex flex-col h-screen ">
             <NavigationBar />
             <ServiceDashboard />
-        </>
+        </div>
     )
 }

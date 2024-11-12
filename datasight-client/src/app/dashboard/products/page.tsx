@@ -4,9 +4,9 @@ import NavigationBar from '../../components/global/NavigationBar'
 
 export default function page() {
     return (
-        <>
+        <div className="flex flex-col h-screen ">
             <NavigationBar />
             <ProductDashboard />
-        </>
+        </div>
     )
 }

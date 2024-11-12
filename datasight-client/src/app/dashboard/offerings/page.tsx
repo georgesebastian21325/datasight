@@ -3,9 +3,9 @@ import OfferingDashboard from '../../../vcomponents/dashboard-ui/offering-dashbo
 
 export default function page() {
     return (
-        <>
+        <div className="flex flex-col h-screen ">
             <NavigationBar />
             <OfferingDashboard />
-        </>
+        </div>
     )
 }
