@@ -21,7 +21,7 @@ export default function OfferingCostChart({ data }) {
         <div className="chart-container">
             {/* Display the total cost formatted as 000,000,000.00 */}
             <h2 className="text-sm">
-                Current Cost: <span className='font-bold text-red-500'>  $ {totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                Current Cost: <span className='font-bold text-black'>  $ {totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </h2>
 
             <ResponsiveContainer width="100%" height={400} className="py-5">
@@ -47,7 +47,7 @@ export default function OfferingCostChart({ data }) {
                         formatter={(value) => `$${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                         cursor={{ fill: '#f5f5f5' }}
                     />
-                    <Bar dataKey="total_offering_cost" fill="red" barSize={20}>
+                    <Bar dataKey="total_offering_cost" fill="#08296C" barSize={20}>
                         <LabelList
                             dataKey="total_offering_cost"
                             position="insideRight"

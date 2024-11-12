@@ -21,7 +21,7 @@ export default function OfferingRevenueChart({ data }) {
         <div className="chart-container">
             {/* Display the total cost formatted as 000,000,000.00 */}
             <h2 className="text-sm">
-                Current Revenue: <span className='font-bold text-green-900'>  $ {totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                Current Revenue: <span className='font-bold text-black'>  $ {totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </h2>
 
             <ResponsiveContainer width="100%" height={400} className="py-5">
@@ -49,7 +49,7 @@ export default function OfferingRevenueChart({ data }) {
                         formatter={(value) => `$${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                         cursor={{ fill: '#f5f5f5' }}
                     />
-                    <Bar dataKey="total_offering_revenue" fill="green" barSize={20}>
+                    <Bar dataKey="total_offering_revenue" fill="purple" barSize={20}>
                         <LabelList
                             dataKey="total_offering_revenue"
                             position="insideRight"
