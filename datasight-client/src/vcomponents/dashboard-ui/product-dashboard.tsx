@@ -139,22 +139,26 @@ export default function ProductLayerDashboard() {
             </CardContent>
           </Card>
         </div>
-        <Card className={`${loading ? 'animate-pulse' : ''}`}>
-          <CardHeader>
-            <CardTitle className='text-lg font-bold'>Product Utilization Rate</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loading ? <div className="skeleton animate-pulse"></div> : <ProductUtilizationRateChart data={productUtilizationRate} />}
-          </CardContent>
-        </Card>
-        <Card className={`${loading ? 'animate-pulse' : ''}`}>
-          <CardHeader>
-            <CardTitle className='text-lg font-bold'>Monthly Utilization Trends by Product</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loading ? <div className="skeleton animate-pulse"></div> : <ProductUtilizationTrendChart data={productUtilizationTrend} />}
-          </CardContent>
-        </Card>
+      </section>
+      <section>
+        <div className="grid gap-4 md:grid-cols-2">
+          <Card className={`${loading ? 'animate-pulse' : ''}`}>
+            <CardHeader>
+              <CardTitle className='text-lg font-bold'>Product Utilization Rate</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loading ? <div className="skeleton animate-pulse"></div> : <ProductUtilizationRateChart data={productUtilizationRate} />}
+            </CardContent>
+          </Card>
+          <Card className={`${loading ? 'animate-pulse' : ''}`}>
+            <CardHeader>
+              <CardTitle className='text-lg font-bold'>Monthly Utilization Trends by Product</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loading ? <div className="skeleton animate-pulse"></div> : <ProductUtilizationTrendChart data={productUtilizationTrend} />}
+            </CardContent>
+          </Card>
+        </div>
       </section>
     </div>
   );
