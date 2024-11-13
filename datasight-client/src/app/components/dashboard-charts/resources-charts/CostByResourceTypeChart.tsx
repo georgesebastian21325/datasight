@@ -25,6 +25,7 @@ function CostByResourceTypeChart({ data }) {
                         outerRadius={150}
                         label={renderCustomLabel} // Use custom label function here
                         labelLine={{ stroke: '#8884d8', strokeWidth: 1 }} // Make label lines more visible
+                        style={{ fontSize: '9px', fontWeight: 'bold' }} 
                     >
                         {data.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

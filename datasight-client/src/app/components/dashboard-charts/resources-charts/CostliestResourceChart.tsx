@@ -32,11 +32,13 @@ function CostliestResourceChart({ data }) {
                     <XAxis
                         type="number"
                         tickFormatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }} 
                     />
                     <YAxis
                         type="category"
                         dataKey="displayLabel" // Display resource_type and resource_id on y-axis
                         width={200} // Increase width for longer labels
+                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }} 
                     />
                     <ChartTooltip
                         formatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}

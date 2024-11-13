@@ -37,6 +37,7 @@ function AverageUtilizationChart({ data }) {
                         domain={[0, 100]}
                         tickFormatter={(value) => `${value}%`}
                         tick={{ fontSize: 12, fill: "#333" }}
+                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }} 
                     />
                     <XAxis
                         dataKey="resource_type"

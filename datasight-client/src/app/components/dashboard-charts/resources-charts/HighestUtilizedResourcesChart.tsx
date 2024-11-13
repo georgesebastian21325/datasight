@@ -1,5 +1,8 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer, Legend, Cell, LabelList } from 'recharts';
+import {
+    BarChart, Bar, XAxis, YAxis, CartesianGrid,
+    Tooltip as ChartTooltip, ResponsiveContainer, Legend, Cell, LabelList
+} from 'recharts';
 import { ChartContainer, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart";
 
 function HighestUtilizedResourcesChart({ data }) {
@@ -9,15 +12,42 @@ function HighestUtilizedResourcesChart({ data }) {
         displayLabel: `${item.resource_type} (${item.resource_id})`
     }));
 
-    // Function to determine color based on average usage percentage
-    const getColor = (percentage) => {
-        if (percentage >= 95) return "red";           // Overutilized
-        if (percentage >= 75 && percentage < 95) return "yellow"; // Balanced
-        return "green";                               // Underutilized
+    // Function to interpolate color based on average usage percentage
+    const getInterpolatedColor = (percentage) => {
+        let color;
+        const green = { r: 0, g: 255, b: 0 };
+        const yellow = { r: 255, g: 255, b: 0 };
+        const red = { r: 255, g: 0, b: 0 };
+
+        if (percentage <= 75) {
+            // Interpolate between green and yellow
+            const ratio = percentage / 75; // 0 to 1
+            color = {
+                r: Math.round(green.r + ratio * (yellow.r - green.r)),
+                g: Math.round(green.g + ratio * (yellow.g - green.g)),
+                b: Math.round(green.b + ratio * (yellow.b - green.b)),
+            };
+        } else if (percentage > 75 && percentage < 95) {
+            // Interpolate between yellow and red
+            const ratio = (percentage - 75) / (95 - 75); // 0 to 1
+            color = {
+                r: Math.round(yellow.r + ratio * (red.r - yellow.r)),
+                g: Math.round(yellow.g + ratio * (red.g - yellow.g)),
+                b: Math.round(yellow.b + ratio * (red.b - yellow.b)),
+            };
+        } else {
+            // percentage >= 95%
+            color = red;
+        }
+        // Return the color as a rgb string
+        return `rgb(${color.r}, ${color.g}, ${color.b})`;
     };
 
     return (
-        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[200px] w-[600px]">
+        <ChartContainer
+            config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }}
+            className="h-[200px] w-[600px]"
+        >
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     data={formattedData}
@@ -27,12 +57,16 @@ function HighestUtilizedResourcesChart({ data }) {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
                         type="number"
-                        tickFormatter={(value) => `${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %`}
+                        tickFormatter={(value) =>
+                            `${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %`
+                        }
+                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }} 
                     />
                     <YAxis
                         type="category"
                         dataKey="displayLabel" // Display resource_type and resource_id on y-axis
                         width={200} // Increase width for longer labels
+                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }} 
                     />
                     <ChartTooltip
                         formatter={(value) => [
@@ -44,7 +78,7 @@ function HighestUtilizedResourcesChart({ data }) {
                         {formattedData.map((entry, index) => (
                             <Cell
                                 key={`cell-${index}`}
-                                fill={getColor(entry.average_usage_percentage)} // Set color based on usage percentage
+                                fill={getInterpolatedColor(entry.average_usage_percentage)} // Set color based on usage percentage
                             />
                         ))}
                         <LabelList
