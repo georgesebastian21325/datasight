@@ -114,22 +114,24 @@ export default function ProductLayerDashboard() {
 
       <section className="mb-8">
         <div className="grid gap-4 md:grid-cols-2">
-          <Card className={`${loading ? 'skeleton animate-pulse' : ''}`}>
-            <CardHeader>
-              <CardTitle className='text-lg font-bold'>Cost Per Product</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? <div className="skeleton animate-pulse"></div> : <CostByProductChart data={costPerProduct} />}
-            </CardContent>
-          </Card>
-          <Card className={`${loading ? 'skeleton animate-pulse' : ''}`}>
-            <CardHeader>
-              <CardTitle className='text-lg font-bold'>Revenue Per Product</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? <div className="skeleton animate-pulse"></div> : <RevenueByProductChart data={revenuePerProduct} />}
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 gap-4">
+            <Card className={`${loading ? 'skeleton animate-pulse' : ''}`}>
+              <CardHeader>
+                <CardTitle className='text-lg font-bold'>Cost Per Product</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {loading ? <div className="skeleton animate-pulse"></div> : <CostByProductChart data={costPerProduct} />}
+              </CardContent>
+            </Card>
+            <Card className={`${loading ? 'skeleton animate-pulse' : ''}`}>
+              <CardHeader>
+                <CardTitle className='text-lg font-bold'>Revenue Per Product</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {loading ? <div className="skeleton animate-pulse"></div> : <RevenueByProductChart data={revenuePerProduct} />}
+              </CardContent>
+            </Card>
+          </div>
           <Card className={`${loading ? 'animate-pulse' : ''}`}>
             <CardHeader>
               <CardTitle className='text-lg font-bold'>Product Revenue Contribution to Total Revenue</CardTitle>

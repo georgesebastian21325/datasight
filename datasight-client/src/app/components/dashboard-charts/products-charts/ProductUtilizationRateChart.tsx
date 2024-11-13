@@ -21,15 +21,16 @@ export default function ProductUtilizationRateChart({ data }) {
         <ChartContainer config={{ cost: { label: "Product Revenue Contribution", color: "hsl(var(--chart-1))" } }} className="h-[410px] w-[600px]">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={processedData} layout="horizontal">
-                    <XAxis type="category" dataKey="product_id" />
-                    <YAxis type="number" dataKey="product_utilization_rate" domain={[0, 100]} unit="%"  />
+                    <XAxis type="category" dataKey="product_id" style={{ fontSize: '12px', fontWeight: 'bold', fill: 'black' }} />
+                    <YAxis type="number" dataKey="product_utilization_rate" domain={[0, 100]} unit="%" style={{ fontSize: '12px', fontWeight: 'bold', fill: 'black' }} />
                     <Tooltip content={<ChartTooltipContent />} />
                     <Legend
-                        verticalAlign="top"
+                        verticalAlign="bottom"
                         wrapperStyle={{
                             paddingBottom: 20,
                             transform: 'translateX(-50%)',
-                            left: '50%'
+                            left: '53%',
+                            bottom: -40
                         }}
                         payload={processedData.map((entry, index) => ({
                             id: entry.product_id,

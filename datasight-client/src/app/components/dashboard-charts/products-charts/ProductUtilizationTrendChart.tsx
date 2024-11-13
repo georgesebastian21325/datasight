@@ -37,8 +37,10 @@ export default function ProductUtilizationTrendChart({ data }) {
             {/* Line chart for the selected product */}
             <ResponsiveContainer width="100%" height={400}>
                 <LineChart data={filteredData} margin={{ top: 10, right: 30, left: 0, bottom: 5 }} style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
+                    <CartesianGrid strokeDasharray="3 3" style={{ fontSize: '12px', fontWeight: 'bold', fill: 'black' }}
+ />
+                    <XAxis dataKey="month" style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }}
+ />
                     <YAxis tickFormatter={(value) => `${value}%`} />
                     <Tooltip formatter={(value) => `${value.toFixed(2)}%`} />
                     <Line type="monotone" dataKey="monthly_avg_usage_percentage" stroke="#8884d8" strokeWidth={2} dot={false} />

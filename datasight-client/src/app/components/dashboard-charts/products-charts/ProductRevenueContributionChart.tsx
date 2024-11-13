@@ -21,11 +21,12 @@ function ProductRevenueContributionChart({ data }) {
         const entry = processedData[index];
         return (
             <text
-                x={x + width + 5} // Position to the right of the bar
-                y={y + 10}        // Adjust vertically
+                x={x + width + 10} // Position to the right of the bar
+                y={y + 25}        // Adjust vertically
                 fill="#000"       // Label color
                 fontSize={12}
-                textAnchor="start"
+                textAnchor="right"
+                style={{ fontSize: '12px', fontWeight: 'bold', fill: 'black' }}
             >
                 {`${value.toFixed(2)}% ($${entry.total_revenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`}
             </text>
@@ -33,18 +34,19 @@ function ProductRevenueContributionChart({ data }) {
     };
 
     return (
-        <ChartContainer config={{ cost: { label: "Product Revenue Contribution", color: "hsl(var(--chart-1))" } }} className="h-[410px] w-[600px]">
+        <ChartContainer config={{ cost: { label: "Product Revenue Contribution", color: "hsl(var(--chart-1))" } }} className="h-[500px] w-[600px]">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={processedData} layout="vertical">
-                    <XAxis type="number" dataKey="revenue_percentage" domain={[0, 100]} unit="%" />
-                    <YAxis type="category" dataKey="product_id" />
+                    <XAxis type="number" dataKey="revenue_percentage" domain={[0, 100]} unit="%" style={{ fontSize: '12px', fontWeight: 'bold', fill: 'black' }} />
+                    <YAxis type="category" dataKey="product_id" style={{ fontSize: '12px', fontWeight: 'bold', fill: 'black' }} />
                     <Tooltip content={<ChartTooltipContent />} />
                     <Legend
-                        verticalAlign="top"
+                        verticalAlign="bottom"
                         wrapperStyle={{
-                            paddingBottom: 20,
+                            paddingBottom: 30,
                             transform: 'translateX(-50%)',
-                            left: '50%'
+                            left: '55%',
+                            bottom: -40
                         }}
                         payload={processedData.map((entry, index) => ({
                             id: entry.product_id,
