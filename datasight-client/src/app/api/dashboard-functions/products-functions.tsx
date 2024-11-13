@@ -150,11 +150,44 @@ async function fetchProductUtilizationRate() {
     }
 }
 
+async function fetchProductUtilizationTrend() {
+    type ProductUtilizationTrendItems = {
+        month: string;
+        product_id: string;
+        monthly_avg_usage_percentage: string;
+    };
+
+    try {
+        const response = await fetch('https://ud2luybs5l.execute-api.ap-southeast-2.amazonaws.com/development/getProductUtilizationTrend');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        // Convert `total_resource_cost` to a number for each item
+        const formattedData = bodyData.map((item: ProductUtilizationTrendItems) => ({
+            ...item,
+            monthly_avg_usage_percentage: parseFloat(item.monthly_avg_usage_percentage)
+        }));
+
+        console.log('Product Utilization Trend', formattedData);
+
+        return formattedData;
+
+    } catch (error) {
+        console.error('Fetch Error:', error);
+        return null;
+    }
+}
+
+
+
 export  {
     fetchTotalProductCost, 
     fetchTotalProductRevenue, 
     fetchProductCostByCategory,
     fetchRevenueByProduct, 
     fetchProductRevenueContribution,
-    fetchProductUtilizationRate
+    fetchProductUtilizationRate, 
+    fetchProductUtilizationTrend
 }

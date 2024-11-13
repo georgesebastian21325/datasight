@@ -20,9 +20,9 @@ export default function ProductUtilizationRateChart({ data }) {
     return (
         <ChartContainer config={{ cost: { label: "Product Revenue Contribution", color: "hsl(var(--chart-1))" } }} className="h-[410px] w-[600px]">
             <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={processedData} layout="vertical">
-                    <XAxis type="number" dataKey="product_utilization_rate" domain={[0, 100]} unit="%" />
-                    <YAxis type="category" dataKey="product_id" />
+                <BarChart data={processedData} layout="horizontal">
+                    <XAxis type="category" dataKey="product_id" />
+                    <YAxis type="number" dataKey="product_utilization_rate" domain={[0, 100]} unit="%"  />
                     <Tooltip content={<ChartTooltipContent />} />
                     <Legend
                         verticalAlign="top"
