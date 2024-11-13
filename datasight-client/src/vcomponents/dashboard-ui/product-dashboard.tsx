@@ -6,8 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/vcomponents/dashboar
 
 import CostByProductChart from '@/app/components/dashboard-charts/products-charts/CostByProductChart.tsx';
 import RevenueByProductChart from '@/app/components/dashboard-charts/products-charts/RevenueByProductChart';
-import ProductRevenueContributionChart from '@/app/components/dashboard-charts/products-charts/ProductRevenueContributionChart'
-import { fetchTotalProductCost, fetchTotalProductRevenue, fetchProductCostByCategory, fetchRevenueByProduct, fetchProductRevenueContribution } from '../../app/api/dashboard-functions/products-functions'
+import ProductRevenueContributionChart from '@/app/components/dashboard-charts/products-charts/ProductRevenueContributionChart';
+import ProductUtilizationRateChart from '@/app/components/dashboard-charts/products-charts/ProductUtilizationRateChart';
+
+
+import { fetchTotalProductCost, fetchTotalProductRevenue, fetchProductCostByCategory, 
+         fetchRevenueByProduct, fetchProductRevenueContribution, fetchProductUtilizationRate } from '../../app/api/dashboard-functions/products-functions'
 import { formatCustom } from '@/app/api/dashboard-functions/global-dashboard-functions'
 
 type ProductCostItem = {
@@ -26,6 +30,11 @@ type ProductRevenueContributionItems = {
   revenue_percentage: string;
 };
 
+type ProductUtilizationRateItems = {
+  product_id: string;
+  product_utilization_rate: string;
+};
+
 export default function ProductLayerDashboard() {
   const [loading, setLoading] = useState(true);  // Loading state
   const [totalProductCost, setTotalProductCost] = useState<string | null>(null)
@@ -33,6 +42,7 @@ export default function ProductLayerDashboard() {
   const [costPerProduct, setCostPerProduct] = useState<ProductCostItem[]>([]);
   const [revenuePerProduct, setRevenuePerProduct] = useState<ProductRevenueItem[]>([]);
   const [productContribution, setProductContribution] = useState<ProductRevenueContributionItems[]>([]);
+  const [productUtilizationRate, setProductUtilizationRate] = useState < ProductUtilizationRateItems[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -42,6 +52,7 @@ export default function ProductLayerDashboard() {
       const costPerProductData = await fetchProductCostByCategory();
       const revenuePerProductData = await fetchRevenueByProduct();
       const productContributionData = await fetchProductRevenueContribution();
+      const productUtilizationRateData = await fetchProductUtilizationRate();
 
       if (totalProductCostData !== null) {
         setTotalProductCost(formatCustom(totalProductCostData));
@@ -54,6 +65,7 @@ export default function ProductLayerDashboard() {
       setCostPerProduct(costPerProductData);
       setRevenuePerProduct(revenuePerProductData);
       setProductContribution(productContributionData);
+      setProductUtilizationRate(productUtilizationRateData);
 
       setLoading(false);  // Stop loading after data is fetched
     }
@@ -115,6 +127,14 @@ export default function ProductLayerDashboard() {
             </CardContent>
           </Card>
         </div>
+        <Card className={`${loading ? 'animate-pulse' : ''}`}>
+          <CardHeader>
+            <CardTitle className='text-lg font-bold'>Product Utilization Rate</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading ? <div className="skeleton animate-pulse"></div> : <ProductUtilizationRateChart data={productUtilizationRate} />}
+          </CardContent>
+        </Card>
       </section>
     </div>
   );
