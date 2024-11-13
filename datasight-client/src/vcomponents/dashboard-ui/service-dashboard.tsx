@@ -11,11 +11,22 @@ import {
 } from "../../app/api/dashboard-functions/services-function"
 
 import CostPerServiceChart from "@/app/components/dashboard-charts/services-charts/CostPerServiceChart"
+import ServiceRevenueChart from "@/app/components/dashboard-charts/services-charts/ServiceRevenueChart"
+import ServiceCostChart from "@/app/components/dashboard-charts/services-charts/ServiceCostChart"
 import RevenueGeneratingServicesChart from "@/app/components/dashboard-charts/services-charts/RevenueGeneratingServicesChart"
 import CompareRevenueCostServicesChart from "@/app/components/dashboard-charts/services-charts/CompareRevenueCostServicesChart"
 import AverageServiceUtilizationChart from "@/app/components/dashboard-charts/services-charts/AverageServiceUtilizationChart"
 import ServiceUtilTrendChart from "@/app/components/dashboard-charts/services-charts/ServiceUtilTrendChart"
 
+type TotalServiceRevenueItems = {
+  service_id: string;
+  total_service_revenue: string;
+}
+
+type TotalServiceCostItems = {
+  service_id: string;
+  total_service_cost: string;
+}
 
 type ServiceCostItem = {
   service_id: string;
@@ -48,8 +59,8 @@ type ServiceUtilizationTrendItems = {
 
 export default function ServiceDashboardComponent() {
   const [loading, setLoading] = useState(true);  // Loading state
-  const [totalServiceCost, setTotalServiceCost] = useState<string | null>(null);
-  const [totalServiceRevenue, setTotalServiceRevenue] = useState<string | null>(null);
+  const [totalServiceCost, setTotalServiceCost] = useState<TotalServiceCostItems []>([]);
+  const [totalServiceRevenue, setTotalServiceRevenue] = useState<TotalServiceRevenueItems[]>([]);
   const [costPerService, setCostPerService] = useState<ServiceCostItem[]>([]);
   const [revenuePerService, setRevenuePerService] = useState<ServiceRevenueItems[]>([]);
   const [costRevenueService, setCostRevenueService] = useState<CostRevenueServiceItems[]>([]);
@@ -67,13 +78,10 @@ export default function ServiceDashboardComponent() {
       const serviceUtilizationByCategoryData = await fetchServiceUtilizationByCategory();
       const serviceUtilizationTrendData = await fetchServiceUtilizationTrend();
 
-      if (serviceCost !== null) {
-        setTotalServiceCost(formatCustom(serviceCost));
-      }
+      setTotalServiceCost(serviceCost);
 
-      if (serviceRevenue !== null) {
-        setTotalServiceRevenue(formatCustom(serviceRevenue));
-      }
+
+      setTotalServiceRevenue(serviceRevenue);
 
       setCostPerService(costByServiceData);
       setRevenuePerService(revenueByServiceData);
@@ -93,20 +101,20 @@ export default function ServiceDashboardComponent() {
       {/* 1. Key Service Metrics Overview */}
       <section>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-          <Card className={`${loading ? 'skeleton bg-brand-blue' : 'bg-brand-blue'} text-white`}>
+          <Card className={`${loading ? 'animate-pulse ' : ''} `}>
             <CardHeader>
               <CardTitle className='text-sm font-medium'>Total Service Cost</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{loading ? '...' : `$ ${totalServiceCost}`}</p>
+              {loading ? <div className="h-48"></div> : <ServiceCostChart data={totalServiceCost} />}
             </CardContent>
           </Card>
-          <Card className={`${loading ? 'skeleton bg-black' : 'bg-black'} text-white`}>
+          <Card className={`${loading ? 'skeleton ' : ''} text-black`}>
             <CardHeader>
               <CardTitle className='text-sm font-medium'>Total Service Revenue</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{loading ? '...' : `$ ${totalServiceRevenue}`}</p>
+              {loading ? <div className="h-48"></div> : <ServiceRevenueChart data={totalServiceRevenue} />}
             </CardContent>
           </Card>
         </div>

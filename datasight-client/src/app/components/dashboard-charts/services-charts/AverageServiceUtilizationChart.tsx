@@ -36,8 +36,9 @@ function AverageServiceUtilizationChart({ data }) {
                         domain={[0, 100]}
                         tickFormatter={(value) => `${value}%`}
                         tick={{ fontSize: 12, fill: "#333" }}
+                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }} 
                     />
-                    <XAxis dataKey="service_id" type="category" hide={false} /> {/* Hide X-axis labels */}
+                    <XAxis dataKey="service_id" type="category" hide={false} style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }} /> {/* Hide X-axis labels */}
                     <Tooltip formatter={(value) => `${value}%`} contentStyle={{ fontSize: 12, color: "#333" }} />
 
                     <Bar dataKey="avg_service_utilization" barSize={40}>

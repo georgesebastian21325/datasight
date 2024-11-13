@@ -34,11 +34,13 @@ function CostPerService({ data }) {
                     <XAxis
                         type="number"
                         tickFormatter={formatNumber} // Format X-axis values
+                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }} 
                     />
                     <YAxis
                         type="category"
                         dataKey="displayLabel" // Display service_id on y-axis
                         width={70} // Increase width for longer labels
+                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }} 
                     />
                     <ChartTooltip
                         formatter={(value) => formatNumber(value)} // Format Tooltip values

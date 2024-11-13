@@ -34,17 +34,21 @@ function RevenueGeneratingServicesChart({ data }) {
                 <BarChart
                     data={formattedData}
                     layout="vertical" // Horizontal bar chart
-                    margin={{ top: 30 }}
+                    margin={{ top: 30, left: 20 }}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
                         type="number"
                         tickFormatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }} 
+                        
                     />
                     <YAxis
                         type="category"
                         dataKey="displayLabel" // Display combined service_id, resource_type, and resource_id on y-axis
                         width={150} // Increase width for longer labels
+                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }} 
+
                     />
                     <ChartTooltip
                         formatter={(value, name, props) => [

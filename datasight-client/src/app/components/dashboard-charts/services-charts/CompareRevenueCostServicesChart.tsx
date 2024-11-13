@@ -32,10 +32,12 @@ export default function CompareRevenueCostServicesChart({ data }) {
                         name="Service ID"
                         tick={{ angle: -45, textAnchor: 'end' }}
                         height={80}
+                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }} 
                     />
                     <YAxis
                         name="Amount ($)"
                         tickFormatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }} 
                     />
                     <ChartTooltip
                         formatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
