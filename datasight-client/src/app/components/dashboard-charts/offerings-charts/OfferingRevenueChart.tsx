@@ -49,7 +49,7 @@ export default function OfferingRevenueChart({ data }) {
                         formatter={(value) => `$${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                         cursor={{ fill: '#f5f5f5' }}
                     />
-                    <Bar dataKey="total_offering_revenue" fill="purple" barSize={20}>
+                    <Bar dataKey="total_offering_revenue" fill="purple" barSize={40}>
                         <LabelList
                             dataKey="total_offering_revenue"
                             position="insideRight"
