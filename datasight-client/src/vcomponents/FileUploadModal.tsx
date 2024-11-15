@@ -30,15 +30,36 @@ export default function FileUploadModal({ onUploadComplete }: FileUploadModalPro
 
   // Define the allowed file names
   const allowedFileNames = [
-    "backup-and-recovery-systems.csv",
-    "cloud-infrastructure.csv",
-    "communication-infrastructure.csv",
+    "backup_and_recovery_systems.csv",
+    "cloud_infrastructure.csv",
+    "communication_infrastructure_uptime.csv",
+    "communication_infrastructure.csv",
     "computer.csv",
+    "date.csv",
+    "expenses.csv",
+    "failure_records.csv",
+    "ip_address.csv",
+    "manufacturer.csv",
+    "network_equipment.csv",
+    "offering_product_mapping.csv",
+    "offering_product_performance.csv",
+    "offering.csv",
+    "product_service_mapping.csv",
+    "product_service_performance.csv",
+    "product.csv",
+    "resource_maintenance.csv",
+    "resource_metric_values.csv",
+    "resource_metrics.csv",
+    "revenue.csv",
     "server.csv",
-    "storage-devices.csv",
-    "virtual-infrastructure.csv"
-    // Add other required file names here
+    "service_level_agreement.csv",
+    "service_resource_mapping.csv",
+    "service.csv",
+    "storage_devices.csv",
+    "user_groups.csv",
+    "virtual_infrastructure.csv"
   ];
+
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
