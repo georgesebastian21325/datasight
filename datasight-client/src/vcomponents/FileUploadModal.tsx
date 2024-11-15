@@ -2,33 +2,59 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/vcomponents/file-upload-components/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/vcomponents/file-upload-components/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/vcomponents/file-upload-components/table";
-import { Upload, AlertCircle, ChevronLeft, ChevronRight, X, FileUp, Check } from "lucide-react";
-import { Alert, AlertDescription } from "@/vcomponents/file-upload-components/alert";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/vcomponents/file-upload-components/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/vcomponents/file-upload-components/table";
+import {
+  Upload,
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  FileUp,
+  Check,
+} from "lucide-react";
+import {
+  Alert,
+  AlertDescription,
+} from "@/vcomponents/file-upload-components/alert";
 import { Badge } from "@/vcomponents/file-upload-components/badge";
 import { ScrollArea } from "./file-upload-components/scroll-area";
 
-
 interface FileInfo {
-  id: string
-  name: string
-  size: number
-  status: "ready" | "uploaded" | "failed" | "uploading"
-  file: File
+  id: string;
+  name: string;
+  size: number;
+  status: "ready" | "uploaded" | "failed" | "uploading";
+  file: File;
 }
 
 interface FileUploadModalProps {
-  onUploadComplete: (files: FileInfo[]) => void
+  onUploadComplete: (files: FileInfo[]) => void;
 }
 
-export default function Component({ onUploadComplete }: FileUploadModalProps = { onUploadComplete: () => { } }) {
-  const [selectedFiles, setSelectedFiles] = useState<FileInfo[]>([])
-  const [error, setError] = useState<string | null>(null)
-  const [isUploading, setIsUploading] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const itemsPerPage = 4
+export default function Component({
+  onUploadComplete,
+}: FileUploadModalProps = { onUploadComplete: () => { } }) {
+  const [selectedFiles, setSelectedFiles] = useState<FileInfo[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadComplete, setUploadComplete] = useState(false); // New state variable
+  const [currentPage, setCurrentPage] = useState(1);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const itemsPerPage = 4;
 
   const allowedFileNames = [
     "backup_and_recovery_systems.csv",
@@ -58,30 +84,41 @@ export default function Component({ onUploadComplete }: FileUploadModalProps = {
     "service.csv",
     "storage_devices.csv",
     "user_groups.csv",
-    "virtual_infrastructure.csv"
-  ]
+    "virtual_infrastructure.csv",
+  ];
 
-  const [requiredFiles, setRequiredFiles] = useState<{ name: string; uploaded: boolean }[]>(
-    allowedFileNames.map(name => ({ name, uploaded: false }))
-  )
+  const [requiredFiles, setRequiredFiles] = useState<
+    { name: string; uploaded: boolean }[]
+  >(allowedFileNames.map((name) => ({ name, uploaded: false })));
 
   useEffect(() => {
-    const updatedRequiredFiles = requiredFiles.map(file => ({
+    const updatedRequiredFiles = requiredFiles.map((file) => ({
       ...file,
-      uploaded: selectedFiles.some(selectedFile => selectedFile.name === file.name && selectedFile.status === "uploaded")
-    }))
-    setRequiredFiles(updatedRequiredFiles)
-  }, [selectedFiles])
+      uploaded: selectedFiles.some(
+        (selectedFile) =>
+          selectedFile.name === file.name && selectedFile.status === "uploaded"
+      ),
+    }));
+    setRequiredFiles(updatedRequiredFiles);
+  }, [selectedFiles]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setError(null)
+    setError(null);
     if (event.target.files) {
-      const fileList = Array.from(event.target.files)
-      const validFiles = fileList.filter((file) => allowedFileNames.includes(file.name))
-      const invalidFiles = fileList.filter((file) => !allowedFileNames.includes(file.name))
+      const fileList = Array.from(event.target.files);
+      const validFiles = fileList.filter((file) =>
+        allowedFileNames.includes(file.name)
+      );
+      const invalidFiles = fileList.filter(
+        (file) => !allowedFileNames.includes(file.name)
+      );
 
       if (invalidFiles.length > 0) {
-        setError(`Some files were not allowed: ${invalidFiles.map(f => f.name).join(", ")}`)
+        setError(
+          `Some files were not allowed: ${invalidFiles
+            .map((f) => f.name)
+            .join(", ")}`
+        );
       }
 
       const fileInfos = validFiles.map((file) => ({
@@ -90,68 +127,73 @@ export default function Component({ onUploadComplete }: FileUploadModalProps = {
         size: file.size,
         status: "ready" as const,
         file,
-      }))
+      }));
 
-      setSelectedFiles((prev) => [...prev, ...fileInfos])
-      setCurrentPage(Math.ceil((selectedFiles.length + fileInfos.length) / itemsPerPage))
+      setSelectedFiles((prev) => [...prev, ...fileInfos]);
+      setCurrentPage(
+        Math.ceil((selectedFiles.length + fileInfos.length) / itemsPerPage)
+      );
     } else {
-      setError("No files selected")
+      setError("No files selected");
     }
-  }
+  };
 
   const handleUpload = async () => {
-    setIsUploading(true)
-    setError(null)
+    setIsUploading(true);
+    setError(null);
 
-    const formData = new FormData()
+    const formData = new FormData();
     selectedFiles.forEach((fileInfo) => {
-      formData.append("files", fileInfo.file)
-    })
+      formData.append("files", fileInfo.file);
+    });
 
     try {
       const response = await fetch("/api/upload", {
         method: "POST",
         body: formData,
-      })
+      });
 
       if (response.ok) {
         const uploadedFiles = selectedFiles.map((file) => ({
           ...file,
           status: "uploaded" as const,
-        }))
-        setSelectedFiles(uploadedFiles)
-        onUploadComplete(uploadedFiles.filter((file) => file.status === "uploaded"))
+        }));
+        setSelectedFiles(uploadedFiles);
+        onUploadComplete(
+          uploadedFiles.filter((file) => file.status === "uploaded")
+        );
+        setUploadComplete(true); // Indicate upload completion
       } else {
-        throw new Error("Upload failed")
+        throw new Error("Upload failed");
       }
     } catch (err) {
-      setError("Upload failed. Please try again.")
+      setError("Upload failed. Please try again.");
       setSelectedFiles((prev) =>
         prev.map((file) => ({
           ...file,
           status: "failed",
         }))
-      )
+      );
     } finally {
-      setIsUploading(false)
+      setIsUploading(false);
     }
-  }
+  };
 
   const handleRemoveFile = (id: string) => {
-    setSelectedFiles((prev) => prev.filter((file) => file.id !== id))
-    const newTotalPages = Math.ceil((selectedFiles.length - 1) / itemsPerPage)
+    setSelectedFiles((prev) => prev.filter((file) => file.id !== id));
+    const newTotalPages = Math.ceil((selectedFiles.length - 1) / itemsPerPage);
     if (currentPage > newTotalPages) {
-      setCurrentPage(newTotalPages || 1)
+      setCurrentPage(newTotalPages || 1);
     }
-  }
+  };
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return "0 Bytes"
-    const k = 1024
-    const sizes = ["Bytes", "KB", "MB", "GB", "TB"]
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
-  }
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  };
 
   const getStatusBadge = (status: FileInfo["status"]) => {
     const statusConfig = {
@@ -159,20 +201,32 @@ export default function Component({ onUploadComplete }: FileUploadModalProps = {
       uploaded: { className: "bg-green-500", label: "Uploaded" },
       failed: { className: "bg-red-500", label: "Failed" },
       uploading: { className: "bg-blue-500", label: "Uploading" },
-    }
-    const { className, label } = statusConfig[status]
-    return <Badge className={`${className} text-white`}>{label}</Badge>
-  }
+    };
+    const { className, label } = statusConfig[status];
+    return <Badge className={`${className} text-white`}>{label}</Badge>;
+  };
 
-  const totalPages = Math.ceil(selectedFiles.length / itemsPerPage)
+  const totalPages = Math.ceil(selectedFiles.length / itemsPerPage);
   const paginatedFiles = selectedFiles.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
-  )
+  );
 
   const isFileSelected = (fileName: string) => {
-    return selectedFiles.some(file => file.name === fileName && (file.status === "ready" || file.status === "uploaded"))
-  }
+    return selectedFiles.some(
+      (file) =>
+        file.name === fileName &&
+        (file.status === "ready" || file.status === "uploaded")
+    );
+  };
+
+  // Check if all required files are selected and ready
+  const allFilesReady = requiredFiles.every((file) =>
+    selectedFiles.some(
+      (selectedFile) =>
+        selectedFile.name === file.name && selectedFile.status === "ready"
+    )
+  );
 
   return (
     <div className="flex flex-col items-center justify-center p-4">
@@ -184,9 +238,13 @@ export default function Component({ onUploadComplete }: FileUploadModalProps = {
         </DialogTrigger>
         <DialogContent className="sm:max-w-[900px]">
           <DialogHeader>
-            <DialogTitle className="text-center mt-8 text-2xl font-bold">Upload Enterprise Architecture Datasets</DialogTitle>
+            <DialogTitle className="text-center mt-8 text-2xl font-bold">
+              Upload Enterprise Architecture Datasets
+            </DialogTitle>
             <p className="text-center text-gray-500">
-              Please ensure you upload all <b className="text-red-500">32 datasets</b> related to your enterprise architecture.
+              Please ensure you upload all{" "}
+              <b className="text-red-500">32 datasets</b> related to your
+              enterprise architecture.
             </p>
           </DialogHeader>
           <div className="flex gap-4">
@@ -216,6 +274,14 @@ export default function Component({ onUploadComplete }: FileUploadModalProps = {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
+              {uploadComplete && ( // Display success message
+                <Alert variant="success" className="mb-4">
+                  <Check className="h-4 w-4" />
+                  <AlertDescription>
+                    All files have been uploaded successfully!
+                  </AlertDescription>
+                </Alert>
+              )}
               <div className="max-h-[400px] overflow-auto">
                 <Table>
                   <TableHeader>
@@ -237,7 +303,7 @@ export default function Component({ onUploadComplete }: FileUploadModalProps = {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleRemoveFile(file.id)}
-                            disabled={isUploading}
+                            disabled={isUploading || uploadComplete} // Disable if upload complete
                           >
                             <X className="h-4 w-4" />
                             <span className="sr-only">Remove file</span>
@@ -261,7 +327,9 @@ export default function Component({ onUploadComplete }: FileUploadModalProps = {
                     Page {currentPage} of {totalPages}
                   </span>
                   <Button
-                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
                     disabled={currentPage === totalPages}
                   >
                     Next
@@ -269,28 +337,41 @@ export default function Component({ onUploadComplete }: FileUploadModalProps = {
                   </Button>
                 </div>
               )}
-              <div className="flex justify-center mt-4">
+              <div className="flex flex-col items-center mt-4">
                 <Button
                   onClick={handleUpload}
                   disabled={
                     isUploading ||
-                    !requiredFiles.every(file =>
-                      selectedFiles.some(selectedFile => selectedFile.name === file.name && selectedFile.status === "ready")
-                    )
+                    !allFilesReady ||
+                    uploadComplete // Disable after upload
                   }
                   className="bg-green-900"
                 >
                   <Upload className="mr-2 h-4 w-4" />
                   {isUploading ? "Uploading..." : "Upload Datasets"}
                 </Button>
+                {!allFilesReady && (
+                  <p className="text-red-500 mt-2">
+                    Please select all required files before uploading.
+                  </p>
+                )}
               </div>
             </div>
             <div className="w-64 border-l pl-4">
               <h3 className="font-semibold mb-2">Required Files</h3>
               <ScrollArea className="h-[400px] pr-4">
                 {requiredFiles.map((file, index) => (
-                  <div key={index} className="flex items-center justify-between py-1">
-                    <span className={isFileSelected(file.name) ? "text-green-500" : "text-red-500"}>
+                  <div
+                    key={index}
+                    className="flex items-center justify-between py-1"
+                  >
+                    <span
+                      className={
+                        isFileSelected(file.name)
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }
+                    >
                       {file.name}
                     </span>
                     {isFileSelected(file.name) ? (
@@ -306,5 +387,5 @@ export default function Component({ onUploadComplete }: FileUploadModalProps = {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
