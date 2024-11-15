@@ -270,7 +270,16 @@ export default function Component({ onUploadComplete }: FileUploadModalProps = {
                 </div>
               )}
               <div className="flex justify-center mt-4">
-                <Button onClick={handleUpload} disabled={isUploading || selectedFiles.length === 0} className="bg-green-900">
+                <Button
+                  onClick={handleUpload}
+                  disabled={
+                    isUploading ||
+                    !requiredFiles.every(file =>
+                      selectedFiles.some(selectedFile => selectedFile.name === file.name && selectedFile.status === "ready")
+                    )
+                  }
+                  className="bg-green-900"
+                >
                   <Upload className="mr-2 h-4 w-4" />
                   {isUploading ? "Uploading..." : "Upload Datasets"}
                 </Button>
