@@ -236,16 +236,11 @@ export default function Component({
             Upload Enterprise Architecture Datasets
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[900px]">
+        <DialogContent className="sm:max-w-[1000px]">
           <DialogHeader>
-            <DialogTitle className="text-center mt-8 text-2xl font-bold">
+            <DialogTitle className="text-center mt-8 text-2xl font-bold mb-5 ">
               Upload Enterprise Architecture Datasets
             </DialogTitle>
-            <p className="text-center text-gray-500">
-              Please ensure you upload all{" "}
-              <b className="text-red-500">32 datasets</b> related to your
-              enterprise architecture.
-            </p>
           </DialogHeader>
           <div className="flex gap-4">
             <div className="flex-1">
@@ -267,6 +262,13 @@ export default function Component({
                   <FileUp className="mr-2 h-4 w-4" />
                   Choose Files
                 </Button>
+                {!allFilesReady && (
+                  <div className='flex justify-center bg-red-100 mt-2 mb-5 py-2 rounded-md'>
+                    <p className="text-red-500 text-center font-medium">
+                      Please select all required files before uploading.
+                    </p>
+                  </div>
+                )}
               </div>
               {error && (
                 <Alert variant="destructive" className="mb-4">
@@ -350,16 +352,11 @@ export default function Component({
                   <Upload className="mr-2 h-4 w-4" />
                   {isUploading ? "Uploading..." : "Upload Datasets"}
                 </Button>
-                {!allFilesReady && (
-                  <p className="text-red-500 mt-2">
-                    Please select all required files before uploading.
-                  </p>
-                )}
               </div>
             </div>
-            <div className="w-64 border-l pl-4">
+            <div className="w-66 border-l pl-4">
               <h3 className="font-semibold mb-2">Required Files</h3>
-              <ScrollArea className="h-[400px] pr-4">
+              <ScrollArea className="h-[400px] pr-5">
                 {requiredFiles.map((file, index) => (
                   <div
                     key={index}
@@ -377,7 +374,7 @@ export default function Component({
                     {isFileSelected(file.name) ? (
                       <Check className="h-4 w-4 text-green-500" />
                     ) : (
-                      <X className="h-4 w-4 text-gray-300" />
+                      <X className="h-4 w-4 text-red-300" />
                     )}
                   </div>
                 ))}
