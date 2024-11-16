@@ -69,9 +69,9 @@ export function Onboarding() {
             <div className="text-center">
               <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
               <h2 className="text-2xl font-semibold mb-4">Onboarding Complete!</h2>
-              <p className="mb-8">Your enterprise architecture data has been successfully uploaded and processed.</p>
-              <Button onClick={() => router.push('/enterprise-architecture-view')} size="lg">
-                View Your Enterprise Architecture
+              <p className="mb-8">Your dataset has been successfully uploaded and processed into our system.</p>
+              <Button onClick={() => router.push('/dashboard/resources')} size="lg">
+                View Your Dashboard
               </Button>
             </div>
           )}

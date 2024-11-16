@@ -1,12 +1,37 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/vcomponents/file-upload-components/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/vcomponents/file-upload-components/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/vcomponents/file-upload-components/table";
-import { Upload, AlertCircle, ChevronLeft, ChevronRight, X, FileUp } from "lucide-react";
-import { Alert, AlertDescription } from "@/vcomponents/file-upload-components/alert";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/vcomponents/file-upload-components/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/vcomponents/file-upload-components/table";
+import {
+  Upload,
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  FileUp,
+  Check,
+} from "lucide-react";
+import {
+  Alert,
+  AlertDescription,
+} from "@/vcomponents/file-upload-components/alert";
 import { Badge } from "@/vcomponents/file-upload-components/badge";
+import { ScrollArea } from "./file-upload-components/scroll-area";
 
 interface FileInfo {
   id: string;
@@ -20,37 +45,80 @@ interface FileUploadModalProps {
   onUploadComplete: (files: FileInfo[]) => void;
 }
 
-export default function FileUploadModal({ onUploadComplete }: FileUploadModalProps) {
+export default function Component({
+  onUploadComplete,
+}: FileUploadModalProps = { onUploadComplete: () => { } }) {
   const [selectedFiles, setSelectedFiles] = useState<FileInfo[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadComplete, setUploadComplete] = useState(false); // New state variable
   const [currentPage, setCurrentPage] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const itemsPerPage = 4;
 
-  // Define the allowed file names
   const allowedFileNames = [
-    "backup-and-recovery-systems.csv",
-    "cloud-infrastructure.csv",
-    "communication-infrastructure.csv",
+    "backup_and_recovery_systems.csv",
+    "cloud_infrastructure.csv",
+    "communication_infrastructure_uptime.csv",
+    "communication_infrastructure.csv",
     "computer.csv",
+    "date.csv",
+    "expenses.csv",
+    "failure_records.csv",
+    "ip_address.csv",
+    "manufacturer.csv",
+    "network_equipment.csv",
+    "offering_product_mapping.csv",
+    "offering_product_performance.csv",
+    "offering.csv",
+    "product_service_mapping.csv",
+    "product_service_performance.csv",
+    "product.csv",
+    "resource_maintenance.csv",
+    "resource_metric_values.csv",
+    "resource_metrics.csv",
+    "revenue.csv",
     "server.csv",
-    "storage-devices.csv",
-    "virtual-infrastructure.csv"
-    // Add other required file names here
+    "service_level_agreement.csv",
+    "service_resource_mapping.csv",
+    "service.csv",
+    "storage_devices.csv",
+    "user_groups.csv",
+    "virtual_infrastructure.csv",
   ];
+
+  const [requiredFiles, setRequiredFiles] = useState<
+    { name: string; uploaded: boolean }[]
+  >(allowedFileNames.map((name) => ({ name, uploaded: false })));
+
+  useEffect(() => {
+    const updatedRequiredFiles = requiredFiles.map((file) => ({
+      ...file,
+      uploaded: selectedFiles.some(
+        (selectedFile) =>
+          selectedFile.name === file.name && selectedFile.status === "uploaded"
+      ),
+    }));
+    setRequiredFiles(updatedRequiredFiles);
+  }, [selectedFiles]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
     if (event.target.files) {
       const fileList = Array.from(event.target.files);
-
-      // Filter files to only include those with names in the allowed list
-      const validFiles = fileList.filter((file) => allowedFileNames.includes(file.name));
-      const invalidFiles = fileList.filter((file) => !allowedFileNames.includes(file.name));
+      const validFiles = fileList.filter((file) =>
+        allowedFileNames.includes(file.name)
+      );
+      const invalidFiles = fileList.filter(
+        (file) => !allowedFileNames.includes(file.name)
+      );
 
       if (invalidFiles.length > 0) {
-        setError(`Some files were not allowed: ${invalidFiles.map(f => f.name).join(", ")}`);
+        setError(
+          `Some files were not allowed: ${invalidFiles
+            .map((f) => f.name)
+            .join(", ")}`
+        );
       }
 
       const fileInfos = validFiles.map((file) => ({
@@ -62,7 +130,9 @@ export default function FileUploadModal({ onUploadComplete }: FileUploadModalPro
       }));
 
       setSelectedFiles((prev) => [...prev, ...fileInfos]);
-      setCurrentPage(Math.ceil((selectedFiles.length + fileInfos.length) / itemsPerPage));
+      setCurrentPage(
+        Math.ceil((selectedFiles.length + fileInfos.length) / itemsPerPage)
+      );
     } else {
       setError("No files selected");
     }
@@ -74,7 +144,7 @@ export default function FileUploadModal({ onUploadComplete }: FileUploadModalPro
 
     const formData = new FormData();
     selectedFiles.forEach((fileInfo) => {
-      formData.append("files", fileInfo.file); // Adjust this if your backend expects a specific field name
+      formData.append("files", fileInfo.file);
     });
 
     try {
@@ -89,7 +159,10 @@ export default function FileUploadModal({ onUploadComplete }: FileUploadModalPro
           status: "uploaded" as const,
         }));
         setSelectedFiles(uploadedFiles);
-        onUploadComplete(uploadedFiles.filter((file) => file.status === "uploaded"));
+        onUploadComplete(
+          uploadedFiles.filter((file) => file.status === "uploaded")
+        );
+        setUploadComplete(true); // Indicate upload completion
       } else {
         throw new Error("Upload failed");
       }
@@ -139,102 +212,174 @@ export default function FileUploadModal({ onUploadComplete }: FileUploadModalPro
     currentPage * itemsPerPage
   );
 
+  const isFileSelected = (fileName: string) => {
+    return selectedFiles.some(
+      (file) =>
+        file.name === fileName &&
+        (file.status === "ready" || file.status === "uploaded")
+    );
+  };
+
+  // Check if all required files are selected and ready
+  const allFilesReady = requiredFiles.every((file) =>
+    selectedFiles.some(
+      (selectedFile) =>
+        selectedFile.name === file.name && selectedFile.status === "ready"
+    )
+  );
+
   return (
     <div className="flex flex-col items-center justify-center p-4">
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="outline" className='bg-green-900 text-white'>Upload Enterprise Architecture Datasets</Button>
+          <Button variant="outline" className="bg-green-900 text-white">
+            Upload Enterprise Architecture Datasets
+          </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[700px]">
+        <DialogContent className="sm:max-w-[1000px]">
           <DialogHeader>
-            <DialogTitle className='text-center mt-8 text-2xl font-bold'>Upload Enterprise Architecture Datasets</DialogTitle>
-            <p className="text-center text-gray-500">
-              Please ensure you upload all <b className="text-red-500">32 datasets</b> related to your enterprise architecture.
-            </p>
+            <DialogTitle className="text-center mt-8 text-2xl font-bold mb-5 ">
+              Upload Enterprise Architecture Datasets
+            </DialogTitle>
           </DialogHeader>
-          <div className="mb-4">
-            <input
-              type="file"
-              multiple
-              onChange={handleFileChange}
-              className="hidden"
-              id="file-input"
-              ref={fileInputRef}
-              aria-label="Select files to upload"
-            />
-            <Button
-              variant="outline"
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full py-8 border-dashed border-2 hover:border-primary"
-            >
-              <FileUp className="mr-2 h-4 w-4" />
-              Choose Files
-            </Button>
-          </div>
-          {error && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-          <div className="max-h-[400px] overflow-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>File Name</TableHead>
-                  <TableHead>Size</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {paginatedFiles.map((file) => (
-                  <TableRow key={file.id}>
-                    <TableCell className="font-medium">{file.name}</TableCell>
-                    <TableCell>{formatFileSize(file.size)}</TableCell>
-                    <TableCell>{getStatusBadge(file.status)}</TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleRemoveFile(file.id)}
-                        disabled={isUploading}
-                      >
-                        <X className="h-4 w-4" />
-                        <span className="sr-only">Remove file</span>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between mt-4">
-              <Button
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeft className="h-4 w-4 mr-2" />
-                Previous
-              </Button>
-              <span>
-                Page {currentPage} of {totalPages}
-              </span>
-              <Button
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-              >
-                Next
-                <ChevronRight className="h-4 w-4 ml-2" />
-              </Button>
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <div className="mb-4">
+                <input
+                  type="file"
+                  multiple
+                  onChange={handleFileChange}
+                  className="hidden"
+                  id="file-input"
+                  ref={fileInputRef}
+                  aria-label="Select files to upload"
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full py-8 border-dashed border-2 hover:border-primary"
+                >
+                  <FileUp className="mr-2 h-4 w-4" />
+                  Choose Files
+                </Button>
+                {!allFilesReady && (
+                  <div className='flex justify-center bg-red-100 mt-2 mb-5 py-2 rounded-md'>
+                    <p className="text-red-500 text-center font-medium">
+                      Please select all required files before uploading.
+                    </p>
+                  </div>
+                )}
+              </div>
+              {error && (
+                <Alert variant="destructive" className="mb-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+              {uploadComplete && ( // Display success message
+                <Alert variant="success" className="mb-4">
+                  <Check className="h-4 w-4" />
+                  <AlertDescription>
+                    All files have been uploaded successfully!
+                  </AlertDescription>
+                </Alert>
+              )}
+              <div className="max-h-[400px] overflow-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>File Name</TableHead>
+                      <TableHead>Size</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Action</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedFiles.map((file) => (
+                      <TableRow key={file.id}>
+                        <TableCell className="font-medium">{file.name}</TableCell>
+                        <TableCell>{formatFileSize(file.size)}</TableCell>
+                        <TableCell>{getStatusBadge(file.status)}</TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRemoveFile(file.id)}
+                            disabled={isUploading || uploadComplete} // Disable if upload complete
+                          >
+                            <X className="h-4 w-4" />
+                            <span className="sr-only">Remove file</span>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between mt-4">
+                  <Button
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-2" />
+                    Previous
+                  </Button>
+                  <span>
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <Button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </div>
+              )}
+              <div className="flex flex-col items-center mt-4">
+                <Button
+                  onClick={handleUpload}
+                  disabled={
+                    isUploading ||
+                    !allFilesReady ||
+                    uploadComplete // Disable after upload
+                  }
+                  className="bg-green-900"
+                >
+                  <Upload className="mr-2 h-4 w-4" />
+                  {isUploading ? "Uploading..." : "Upload Datasets"}
+                </Button>
+              </div>
             </div>
-          )}
-          <div className="flex justify-center mt-4">
-            <Button onClick={handleUpload} disabled={isUploading || selectedFiles.length === 0} className='bg-green-900'>
-              <Upload className="mr-2 h-4 w-4" />
-              {isUploading ? "Uploading..." : "Upload Datasets"}
-            </Button>
+            <div className="w-66 border-l pl-4">
+              <h3 className="font-semibold mb-2">Required Files</h3>
+              <ScrollArea className="h-[400px] pr-5">
+                {requiredFiles.map((file, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between py-1"
+                  >
+                    <span
+                      className={
+                        isFileSelected(file.name)
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }
+                    >
+                      {file.name}
+                    </span>
+                    {isFileSelected(file.name) ? (
+                      <Check className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <X className="h-4 w-4 text-red-300" />
+                    )}
+                  </div>
+                ))}
+              </ScrollArea>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
