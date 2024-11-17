@@ -71,14 +71,13 @@ function ServiceUtilTrendLineChart({ data }) {
                             formatter={(value) => `${value}%`}
                             contentStyle={{ fontSize: 12, color: "#333" }}
                         />
-                        <Legend verticalAlign="bottom" />
                         <Line
                             type="monotone"
                             dataKey="avg_daily_service_utilization"
                             name={selectedService}
                             stroke={SERVICE_COLORS[selectedService]}
                             strokeWidth={2}
-                            dot={{ r: 2 }}
+                            dot={{ r: 1 }}
                             connectNulls // Connect data points even if some dates are missing
                         />
                         {/* Add ReferenceLine for average utilization */}
