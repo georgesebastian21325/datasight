@@ -132,8 +132,9 @@ async function fetchTopRevenueGeneratingResources() {
 
 async function fetchAverageUtilizationResource() {
     type AverageUtilizationItems = {
-        resource_type: string;
-        average_usage_percentage: string;
+        resource_id: string;
+        month: string;
+        average_monthly_utilization_percentage: string;
     };
 
     try {
@@ -145,9 +146,9 @@ async function fetchAverageUtilizationResource() {
 
         // Ensure the correct field name `average_usage_percentage` is used
         const formattedData = bodyData.map((item: AverageUtilizationItems) => ({
-            ...item,
-            average_usage_percentage: parseFloat(item.average_usage_percentage)
+            ...item
         }));
+
 
         console.log('Average Utilization Per Resource:', formattedData);
 

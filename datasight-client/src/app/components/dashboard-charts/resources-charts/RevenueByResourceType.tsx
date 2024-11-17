@@ -90,7 +90,7 @@ function RevenueByResourceTypeChart({ data }) {
                         outerRadius={150}
                         label={(props) => renderCustomLabel({ ...props, total: totalRevenue })}
                         labelLine={{ stroke: '#8884d8', strokeWidth: 1 }} // Custom label lines
-                        style={{ fontSize: '9px', fontWeight: 'bold' }}
+                        style={{ fontSize: '11px', fontWeight: 'bold' }}
                     >
                         {formattedData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={RESOURCE_COLORS[entry.resource_type] || "#000000"} />

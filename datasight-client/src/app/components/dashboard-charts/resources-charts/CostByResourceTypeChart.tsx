@@ -36,7 +36,7 @@ function CostByResourceTypeChart({ data }) {
                         outerRadius={150}
                         label={(props) => renderCustomLabel({ ...props, total: totalCost })} // Add total to props
                         labelLine={{ stroke: '#8884d8', strokeWidth: 1 }} // Make label lines more visible
-                        style={{ fontSize: '9px', fontWeight: 'bold' }}
+                        style={{ fontSize: '11px', fontWeight: 'bold' }}
                     >
                         {data.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

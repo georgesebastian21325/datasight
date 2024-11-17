@@ -1,54 +1,127 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ChartContainer } from "@/vcomponents/dashboard-ui/resource-components/chart";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend, ReferenceLine } from 'recharts';
-
-const RESOURCE_COLORS = {
-    "Backup and Recovery System": "#4B0082",
-    "Cloud Infrastructure": "#2E8B57",
-    "Communication Infrastructure": "#B8860B",
-    "Computer": "#556B2F",
-    "Network Equipment": "#4682B4",
-    "Server": "#6A5ACD",
-    "Storage Devices": "#2F4F4F",
-    "Virtual Infrastructure": "#8B008B"
-};
+import {
+    LineChart,
+    Line,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+    Legend,
+    ReferenceLine
+} from 'recharts';
 
 function AverageUtilizationChart({ data }) {
-    // Ensure data values are within the 0-100 range
     const formattedData = data.map((item) => ({
         ...item,
-        average_usage_percentage: Math.min(Math.max(isNaN(item.average_usage_percentage) ? 0 : item.average_usage_percentage, 0), 100)
+        resource_id: item.resource_id.trim().toUpperCase(),
+        average_monthly_utilization_percentage: Math.min(
+            Math.max(
+                isNaN(item.average_monthly_utilization_percentage)
+                    ? 0
+                    : item.average_monthly_utilization_percentage,
+                0
+            ),
+            100
+        ),
     }));
 
+
+    // Get unique resource_ids for the filter dropdown
+    const resourceIds = [...new Set(formattedData.map((item) => item.resource_id))];
+    const [selectedResourceId, setSelectedResourceId] = useState(resourceIds[0] || '');
+
+    // Filter data based on the selected resource_id
+    const filteredData = formattedData.filter(
+        (item) => item.resource_id === selectedResourceId
+    );
+
+    // Prepare data for the chart
+    const dataByMonth = filteredData.map((item) => ({
+        month: item.month,
+        average_monthly_utilization_percentage: item.average_monthly_utilization_percentage,
+    }));
+
+    // Sort the data by month
+    dataByMonth.sort((a, b) => {
+        const parseMonth = (monthStr) => {
+            const monthNumber = parseInt(monthStr.slice(1, 3), 10);
+            const yearNumber = parseInt('20' + monthStr.slice(3), 10);
+            return new Date(yearNumber, monthNumber - 1).getTime();
+        };
+        return parseMonth(a.month) - parseMonth(b.month);
+    });
+
     return (
-        <ChartContainer config={{ cost: { label: "Average Utilization by Resource Type", color: "hsl(var(--chart-1))" } }} className="h-[450px] w-[600px] py-[3rem]">
-            <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={formattedData} layout="horizontal" margin={{ top: 5, right: 0, bottom: 20, left: 0 }}
-                    barCategoryGap="20%" >
+        <ChartContainer
+            config={{ cost: { label: "Average Monthly Utilization by Resource ID", color: "hsl(var(--chart-1))" } }}
+            className="h-[500px] w-[600px] py-[3rem]"
+        >
+            {/* Filter Dropdown */}
+            <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
+                <label htmlFor="resource-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
+                    Select Resource ID:
+                </label>
+                <select
+                    id="resource-filter"
+                    value={selectedResourceId}
+                    onChange={(e) => setSelectedResourceId(e.target.value)}
+                >
+                    {resourceIds.map((id) => (
+                        <option key={id} value={id}>
+                            {id}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            <ResponsiveContainer width="100%" height="80%">
+                <LineChart data={dataByMonth} margin={{ top: 5, right: 20, bottom: 20, left: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" />
 
                     {/* Reference lines at 50%, 75%, and 100% */}
-                    <ReferenceLine y={100} stroke="red" strokeDasharray="3 3" strokeWidth={3} label={{ position: "insideTopRight", fill: "#555"}} />
-                    <ReferenceLine y={75} stroke="orange" strokeDasharray="3 3" strokeWidth={3}  label={{ position: "insideTopRight", fill: "#555" }} />
-                    <ReferenceLine y={50} stroke="green" strokeDasharray="3 3" strokeWidth={3}  label={{ position: "insideTopRight", fill: "#555" }} />
+                    <ReferenceLine
+                        y={100}
+                        stroke="red"
+                        strokeDasharray="3 3"
+                        strokeWidth={1}
+                        label={{ position: "insideTopRight", fill: "#555", value: "100%" }}
+                    />
+                    <ReferenceLine
+                        y={75}
+                        stroke="orange"
+                        strokeDasharray="3 3"
+                        strokeWidth={1}
+                        label={{ position: "insideTopRight", fill: "#555", value: "75%" }}
+                    />
+                    <ReferenceLine
+                        y={50}
+                        stroke="green"
+                        strokeDasharray="3 3"
+                        strokeWidth={1}
+                        label={{ position: "insideTopRight", fill: "#555", value: "50%" }}
+                    />
 
                     <YAxis
-                        type="number"
                         domain={[0, 100]}
                         tickFormatter={(value) => `${value}%`}
                         tick={{ fontSize: 12, fill: "#333" }}
-                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }} 
+                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }}
                     />
                     <XAxis
-                        dataKey="resource_type"
-                        type="category"
+                        dataKey="month"
                         hide={false}
                         style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }}
                         angle={-20}
                         textAnchor="end"
                         dy={10}
                     />
-                    <Tooltip formatter={(value) => `${value}%`} contentStyle={{ fontSize: 12, color: "#333" }} />
+                    <Tooltip
+                        formatter={(value) => `${value}%`}
+                        contentStyle={{ fontSize: 12, color: "#333" }}
+                        labelFormatter={(label) => `Month: ${label}`}
+                    />
 
                     <Legend
                         verticalAlign="bottom"
@@ -58,19 +131,18 @@ function AverageUtilizationChart({ data }) {
                             left: '45%',
                             transform: 'translateX(-41%)'
                         }}
-                        payload={Object.keys(RESOURCE_COLORS).map((key) => ({
-                            value: key,
-                            type: "square",
-                            color: RESOURCE_COLORS[key]
-                        }))}
                     />
 
-                    <Bar dataKey="average_usage_percentage" barSize={20}>
-                        {formattedData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={RESOURCE_COLORS[entry.resource_type] || "#8884d8"} />
-                        ))}
-                    </Bar>
-                </BarChart>
+                    <Line
+                        type="monotone"
+                        dataKey="average_monthly_utilization_percentage"
+                        stroke="#8884d8"
+                        strokeWidth={2}
+                        dot={{ r: 2 }}
+                        name={selectedResourceId}
+                        connectNulls={true}
+                    />
+                </LineChart>
             </ResponsiveContainer>
         </ChartContainer>
     );

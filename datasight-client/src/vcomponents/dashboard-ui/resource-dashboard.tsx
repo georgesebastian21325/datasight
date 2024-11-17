@@ -27,20 +27,11 @@ type ResourceRevenueItem = {
 }
 
 type AverageUtilizationItems = {
-  resource_type: string;
-  average_usage_percentage: string;
-}
-
-type HighestUtilizedItems = {
-  resource_type: string;
-  average_usage_percentage: string;
-}
-
-type LowestUtilizedItems = {
   resource_id: string;
-  resource_type: string;
-  average_usage_percentage: string;
-}
+  month: string;
+  average_monthly_utilization_percentage: number;
+};
+
 
 
 export default function ResourceDashboardComponent() {
@@ -50,8 +41,6 @@ export default function ResourceDashboardComponent() {
   const [costByResourceType, setCostByResourceType] = useState<ResourceCostItem[]>([]);
   const [revenueByResourceType, setRevenueResource] = useState<ResourceRevenueItem[]>([]);
   const [averageUtilization, setAverageUtilization] = useState<AverageUtilizationItems[]>([]);
-  const [highestUtilization, setHighestUtilization] = useState<HighestUtilizedItems[]>([]);
-  const [lowestUtilization, setLowestUtilization] = useState<LowestUtilizedItems[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -61,8 +50,6 @@ export default function ResourceDashboardComponent() {
       const costByResourceType = await fetchCostByResourceType();
       const revenueByResourceTypeData = await fetchTopRevenueGeneratingResources();
       const aveUtilizationResource = await fetchAverageUtilizationResource();
-      const highestUtilizedResources = await fetchHighestUtilizedResources();
-      const lowestUtilizedResources = await fetchLowestUtilizedResources();
 
       if (resourceCost !== null) {
         setTotalResourceCost(formatCustom(resourceCost));
@@ -75,8 +62,6 @@ export default function ResourceDashboardComponent() {
       setCostByResourceType(costByResourceType);
       setRevenueResource(revenueByResourceTypeData);
       setAverageUtilization(aveUtilizationResource);
-      setHighestUtilization(highestUtilizedResources);
-      setLowestUtilization(lowestUtilizedResources);
       setLoading(false);  // Stop loading after data is fetched
     }
 
@@ -132,7 +117,7 @@ export default function ResourceDashboardComponent() {
       </div>
 
       {/* 3. Capacity and Utilization Insights */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+      <div className="grid grid-cols-1 gap-4 mb-8">
         <Card className={`${loading ? 'animate-pulse' : ''}`}>
           <CardHeader>
             <CardTitle className='text-lg font-bold'>Average Utilization by Resource Type</CardTitle>
@@ -141,24 +126,6 @@ export default function ResourceDashboardComponent() {
             {loading ? <div className="h-48"></div> : <AverageUtilizationChart data={averageUtilization} />}
           </CardContent>
         </Card>
-        <div className="grid grid-cols-1 gap-4">
-          <Card className={`${loading ? 'animate-pulse' : ''}`}>
-            <CardHeader>
-              <CardTitle className='text-lg font-bold'>Highest Utilized Resources</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? <div className="h-48"></div> : <HighestUtilizedResourcesChart data={highestUtilization} />}
-            </CardContent>
-          </Card>
-          <Card className={`${loading ? 'animate-pulse' : ''}`}>
-            <CardHeader>
-              <CardTitle className='text-lg font-bold'>Lowest Utilized Resources</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? <div className="h-48"></div> : <LowestUtlizedResourcesChart data={lowestUtilization} />}
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </div>
   )
