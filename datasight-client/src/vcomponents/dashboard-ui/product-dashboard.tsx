@@ -13,8 +13,8 @@ import ProductUtilizationTrendChart from '@/app/components/dashboard-charts/prod
 
 import { fetchTotalProductCost, fetchTotalProductRevenue, fetchProductCostByCategory, 
          fetchRevenueByProduct, fetchProductRevenueContribution, fetchProductUtilizationRate,
-         fetchProductUtilizationTrend } from '../../app/api/dashboard-functions/products-functions'
-import { formatCustom } from '@/app/api/dashboard-functions/global-dashboard-functions'
+         fetchProductUtilizationTrend } from '../../app/api/dashboardFunctions/products-functions'
+import { formatCustom } from '@/app/api/dashboardFunctions/global-dashboard-functions'
 
 type ProductCostItem = {
   product_id: string;

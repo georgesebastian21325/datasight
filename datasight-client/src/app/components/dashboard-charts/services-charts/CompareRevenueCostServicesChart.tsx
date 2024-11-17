@@ -1,7 +1,7 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer, Legend } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart";
 
-import { formatCustom } from '../../../api/dashboard-functions/services-function';
+import { formatCustom } from '../../../api/dashboardFunctions/services-function';
 
 const SERVICE_COLORS = {
     cost: "#FF5733",      // Bright orange-red for cost

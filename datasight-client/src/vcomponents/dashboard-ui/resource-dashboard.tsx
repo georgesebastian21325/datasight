@@ -6,11 +6,10 @@ import {
   fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType, fetchTopCostliestResources,
   fetchTopRevenueGeneratingResources, formatCustom, fetchAverageUtilizationResource,
   fetchHighestUtilizedResources, fetchLowestUtilizedResources
-} from '../../app/api/dashboard-functions/resources-functions'
+} from '../../app/api/dashboardFunctions/resources-functions'
 
 import CostByResourceTypeChart from '../../app/components/dashboard-charts/resources-charts/CostByResourceTypeChart'
-import CostliestResourceChart from '../../app/components/dashboard-charts/resources-charts/CostliestResourceChart'
-import RevenueResourceChart from '../../app/components/dashboard-charts/resources-charts/RevenueResourceChart'
+import RevenueByResourceTypeChart from '../../app/components/dashboard-charts/resources-charts/RevenueByResourceType'
 import AverageUtilizationChart from '../../app/components/dashboard-charts/resources-charts/AverageUtilizationChart';
 import HighestUtilizedResourcesChart from '../../app/components/dashboard-charts/resources-charts/HighestUtilizedResourcesChart'
 import LowestUtlizedResourcesChart from '../../app/components/dashboard-charts/resources-charts/LowestUtilizedResourcesChart'
@@ -22,32 +21,17 @@ type ResourceCostItem = {
   total_resource_cost: string;
 };
 
-type CostliestItem = {
-  resource_id: string;
-  resource_type: string;
-  total_resource_cost: string;
-}
-
-type RevenueItem = {
+type ResourceRevenueItem = {
   resource_id: string;
   total_resource_revenue: string;
 }
 
 type AverageUtilizationItems = {
-  resource_type: string;
-  average_usage_percentage: string;
-}
-
-type HighestUtilizedItems = {
-  resource_type: string;
-  average_usage_percentage: string;
-}
-
-type LowestUtilizedItems = {
   resource_id: string;
-  resource_type: string;
-  average_usage_percentage: string;
-}
+  month: string;
+  average_monthly_utilization_percentage: number;
+};
+
 
 
 export default function ResourceDashboardComponent() {
@@ -55,11 +39,8 @@ export default function ResourceDashboardComponent() {
   const [totalResourceCost, setTotalResourceCost] = useState<string | null>(null)
   const [totalResourceRevenue, setTotalResourceRevenue] = useState<string | null>(null)
   const [costByResourceType, setCostByResourceType] = useState<ResourceCostItem[]>([]);
-  const [costliestResource, setCostliestResource] = useState<CostliestItem[]>([]);
-  const [revenueResource, setRevenueResource] = useState<RevenueItem[]>([]);
+  const [revenueByResourceType, setRevenueResource] = useState<ResourceRevenueItem[]>([]);
   const [averageUtilization, setAverageUtilization] = useState<AverageUtilizationItems[]>([]);
-  const [highestUtilization, setHighestUtilization] = useState<HighestUtilizedItems[]>([]);
-  const [lowestUtilization, setLowestUtilization] = useState<LowestUtilizedItems[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -67,11 +48,8 @@ export default function ResourceDashboardComponent() {
       const resourceCost = await fetchTotalResourceCost();
       const resourceRevenue = await fetchTotalResourceRevenue();
       const costByResourceType = await fetchCostByResourceType();
-      const costliestResource = await fetchTopCostliestResources();
-      const revenueResource = await fetchTopRevenueGeneratingResources();
+      const revenueByResourceTypeData = await fetchTopRevenueGeneratingResources();
       const aveUtilizationResource = await fetchAverageUtilizationResource();
-      const highestUtilizedResources = await fetchHighestUtilizedResources();
-      const lowestUtilizedResources = await fetchLowestUtilizedResources();
 
       if (resourceCost !== null) {
         setTotalResourceCost(formatCustom(resourceCost));
@@ -82,11 +60,8 @@ export default function ResourceDashboardComponent() {
       }
 
       setCostByResourceType(costByResourceType);
-      setCostliestResource(costliestResource);
-      setRevenueResource(revenueResource);
+      setRevenueResource(revenueByResourceTypeData);
       setAverageUtilization(aveUtilizationResource);
-      setHighestUtilization(highestUtilizedResources);
-      setLowestUtilization(lowestUtilizedResources);
       setLoading(false);  // Stop loading after data is fetched
     }
 
@@ -132,51 +107,25 @@ export default function ResourceDashboardComponent() {
         <div className="grid grid-cols-1 gap-4">
           <Card className={`${loading ? 'animate-pulse' : ''}`}>
             <CardHeader>
-              <CardTitle className='text-lg font-bold'>Top 5 Costliest Resources</CardTitle>
+              <CardTitle className='text-lg font-bold'>Revenue By Resource Type</CardTitle>
             </CardHeader>
             <CardContent>
-              {loading ? <div className="h-48"></div> : <CostliestResourceChart data={costliestResource} />}
-            </CardContent>
-          </Card>
-          <Card className={`${loading ? 'animate-pulse' : ''}`}>
-            <CardHeader>
-              <CardTitle className='text-lg font-bold'>Top 5 Revenue-Generating Resources</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? <div className="h-48"></div> : <RevenueResourceChart data={revenueResource} />}
+              {loading ? <div className="h-48"></div> : <RevenueByResourceTypeChart data={revenueByResourceType} />}
             </CardContent>
           </Card>
         </div>
       </div>
 
       {/* 3. Capacity and Utilization Insights */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+      <div className="grid grid-cols-1 gap-4 mb-8">
         <Card className={`${loading ? 'animate-pulse' : ''}`}>
           <CardHeader>
-            <CardTitle className='text-lg font-bold'>Average Utilization by Resource Type</CardTitle>
+            <CardTitle className='text-lg font-bold'>Average Utilization by Resource ID</CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? <div className="h-48"></div> : <AverageUtilizationChart data={averageUtilization} />}
           </CardContent>
         </Card>
-        <div className="grid grid-cols-1 gap-4">
-          <Card className={`${loading ? 'animate-pulse' : ''}`}>
-            <CardHeader>
-              <CardTitle className='text-lg font-bold'>Highest Utilized Resources</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? <div className="h-48"></div> : <HighestUtilizedResourcesChart data={highestUtilization} />}
-            </CardContent>
-          </Card>
-          <Card className={`${loading ? 'animate-pulse' : ''}`}>
-            <CardHeader>
-              <CardTitle className='text-lg font-bold'>Lowest Utilized Resources</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? <div className="h-48"></div> : <LowestUtlizedResourcesChart data={lowestUtilization} />}
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </div>
   )
