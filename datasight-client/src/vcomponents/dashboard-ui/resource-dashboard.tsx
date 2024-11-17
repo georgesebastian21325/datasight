@@ -6,7 +6,7 @@ import {
   fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType, fetchTopCostliestResources,
   fetchTopRevenueGeneratingResources, formatCustom, fetchAverageUtilizationResource,
   fetchHighestUtilizedResources, fetchLowestUtilizedResources
-} from '../../app/api/dashboard-functions/resources-functions'
+} from '../../app/api/dashboardFunctions/resources-functions'
 
 import CostByResourceTypeChart from '../../app/components/dashboard-charts/resources-charts/CostByResourceTypeChart'
 import RevenueByResourceTypeChart from '../../app/components/dashboard-charts/resources-charts/RevenueByResourceType'

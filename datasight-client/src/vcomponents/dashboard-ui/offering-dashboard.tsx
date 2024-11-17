@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { DollarSign } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/vcomponents/dashboard-ui/offering-components/card'
 
-import { fetchOfferingCost, fetchOfferingRevenue, fetchOfferingProductionCostContribution, fetchOfferingProductRevenueContribution, fetchOfferingRevenueStability } from '@/app/api/dashboard-functions/offerings-functions'
+import { fetchOfferingCost, fetchOfferingRevenue, fetchOfferingProductionCostContribution, fetchOfferingProductRevenueContribution, fetchOfferingRevenueStability } from '@/app/api/dashboardFunctions/offerings-functions'
 
 import OfferingCostChart from '@/app/components/dashboard-charts/offerings-charts/OfferingsCostChart'
 import OfferingRevenueChart from '@/app/components/dashboard-charts/offerings-charts/OfferingRevenueChart'

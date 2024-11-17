@@ -16,6 +16,8 @@ import "reactflow/dist/style.css";
 import DataMappingLoadingState from "../components/global/DataMappingLoadingState";
 import { useGlobalState } from "../context/GlobalStateContext"; // Import the global state
 
+import { fetchResourceHealthStatus } from '../api/dataMapping/health-status-function'
+
 interface ResourceServiceMappingData {
 	service_id: string;
 	resource_id: string;

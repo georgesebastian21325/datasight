@@ -2,7 +2,7 @@ import React from 'react';
 import { PieChart, Pie, Cell, Tooltip as ChartTooltip, ResponsiveContainer, Legend } from 'recharts';
 import { ChartContainer } from "@/vcomponents/dashboard-ui/resource-components/chart";
 
-import { formatCustom } from '../../../api/dashboard-functions/services-function';
+import { formatCustom } from '../../../api/dashboardFunctions/services-function';
 
 const SERVICE_COLORS = {
     "SVC0001": "#3D2B1F", // Dark brown

@@ -8,7 +8,7 @@ import {
   fetchTotalServiceCost, fetchTotalServiceRevenue, fetchCostPerService,
   fetchRevenuePerService, compareCostAndRevenue, fetchServiceUtilizationByCategory,
   fetchServiceUtilizationTrend, formatCustom
-} from "../../app/api/dashboard-functions/services-function"
+} from "../../app/api/dashboardFunctions/services-function"
 
 import CostPerServiceChart from "@/app/components/dashboard-charts/services-charts/CostPerServiceChart"
 import RevenuePerServiceChart from "@/app/components/dashboard-charts/services-charts/RevenuePerServiceChart"
