@@ -1,25 +1,16 @@
 
 async function fetchTotalServiceCost() {
-    type TotalServiceCostItems = {
-        service_id: string;
-        total_service_cost: string;
-    };
-
     try {
         const response = await fetch('https://ugdwdejp73.execute-api.ap-southeast-2.amazonaws.com/development/getTotalServiceCost');
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
         const data = await response.json();
         const bodyData = JSON.parse(data.body);
-        // Convert `total_service_cost` to a number for each item
-        const formattedData = bodyData.map((item: TotalServiceCostItems) => ({
-            ...item,
-            total_service_cost: parseFloat(item.total_service_cost)
-        }));
+        const totalServiceCost = parseFloat(bodyData[0].total_service_cost);
 
-        console.log('Total Service Cost', formattedData);
 
-        return formattedData; // Return the fetched data
+        console.log('Total Service Cost:', totalServiceCost);
+        return totalServiceCost; // Return the fetched data
     } catch (error) {
         console.error('Fetch error:', error);
         return null;
@@ -27,30 +18,19 @@ async function fetchTotalServiceCost() {
 }
 
 async function fetchTotalServiceRevenue() {
-    type ServiceRevenueItem = {
-        service_id: string;
-        total_service_revenue: string;
-    };
-
     try {
         const response = await fetch('https://ugdwdejp73.execute-api.ap-southeast-2.amazonaws.com/development/getTotalServiceRevenue');
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
         const data = await response.json();
         const bodyData = JSON.parse(data.body);
+        const totalServiceRevenue = parseFloat(bodyData[0].total_service_revenue);
 
-        // Convert `total_service_revenue` to a number for each item
-        const formattedData = bodyData.map((item: ServiceRevenueItem) => ({
-            ...item,
-            total_service_revenue: parseFloat(item.total_service_revenue)
-        }));
 
-        console.log('Total Service Revenue', formattedData);
-
-        return formattedData;
-
+        console.log('Total Service Cost:', totalServiceRevenue);
+        return totalServiceRevenue; // Return the fetched data
     } catch (error) {
-        console.error('Fetch Error:', error);
+        console.error('Fetch error:', error);
         return null;
     }
 }
@@ -94,12 +74,10 @@ async function fetchCostPerService() {
 
 
 
-async function fetchRevenueGeneratingServices() {
+async function fetchRevenuePerService() {
     type ServiceRevenueItems = {
         service_id: string;
         total_service_revenue: string;
-        resource_id: string;
-        resource_type: string;
     };
 
     try {
@@ -115,7 +93,7 @@ async function fetchRevenueGeneratingServices() {
             total_service_revenue: parseFloat(item.total_service_revenue)
         }));
 
-        console.log('Revenue Per Service Associated with Resources', formattedData);
+        console.log('Revenue Per Service', formattedData);
 
         return formattedData;
 
@@ -227,7 +205,7 @@ export {
     fetchTotalServiceCost,
     fetchTotalServiceRevenue,
     fetchCostPerService,
-    fetchRevenueGeneratingServices,
+    fetchRevenuePerService,
     compareCostAndRevenue,
     fetchServiceUtilizationByCategory,
     fetchServiceUtilizationTrend,

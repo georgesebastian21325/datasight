@@ -2,8 +2,6 @@ import React from 'react';
 import { PieChart, Pie, Cell, Tooltip as ChartTooltip, ResponsiveContainer, Legend } from 'recharts';
 import { ChartContainer } from "@/vcomponents/dashboard-ui/resource-components/chart";
 
-import { formatCustom } from '../../../api/dashboard-functions/services-function';
-
 const SERVICE_COLORS = {
     "SVC0001": "#3D2B1F", // Dark brown
     "SVC0002": "#2F4858", // Dark slate blue
@@ -12,38 +10,40 @@ const SERVICE_COLORS = {
     "SVC0005": "#2C3E50"  // Dark teal
 };
 
-function CostPerService({ data }) {
-    // Calculate total cost to compute percentages
-    const totalCost = data.reduce((sum, item) => sum + Number(item.total_service_cost), 0);
+function RevenuePerServiceChart({ data }) {
+    // Calculate total revenue to compute percentages
+    const totalRevenue = data.reduce((sum, item) => sum + Number(item.total_service_revenue), 0);
 
     // Prepare data with percentages and labels
-    const formattedData = data.map(item => {
-        const cost = Number(item.total_service_cost);
-        const percentage = ((cost / totalCost) * 100).toFixed(2);
-        return {
-            ...item,
-            cost,
-            percentage,
-            name: item.service_id,
-        };
-    });
+    const formattedData = data
+        .map(item => {
+            const revenue = Number(item.total_service_revenue);
+            const percentage = ((revenue / totalRevenue) * 100).toFixed(2);
+            return {
+                ...item,
+                revenue,
+                percentage,
+                name: item.service_id,
+            };
+        })
+        .sort((a, b) => b.revenue - a.revenue); // Sort by revenue in descending order
 
     // Formatter function for displaying numbers in 000,000,000 format
     const formatNumber = (value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 
     return (
-        <ChartContainer config={{ cost: { label: "Total Service Cost", color: "hsl(var(--chart-1))" } }} className="h-[470px] w-[650px]">
+        <ChartContainer config={{ cost: { label: "Total Service Revenue", color: "hsl(var(--chart-1))" } }} className="h-[470px] w-[650px]">
             <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                     <Pie
                         data={formattedData}
-                        dataKey="cost"
+                        dataKey="revenue"
                         nameKey="name"
                         cx="50%"
                         cy="50%"
                         outerRadius={150}
                         labelLine={true}
-                        label={({ cost, percentage }) => `${formatNumber(cost)} (${percentage}%)`}
+                        label={({ revenue, percentage }) => `${formatNumber(revenue)} (${percentage}%)`}
                     >
                         {formattedData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={SERVICE_COLORS[entry.service_id]} />
@@ -53,11 +53,16 @@ function CostPerService({ data }) {
                         formatter={(value) => formatNumber(value)}
                         separator=": "
                     />
-                    <Legend />
+                    <Legend
+                        formatter={(value, entry) => {
+                            const legendItem = formattedData.find(item => item.name === entry.value);
+                            return `${value}`;
+                        }}
+                    />
                 </PieChart>
             </ResponsiveContainer>
         </ChartContainer>
     );
 }
 
-export default CostPerService;
+export default RevenuePerServiceChart;
