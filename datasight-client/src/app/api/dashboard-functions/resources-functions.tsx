@@ -102,10 +102,9 @@ async function fetchTopCostliestResources() {
 }
 
 async function fetchTopRevenueGeneratingResources() {
-    type ResourceCostItem = {
+    type ResourceRevenueItem = {
         resource_id: string;
-        resource_type: string;
-        total_resource_cost: string;
+        total_resource_revenue: string;
     };
 
     try {
@@ -116,9 +115,9 @@ async function fetchTopRevenueGeneratingResources() {
         const bodyData = JSON.parse(data.body);
 
         // Convert `total_resource_cost` to a number for each item
-        const formattedData = bodyData.map((item: ResourceCostItem) => ({
+        const formattedData = bodyData.map((item: ResourceRevenueItem) => ({
             ...item,
-            total_resource_cost: parseFloat(item.total_resource_cost)
+            total_resource_revenue: parseFloat(item.total_resource_revenue)
         }));
 
         console.log('Top Resource Generating Revenue', formattedData);

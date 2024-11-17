@@ -21,7 +21,7 @@ function CostByResourceTypeChart({ data }) {
                         dataKey="total_resource_cost"
                         nameKey="resource_type"
                         cx="45%"
-                        cy="60%"
+                        cy="50%"
                         outerRadius={150}
                         label={renderCustomLabel} // Use custom label function here
                         labelLine={{ stroke: '#8884d8', strokeWidth: 1 }} // Make label lines more visible
@@ -33,7 +33,7 @@ function CostByResourceTypeChart({ data }) {
                     </Pie>
                     <ChartTooltip content={<ChartTooltipContent />} />
                     <Legend verticalAlign="bottom" height={36} wrapperStyle={{
-                        bottom: -50, // Adjusts the distance from the bottom of the container
+                        bottom: -20, // Adjusts the distance from the bottom of the container
                         left: '45%', // Centers horizontally
                         transform: 'translateX(-50%)', // Centers the legend accurately
                     }} />
