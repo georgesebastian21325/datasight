@@ -56,7 +56,7 @@ function AverageUtilizationChart({ data }) {
     return (
         <ChartContainer
             config={{ cost: { label: "Average Monthly Utilization by Resource ID", color: "hsl(var(--chart-1))" } }}
-            className="h-[500px] w-[600px] py-[3rem]"
+            className="h-[500px] w-[1300px] py-[3rem]"
         >
             {/* Filter Dropdown */}
             <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
@@ -127,7 +127,7 @@ function AverageUtilizationChart({ data }) {
                         verticalAlign="bottom"
                         height={36}
                         wrapperStyle={{
-                            bottom: -100,
+                            bottom: -20,
                             left: '45%',
                             transform: 'translateX(-41%)'
                         }}
