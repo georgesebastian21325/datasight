@@ -122,8 +122,7 @@ export default function ServiceDashboardComponent() {
 
       {/* 2. Financial Performance */}
       <section>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-8">
             <Card className={`${loading ? 'animate-pulse' : ''}`}>
               <CardHeader>
                 <CardTitle className='text-lg font-bold'>Service Cost by Category</CardTitle>
@@ -134,31 +133,22 @@ export default function ServiceDashboardComponent() {
             </Card>
             <Card className={`${loading ? 'animate-pulse' : ''}`}>
               <CardHeader>
-                <CardTitle className='text-lg font-bold'>Revenue vs. Cost Comparison per Service</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {loading ? <div className="h-48"></div> : <CompareRevenueCostServicesChart data={costRevenueService} />}
-              </CardContent>
-            </Card>
-          </div>
-          <div className="grid grid-cols-1 gap-4">
-            <Card className={`${loading ? 'animate-pulse' : ''}`}>
-              <CardHeader>
                 <CardTitle className='text-lg font-bold'>Service Revenue by Category</CardTitle>
               </CardHeader>
               <CardContent>
                 {loading ? <div className="h-48"></div> : <RevenuePerServiceChart data={revenuePerService} />}
               </CardContent>
             </Card>
-            <Card className={`${loading ? 'animate-pulse' : ''}`}>
-              <CardHeader>
-                <CardTitle className='text-lg font-bold'>Average Service Utilization</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {loading ? <div className="h-48"></div> : <AverageServiceUtilizationChart data={serviceUtilization} />}
-              </CardContent>
-            </Card>
-          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-4">
+          <Card className={`${loading ? 'animate-pulse' : ''}`}>
+            <CardHeader>
+              <CardTitle className='text-lg font-bold'>Revenue vs. Cost Comparison per Service</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loading ? <div className="h-48"></div> : <CompareRevenueCostServicesChart data={costRevenueService} />}
+            </CardContent>
+          </Card>
         </div>
         <div className="grid grid-cols-1 gap-4">
           <Card>
