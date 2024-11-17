@@ -38,10 +38,7 @@ interface ProductOfferingMappingData {
 
 interface ResourceHealthStatus {
 	resource_id: string;
-	resource_type: string;
-	obsolescence_health: string;
-	capacity_health: string;
-	total_health: string;
+	resource_risk_color: string;
 }
 
 interface ServiceHealthStatus {
@@ -102,11 +99,13 @@ export default function OPSRMapping() {
 		const fetchData = async () => {
 			try {
 				// Fetch mappings with enhanced error handling
-				const [resourceRes, productRes, offeringRes] = await Promise.all([
+				const [resourceRes, productRes, offeringRes, resourceHealthStatusData] = await Promise.all([
 					fetch("https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getResourceServiceMapping"),
 					fetch("https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getServiceProductMapping"),
-					fetch("https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getProductOfferingMapping")
+					fetch("https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getProductOfferingMapping"),
+					fetchResourceHealthStatus()
 				]);
+				
 
 				// Ensure responses are OK before parsing JSON
 				if (!resourceRes.ok || !productRes.ok || !offeringRes.ok) {
@@ -128,6 +127,8 @@ export default function OPSRMapping() {
 				setResourceMappingData(parsedResourceData);
 				setProductMappingData(parsedProductData);
 				setOfferingMappingData(parsedOfferingData);
+				setResourceHealthData(resourceHealthStatusData);
+
 
 				// Clear error if successful
 				setError(null);
@@ -141,6 +142,8 @@ export default function OPSRMapping() {
 
 		fetchData();
 	}, []);
+
+
 
 
 	const handleNodeClick = (event: any, node: Node) => {
@@ -467,7 +470,7 @@ export default function OPSRMapping() {
 
 			// Find the corresponding health data for the resource node
 			const healthStatus = healthResourceData.find(h => h.resource_id === resourceNodeId);
-			const healthColor = healthStatus ? getHealthColor(healthStatus.total_health) : 'gray';
+			const healthColor = healthStatus ? getHealthColor(healthStatus.resource_risk_color) : 'gray';
 
 			nodes.push({
 				id: resourceNodeId,
