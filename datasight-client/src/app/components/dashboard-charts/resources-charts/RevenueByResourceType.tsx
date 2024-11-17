@@ -65,12 +65,17 @@ function aggregateAndSortByResourceType(data) {
     return Object.values(aggregated).sort((a, b) => a.resource_type.localeCompare(b.resource_type));
 }
 
-// Custom label for Pie chart
-const renderCustomLabel = ({ name, value }) =>
-    `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+// Custom label for Pie chart with percentage
+function renderCustomLabel({ name, value, total }) {
+    const percentage = ((value / total) * 100).toFixed(2); // Calculate percentage
+    return `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${percentage}%)`;
+}
 
 function RevenueByResourceTypeChart({ data }) {
     const formattedData = aggregateAndSortByResourceType(data);
+
+    // Calculate the total revenue for percentage calculation
+    const totalRevenue = formattedData.reduce((acc, entry) => acc + entry.total_resource_revenue, 0);
 
     return (
         <ChartContainer config={{ cost: { label: "Total Resource Revenue", color: "hsl(var(--chart-1))" } }} className="h-[410px]">
@@ -83,7 +88,7 @@ function RevenueByResourceTypeChart({ data }) {
                         cx="45%"
                         cy="50%"
                         outerRadius={150}
-                        label={renderCustomLabel}
+                        label={(props) => renderCustomLabel({ ...props, total: totalRevenue })}
                         labelLine={{ stroke: '#8884d8', strokeWidth: 1 }} // Custom label lines
                         style={{ fontSize: '9px', fontWeight: 'bold' }}
                     >
