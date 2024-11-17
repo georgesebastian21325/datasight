@@ -98,7 +98,7 @@ function RevenueByResourceTypeChart({ data }) {
                     </Pie>
                     <ChartTooltip content={<ChartTooltipContent />} />
                     <Legend verticalAlign="bottom" height={36} wrapperStyle={{
-                        bottom: -20,
+                        bottom: -10,
                         left: '45%',
                         transform: 'translateX(-50%)',
                     }} />
