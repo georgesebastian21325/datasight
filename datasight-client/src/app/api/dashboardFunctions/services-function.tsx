@@ -134,33 +134,6 @@ async function compareCostAndRevenue() {
 }
 
 
-async function fetchServiceUtilizationByCategory () {
-    type ServiceUtilizationItems = {
-        service_id: string;
-        avg_service_utilization: string;
-    }
-
-    try {
-        const response = await fetch('https://ugdwdejp73.execute-api.ap-southeast-2.amazonaws.com/development/getServiceUtilizationByCategory');
-        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-
-        const data = await response.json();
-        const bodyData = JSON.parse(data.body);
-
-        const formattedData = bodyData.map((item: ServiceUtilizationItems) => ({
-            ...item,
-            total_service_cost: parseFloat(item.avg_service_utilization)
-        }));
-
-        console.log('Service Utilization By Category', formattedData);
-
-        return formattedData;
-    } catch (error) {
-        console.error(error);
-        return null;
-    }
-
-}
 
 async function fetchServiceUtilizationTrend() {
     type ServiceUtilizationTrendItems = {
