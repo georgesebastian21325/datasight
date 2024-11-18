@@ -38,7 +38,7 @@ interface ProductOfferingMappingData {
 
 interface ResourceHealthStatus {
 	resource_id: string;
-	resource_risk_color: string;
+	resource_risk_status: string;
 }
 
 interface ServiceHealthStatus {
@@ -470,7 +470,7 @@ export default function OPSRMapping() {
 
 			// Find the corresponding health data for the resource node
 			const healthStatus = healthResourceData.find(h => h.resource_id === resourceNodeId);
-			const healthColor = healthStatus ? getHealthColor(healthStatus.resource_risk_color) : 'gray';
+			const healthColor = healthStatus ? getHealthColor(healthStatus.resource_risk_status) : 'gray';
 
 			nodes.push({
 				id: resourceNodeId,

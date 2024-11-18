@@ -1,7 +1,7 @@
 async function fetchResourceHealthStatus() {
     type ResourceHealthStatus = {
         resource_id: string;
-        resource_risk_color: string;
+        resource_risk_status: string;
     }
 
     try {
