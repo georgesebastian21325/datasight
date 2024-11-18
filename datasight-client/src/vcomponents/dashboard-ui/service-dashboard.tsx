@@ -1,19 +1,18 @@
 'use client'
 
 import { useState, useEffect } from "react"
-import { Alert, AlertDescription, AlertTitle } from "@/vcomponents/dashboard-ui/service-components/alert"
-import { Card, CardContent, CardHeader, CardTitle } from "@/vcomponents/dashboard-ui/service-components/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/vcomponents/dashboard-ui/service-components/card"
 
 import {
   fetchTotalServiceCost, fetchTotalServiceRevenue, fetchCostPerService,
-  fetchRevenuePerService, compareCostAndRevenue, fetchServiceUtilizationByCategory,
+  fetchRevenuePerService, compareCostAndRevenue, fetchServiceResourceList,
   fetchServiceUtilizationTrend, formatCustom
 } from "../../app/api/dashboardFunctions/services-function"
 
 import CostPerServiceChart from "@/app/components/dashboard-charts/services-charts/CostPerServiceChart"
 import RevenuePerServiceChart from "@/app/components/dashboard-charts/services-charts/RevenuePerServiceChart"
 import CompareRevenueCostServicesChart from "@/app/components/dashboard-charts/services-charts/CompareRevenueCostServicesChart"
-import AverageServiceUtilizationChart from "@/app/components/dashboard-charts/services-charts/AverageServiceUtilizationChart"
+import ServicesTableList from "@/app/components/dashboard-charts/services-charts/ServicesRevenueTableList"
 import ServiceUtilTrendChart from "@/app/components/dashboard-charts/services-charts/ServiceUtilTrendChart"
 
 type TotalServiceRevenueItems = {
@@ -40,9 +39,11 @@ type CostRevenueServiceItems = {
   total_service_revenue: string;
 }
 
-type ServiceUtilizationItems = {
+type ServiceResourceListItems = {
   service_id: string;
-  avg_service_utilization: string;
+  resource_id: string;
+  resource_type: string;
+  revenue_generated_based_on_resource_id: string;
 }
 
 type ServiceUtilizationTrendItems = {
@@ -59,8 +60,8 @@ export default function ServiceDashboardComponent() {
   const [costPerService, setCostPerService] = useState<ServiceCostItem[]>([]);
   const [revenuePerService, setRevenuePerService] = useState<ServiceRevenueItems[]>([]);
   const [costRevenueService, setCostRevenueService] = useState<CostRevenueServiceItems[]>([]);
-  const [serviceUtilization, setServiceUtilization] = useState<ServiceUtilizationItems[]>([]);
   const [serviceUtilizationTrend, setServiceUtilizationTrend] = useState<ServiceUtilizationTrendItems[]>([]);
+  const [serviceResourceList, setServiceResourceList] = useState<ServiceResourceListItems[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -70,13 +71,13 @@ export default function ServiceDashboardComponent() {
       const costByServiceData = await fetchCostPerService();
       const revenueByServiceData = await fetchRevenuePerService();
       const comparedCostRevenueServiceData = await compareCostAndRevenue();
-      const serviceUtilizationByCategoryData = await fetchServiceUtilizationByCategory();
+      const serviceResourceListData = await fetchServiceResourceList();
       const serviceUtilizationTrendData = await fetchServiceUtilizationTrend();
 
 
       if (serviceCost !== null) {
         setTotalServiceCost(formatCustom(serviceCost));
-      } 
+      }
 
       if (serviceRevenue !== null) {
         setTotalServiceRevenue(formatCustom(serviceRevenue));
@@ -86,7 +87,7 @@ export default function ServiceDashboardComponent() {
       setCostPerService(costByServiceData);
       setRevenuePerService(revenueByServiceData);
       setCostRevenueService(comparedCostRevenueServiceData);
-      setServiceUtilization(serviceUtilizationByCategoryData);
+      setServiceResourceList(serviceResourceListData);
       setServiceUtilizationTrend(serviceUtilizationTrendData);
       setLoading(false);  // Stop loading after data is fetched
     }
@@ -123,30 +124,40 @@ export default function ServiceDashboardComponent() {
       {/* 2. Financial Performance */}
       <section>
         <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-8">
-            <Card className={`${loading ? 'animate-pulse' : ''}`}>
-              <CardHeader>
-                <CardTitle className='text-lg font-bold'>Service Cost by Category</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {loading ? <div className="h-48"></div> : <CostPerServiceChart data={costPerService} />}
-              </CardContent>
-            </Card>
-            <Card className={`${loading ? 'animate-pulse' : ''}`}>
-              <CardHeader>
-                <CardTitle className='text-lg font-bold'>Service Revenue by Category</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {loading ? <div className="h-48"></div> : <RevenuePerServiceChart data={revenuePerService} />}
-              </CardContent>
-            </Card>
+          <Card className={`${loading ? 'animate-pulse' : ''}`}>
+            <CardHeader>
+              <CardTitle className='text-lg font-bold'>Service Cost by Category</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loading ? <div className="h-48"></div> : <CostPerServiceChart data={costPerService} />}
+            </CardContent>
+          </Card>
+          <Card className={`${loading ? 'animate-pulse' : ''}`}>
+            <CardHeader>
+              <CardTitle className='text-lg font-bold'>Service Revenue by Category</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loading ? <div className="h-48"></div> : <RevenuePerServiceChart data={revenuePerService} />}
+            </CardContent>
+          </Card>
         </div>
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-2 gap-4 mb-4">
           <Card className={`${loading ? 'animate-pulse' : ''}`}>
             <CardHeader>
               <CardTitle className='text-lg font-bold'>Revenue vs. Cost Comparison per Service</CardTitle>
             </CardHeader>
             <CardContent>
               {loading ? <div className="h-48"></div> : <CompareRevenueCostServicesChart data={costRevenueService} />}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className='text-lg font-bold'> Associated Services Per Resources (Revenue) </CardTitle>
+              <CardDescription> List of resources associated for each service by revenue. </CardDescription>
+            </CardHeader>
+
+            <CardContent>
+              <ServicesTableList data={serviceResourceList} />
             </CardContent>
           </Card>
         </div>

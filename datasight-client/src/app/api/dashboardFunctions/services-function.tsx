@@ -133,33 +133,33 @@ async function compareCostAndRevenue() {
 
 }
 
-
-async function fetchServiceUtilizationByCategory () {
-    type ServiceUtilizationItems = {
+async function fetchServiceResourceList() {
+    type ServiceResourceListItems = {
         service_id: string;
-        avg_service_utilization: string;
+        resource_id: string;
+        resource_type: string;
+        revenue_generated_based_on_resource_id: string;
     }
 
     try {
-        const response = await fetch('https://ugdwdejp73.execute-api.ap-southeast-2.amazonaws.com/development/getServiceUtilizationByCategory');
-        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-
+        const response = await fetch('https://ugdwdejp73.execute-api.ap-southeast-2.amazonaws.com/development/getServiceResourceList');
+        
         const data = await response.json();
         const bodyData = JSON.parse(data.body);
 
-        const formattedData = bodyData.map((item: ServiceUtilizationItems) => ({
+        const formattedData = bodyData.map((item: ServiceResourceListItems) => ({
             ...item,
-            total_service_cost: parseFloat(item.avg_service_utilization)
+            revenue_generated_based_on_resource_id: parseFloat(item.revenue_generated_based_on_resource_id)
         }));
 
-        console.log('Service Utilization By Category', formattedData);
+        console.log('Service with Resource List', formattedData);
 
         return formattedData;
+
     } catch (error) {
         console.error(error);
         return null;
     }
-
 }
 
 async function fetchServiceUtilizationTrend() {
@@ -207,7 +207,7 @@ export {
     fetchCostPerService,
     fetchRevenuePerService,
     compareCostAndRevenue,
-    fetchServiceUtilizationByCategory,
+    fetchServiceResourceList,
     fetchServiceUtilizationTrend,
     formatCustom
 }

@@ -47,34 +47,6 @@ export default function Page() {
 
 	return (
 		<div className="flex flex-col h-screen ">
-			{/* <div className="w-full lg:w-1/5 h-full overflow-auto border-r border-gray-200 p-4 flex flex-col">
-
-				<div className="mb-8">
-					<Header />
-				</div>
-
-				<h2 className="text-xl font-bold mb-4">
-					Optimization Options
-				</h2>
-				<div className="space-y-2 flex-grow">
-					<button className="w-full text-left px-4 py-2 hover:bg-blue-800 rounded-md bg-brand-blue text-white transition-transform transform hover:scale-105">
-						Obsolescences
-					</button>
-					<button className="w-full text-left px-4 py-2 hover:bg-blue-800 rounded-md bg-brand-blue text-white transition-transform transform hover:scale-105">
-						Capacity
-					</button>
-					<button className="w-full text-left px-4 py-2 hover:bg-blue-800 rounded-md bg-brand-blue text-white transition-transform transform hover:scale-105">
-						Finance
-					</button>
-					<button className="w-full text-left px-4 py-2 hover:bg-blue-800 rounded-md bg-brand-blue text-white transition-transform transform hover:scale-105">
-						Risk
-					</button>
-				</div>
-
-				<button className="mt-12 py-2 mb-12 lg:mt-auto lg:mb-4 lg:px-6 lg:py-2 bg-yellow-500 hover:bg-gray-900 text-white rounded">
-					Present With AI
-				</button>
-			</div> */}
 			<NavigationBar />
 			{/* Right side - Enterprise Mapping */}
 			<div className="mx-auto p-4 pt-16 h-screen w-[90%]">
