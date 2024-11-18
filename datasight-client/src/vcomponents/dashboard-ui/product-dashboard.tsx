@@ -114,7 +114,7 @@ export default function ProductLayerDashboard() {
 
       <section className="mb-8">
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="grid grid-cols-1 gap-4">
+ 
             <Card className={`${loading ? 'skeleton animate-pulse' : ''}`}>
               <CardHeader>
                 <CardTitle className='text-lg font-bold'>Cost Per Product</CardTitle>
@@ -132,15 +132,6 @@ export default function ProductLayerDashboard() {
               </CardContent>
             </Card>
           </div>
-          <Card className={`${loading ? 'animate-pulse' : ''}`}>
-            <CardHeader>
-              <CardTitle className='text-lg font-bold'>Product Revenue Contribution to Total Revenue</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? <div className="skeleton animate-pulse"></div> : <ProductRevenueContributionChart data={productContribution} />}
-            </CardContent>
-          </Card>
-        </div>
       </section>
       <section>
         <div className="grid gap-4 md:grid-cols-2">
