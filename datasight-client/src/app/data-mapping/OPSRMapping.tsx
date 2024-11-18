@@ -16,7 +16,7 @@ import "reactflow/dist/style.css";
 import DataMappingLoadingState from "../components/global/DataMappingLoadingState";
 import { useGlobalState } from "../context/GlobalStateContext"; // Import the global state
 
-import { fetchResourceHealthStatus } from '../api/dataMapping/mapping-functions'
+import { fetchResourceHealthStatus, fetchServiceHealthStatus } from '../api/dataMapping/mapping-functions'
 
 interface ResourceServiceMappingData {
 	service_id: string;
@@ -43,9 +43,7 @@ interface ResourceHealthStatus {
 
 interface ServiceHealthStatus {
     service_id: string;
-    obsolescence_health: string;
-    capacity_health: string;
-    total_health: string;
+	service_risk_status: string;
 }
 
 interface ProductHealthStatus {
@@ -99,11 +97,12 @@ export default function OPSRMapping() {
 		const fetchData = async () => {
 			try {
 				// Fetch mappings with enhanced error handling
-				const [resourceRes, productRes, offeringRes, resourceHealthStatusData] = await Promise.all([
+				const [resourceRes, productRes, offeringRes, resourceHealthStatusData, serviceHealthStatusData] = await Promise.all([
 					fetch("https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getResourceServiceMapping"),
 					fetch("https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getServiceProductMapping"),
 					fetch("https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getProductOfferingMapping"),
-					fetchResourceHealthStatus()
+					fetchResourceHealthStatus(),
+					fetchServiceHealthStatus()
 				]);
 				
 
@@ -128,6 +127,7 @@ export default function OPSRMapping() {
 				setProductMappingData(parsedProductData);
 				setOfferingMappingData(parsedOfferingData);
 				setResourceHealthData(resourceHealthStatusData);
+				setServiceHealthData(serviceHealthStatusData);
 
 
 				// Clear error if successful
@@ -389,7 +389,7 @@ export default function OPSRMapping() {
                     return h.service_id === serviceNodeId;
                 });
 
-                const healthColor = healthStatus ? getHealthColor(healthStatus.total_health) : 'gray';
+                const healthColor = healthStatus ? getHealthColor(healthStatus.service_risk_status) : 'gray';
 
 
                 console.log('Service Ids: ', serviceNodes)
