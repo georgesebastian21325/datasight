@@ -50,8 +50,6 @@ export default function ProductLayerDashboard() {
   const [totalProductRevenue, setTotalProductRevenue] = useState<string | null>(null)
   const [costPerProduct, setCostPerProduct] = useState<ProductCostItem[]>([]);
   const [revenuePerProduct, setRevenuePerProduct] = useState<ProductRevenueItem[]>([]);
-  const [productContribution, setProductContribution] = useState<ProductRevenueContributionItems[]>([]);
-  const [productUtilizationRate, setProductUtilizationRate] = useState < ProductUtilizationRateItems[]>([]);
   const [productUtilizationTrend, setProductUtilizationTrend] = useState <ProductUtilizationTrendItems[]>([]);
 
   useEffect(() => {
@@ -61,8 +59,7 @@ export default function ProductLayerDashboard() {
       const totalProductRevenueData = await fetchTotalProductRevenue();
       const costPerProductData = await fetchProductCostByCategory();
       const revenuePerProductData = await fetchRevenueByProduct();
-      const productContributionData = await fetchProductRevenueContribution();
-      const productUtilizationRateData = await fetchProductUtilizationRate();
+
       const productUtilizationTrendData = await fetchProductUtilizationTrend();
 
       if (totalProductCostData !== null) {
@@ -75,8 +72,6 @@ export default function ProductLayerDashboard() {
 
       setCostPerProduct(costPerProductData);
       setRevenuePerProduct(revenuePerProductData);
-      setProductContribution(productContributionData);
-      setProductUtilizationRate(productUtilizationRateData);
       setProductUtilizationTrend(productUtilizationTrendData);
 
       setLoading(false);  // Stop loading after data is fetched
@@ -135,14 +130,6 @@ export default function ProductLayerDashboard() {
       </section>
       <section>
         <div className="grid gap-4 md:grid-cols-2">
-          <Card className={`${loading ? 'animate-pulse' : ''}`}>
-            <CardHeader>
-              <CardTitle className='text-lg font-bold'>Product Utilization Rate</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? <div className="skeleton animate-pulse"></div> : <ProductUtilizationRateChart data={productUtilizationRate} />}
-            </CardContent>
-          </Card>
           <Card className={`${loading ? 'animate-pulse' : ''}`}>
             <CardHeader>
               <CardTitle className='text-lg font-bold'>Monthly Utilization Trends by Product</CardTitle>

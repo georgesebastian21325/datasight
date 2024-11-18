@@ -1,42 +1,82 @@
-import { BarChart, Bar, XAxis, YAxis, Tooltip as ChartTooltip, ResponsiveContainer, Legend, Cell } from 'recharts';
+import { PieChart, Pie, Tooltip as ChartTooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from "@/vcomponents/dashboard-ui/service-components/chart";
 
-const PRODUCT_COLORS = [
-    "#4B0082", "#2E8B57", "#B8860B", "#556B2F", "#4682B4"
+const COLORS = [
+    "#4B0082", "#2E8B57", "#B8860B", "#556B2F", "#4682B4",
+    "#6A5ACD", "#2F4F4F", "#8B008B", "#8B4513", "#B22222",
+    "#2F2F2F", "#8B0000", "#A0522D", "#483D8B", "#2B2B2B"
 ];
+
+// Function to calculate percentage
+function calculatePercentage(value, total) {
+    return ((value / total) * 100).toFixed(2); // Keep 2 decimal places
+}
+
+// Custom label renderer with percentage
+const renderCustomLabel = ({ name, value, total }) => {
+    const percentage = calculatePercentage(value, total);
+    return `${name}: $${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${percentage}%)`;
+};
 
 function CostByProductChart({ data }) {
     // Sort the data by product_id
     const sortedData = [...data].sort((a, b) => a.product_id.localeCompare(b.product_id));
 
+    // Calculate the total cost
+    const totalCost = sortedData.reduce((acc, entry) => acc + (entry.total_product_cost || 0), 0);
+
     return (
-        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[200px] w-[600px]">
+        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[410px] w-[600px]">
             <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={sortedData} margin={{ top: 20, right: 20, left: 60, bottom: -10 }}  >
-                    <XAxis dataKey="product_id" style={{ fontSize: '12px', fontWeight: 'bold', fill: 'black' }} />
-                    <YAxis tickFormatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`} style={{ fontSize: '12px', fontWeight: 'bold', fill: 'black' }}  />
-                    <ChartTooltip content={<ChartTooltipContent />} />
+                <PieChart>
+                    <Pie
+                        data={sortedData}
+                        dataKey="total_product_cost"
+                        nameKey="product_id"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={160}
+                        label={(props) => renderCustomLabel({ ...props, total: totalCost })} // Add total to props
+                        labelLine={{ stroke: '#8884d8', strokeWidth: 1 }}
+                        style={{ fontSize: '9px', fontWeight: 'bold' }}
+                    >
+                        {sortedData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                    </Pie>
+                    <ChartTooltip
+                        content={({ active, payload }) => {
+                            if (active && payload && payload.length) {
+                                const { product_id, total_product_cost } = payload[0].payload;
+                                const percentage = calculatePercentage(total_product_cost, totalCost);
+                                return (
+                                    <div style={{ backgroundColor: "#fff", padding: "8px", border: "1px solid #ccc", borderRadius: "4px" }}>
+                                        <p><strong>{product_id}</strong></p>
+                                        <p>Cost: ${total_product_cost.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+
+                                    </div>
+                                );
+                            }
+                            return null;
+                        }}
+                    />
+
                     <Legend
                         verticalAlign="bottom"
                         height={36}
                         wrapperStyle={{
-                            bottom: -20, // Adjusts the distance from the bottom of the container
-                            left: '50%', // Centers horizontally
-                            transform: 'translateX(-50%)', // Centers the legend accurately
+                            bottom: -20,
+                            left: '50%',
+                            transform: 'translateX(-50%)',
                         }}
                         payload={sortedData.map((entry, index) => ({
                             id: entry.product_id,
                             type: "square",
-                            value: entry.product_id,
-                            color: PRODUCT_COLORS[index % PRODUCT_COLORS.length]
-                        }))} // Custom legend with sorted product_id and color
+                            value: `${entry.product_id}`,
+                            color: COLORS[index % COLORS.length],
+                        }))}
                     />
-                    <Bar dataKey="total_resource_cost" name="Total Resource Cost">
-                        {sortedData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={PRODUCT_COLORS[index % PRODUCT_COLORS.length]} />
-                        ))}
-                    </Bar>
-                </BarChart>
+                </PieChart>
             </ResponsiveContainer>
         </ChartContainer>
     );

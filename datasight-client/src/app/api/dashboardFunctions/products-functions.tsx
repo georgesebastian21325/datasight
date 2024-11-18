@@ -51,7 +51,7 @@ async function fetchProductCostByCategory() {
         // Convert `total_resource_cost` to a number for each item
         const formattedData = bodyData.map((item: ProductCostItem) => ({
             ...item,
-            total_resource_cost: parseFloat(item.total_product_cost)
+            total_product_cost: parseFloat(item.total_product_cost)
         }));
 
         console.log('Cost By Product Type', formattedData);
