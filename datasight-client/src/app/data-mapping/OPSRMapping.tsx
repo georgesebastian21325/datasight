@@ -16,7 +16,7 @@ import "reactflow/dist/style.css";
 import DataMappingLoadingState from "../components/global/DataMappingLoadingState";
 import { useGlobalState } from "../context/GlobalStateContext"; // Import the global state
 
-import { fetchResourceHealthStatus, fetchServiceHealthStatus } from '../api/dataMapping/mapping-functions'
+import { fetchResourceHealthStatus, fetchServiceHealthStatus, fetchProductHealthStatus, fetchOfferingHealthStatus } from '../api/dataMapping/mapping-functions'
 
 interface ResourceServiceMappingData {
 	service_id: string;
@@ -48,16 +48,12 @@ interface ServiceHealthStatus {
 
 interface ProductHealthStatus {
     product_id: string;
-    obsolescence_health: string;
-    capacity_health: string;
-    total_health: string;
+	product_risk_status:string;
 }
 
 interface OfferingHealthStatus {
     offering_id: string;
-    obsolescence_health: string;
-    capacity_health: string;
-    total_health: string;
+	offering_risk_status: string;
 }
 
 const nodeTypes = {};
@@ -97,12 +93,14 @@ export default function OPSRMapping() {
 		const fetchData = async () => {
 			try {
 				// Fetch mappings with enhanced error handling
-				const [resourceRes, productRes, offeringRes, resourceHealthStatusData, serviceHealthStatusData] = await Promise.all([
+				const [resourceRes, productRes, offeringRes, resourceHealthStatusData, serviceHealthStatusData, productHealthStatusData, offeringHealthStatusData] = await Promise.all([
 					fetch("https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getResourceServiceMapping"),
 					fetch("https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getServiceProductMapping"),
 					fetch("https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getProductOfferingMapping"),
 					fetchResourceHealthStatus(),
-					fetchServiceHealthStatus()
+					fetchServiceHealthStatus(),
+					fetchProductHealthStatus(),
+					fetchOfferingHealthStatus()
 				]);
 				
 
@@ -128,6 +126,8 @@ export default function OPSRMapping() {
 				setOfferingMappingData(parsedOfferingData);
 				setResourceHealthData(resourceHealthStatusData);
 				setServiceHealthData(serviceHealthStatusData);
+				setProductHealthData(productHealthStatusData);
+				setOfferingHealthData(offeringHealthStatusData);
 
 
 				// Clear error if successful
@@ -265,7 +265,7 @@ export default function OPSRMapping() {
                     return h.offering_id === offeringNodeId;
                 });
 
-                const healthColor = healthStatus ? getHealthColor(healthStatus.total_health) : 'gray';
+                const healthColor = healthStatus ? getHealthColor(healthStatus.offering_risk_status) : 'gray';
 
 
 				nodes.push({
@@ -310,7 +310,7 @@ export default function OPSRMapping() {
                     return h.product_id === productNodeId;
                 });
 
-                const healthColor = healthStatus ? getHealthColor(healthStatus.total_health) : 'gray';
+                const healthColor = healthStatus ? getHealthColor(healthStatus.product_risk_status) : 'gray';
 
 				nodes.push({
 					id: productNodeId,
