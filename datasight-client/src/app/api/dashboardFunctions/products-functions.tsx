@@ -80,7 +80,7 @@ async function fetchRevenueByProduct() {
         // Convert `total_resource_cost` to a number for each item
         const formattedData = bodyData.map((item: ProductRevenueItem) => ({
             ...item,
-            total_resource_cost: parseFloat(item.total_product_revenue)
+            total_product_revenue: parseFloat(item.total_product_revenue)
         }));
 
         console.log('Revenue By Product Type', formattedData);

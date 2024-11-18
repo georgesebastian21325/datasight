@@ -53,7 +53,6 @@ function CostByProductChart({ data }) {
                                     <div style={{ backgroundColor: "#fff", padding: "8px", border: "1px solid #ccc", borderRadius: "4px" }}>
                                         <p><strong>{product_id}</strong></p>
                                         <p>Cost: ${total_product_cost.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
-
                                     </div>
                                 );
                             }
