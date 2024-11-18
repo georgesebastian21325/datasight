@@ -15,7 +15,7 @@ function calculatePercentage(value, total) {
 // Custom label renderer with percentage
 const renderCustomLabel = ({ name, value, total }) => {
     const percentage = calculatePercentage(value, total);
-    return `${name}: $${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${percentage}%)`;
+    return ` $${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${percentage}%)`;
 };
 
 function CostByProductChart({ data }) {
