@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/vco
 
 import {
   fetchTotalServiceCost, fetchTotalServiceRevenue, fetchCostPerService,
-  fetchRevenuePerService, compareCostAndRevenue, 
+  fetchRevenuePerService, compareCostAndRevenue, fetchServiceResourceList,
   fetchServiceUtilizationTrend, formatCustom
 } from "../../app/api/dashboardFunctions/services-function"
 
@@ -40,9 +40,11 @@ type CostRevenueServiceItems = {
   total_service_revenue: string;
 }
 
-type ServiceUtilizationItems = {
+type ServiceResourceListItems = {
   service_id: string;
-  avg_service_utilization: string;
+  resource_id: string;
+  resource_type: string;
+  revenue_generated_based_on_resource_id: string;
 }
 
 type ServiceUtilizationTrendItems = {
@@ -59,8 +61,8 @@ export default function ServiceDashboardComponent() {
   const [costPerService, setCostPerService] = useState<ServiceCostItem[]>([]);
   const [revenuePerService, setRevenuePerService] = useState<ServiceRevenueItems[]>([]);
   const [costRevenueService, setCostRevenueService] = useState<CostRevenueServiceItems[]>([]);
-  const [serviceUtilization, setServiceUtilization] = useState<ServiceUtilizationItems[]>([]);
   const [serviceUtilizationTrend, setServiceUtilizationTrend] = useState<ServiceUtilizationTrendItems[]>([]);
+  const [serviceResourceList, setServiceResourceList] = useState<ServiceResourceListItems[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -70,6 +72,7 @@ export default function ServiceDashboardComponent() {
       const costByServiceData = await fetchCostPerService();
       const revenueByServiceData = await fetchRevenuePerService();
       const comparedCostRevenueServiceData = await compareCostAndRevenue();
+      const serviceResourceListData = await fetchServiceResourceList();
       const serviceUtilizationTrendData = await fetchServiceUtilizationTrend();
 
 
@@ -85,6 +88,7 @@ export default function ServiceDashboardComponent() {
       setCostPerService(costByServiceData);
       setRevenuePerService(revenueByServiceData);
       setCostRevenueService(comparedCostRevenueServiceData);
+      setServiceResourceList(serviceResourceListData);
       setServiceUtilizationTrend(serviceUtilizationTrendData);
       setLoading(false);  // Stop loading after data is fetched
     }
@@ -154,7 +158,7 @@ export default function ServiceDashboardComponent() {
             </CardHeader>
 
             <CardContent>
-              <ServicesTableList />
+              <ServicesTableList data={serviceResourceList} />
             </CardContent>
           </Card>
         </div>
