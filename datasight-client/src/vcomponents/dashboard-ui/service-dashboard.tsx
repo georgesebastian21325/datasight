@@ -13,7 +13,7 @@ import {
 import CostPerServiceChart from "@/app/components/dashboard-charts/services-charts/CostPerServiceChart"
 import RevenuePerServiceChart from "@/app/components/dashboard-charts/services-charts/RevenuePerServiceChart"
 import CompareRevenueCostServicesChart from "@/app/components/dashboard-charts/services-charts/CompareRevenueCostServicesChart"
-import ServicesTableList from "@/app/components/dashboard-charts/services-charts/ServicesTableList"
+import ServicesTableList from "@/app/components/dashboard-charts/services-charts/ServicesRevenueTableList"
 import ServiceUtilTrendChart from "@/app/components/dashboard-charts/services-charts/ServiceUtilTrendChart"
 
 type TotalServiceRevenueItems = {
@@ -153,8 +153,8 @@ export default function ServiceDashboardComponent() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle className='text-lg font-bold'> Services with Associated Resources </CardTitle>
-              <CardDescription> List of resources associated for each service. </CardDescription>
+              <CardTitle className='text-lg font-bold'> Associated Services Per Resources (Revenue) </CardTitle>
+              <CardDescription> List of resources associated for each service by revenue. </CardDescription>
             </CardHeader>
 
             <CardContent>

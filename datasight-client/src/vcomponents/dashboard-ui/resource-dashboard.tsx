@@ -3,16 +3,14 @@
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/vcomponents/dashboard-ui/resource-components/card"
 import {
-  fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType, fetchTopCostliestResources,
+  fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType,
   fetchTopRevenueGeneratingResources, formatCustom, fetchAverageUtilizationResource,
-  fetchHighestUtilizedResources, fetchLowestUtilizedResources
 } from '../../app/api/dashboardFunctions/resources-functions'
 
 import CostByResourceTypeChart from '../../app/components/dashboard-charts/resources-charts/CostByResourceTypeChart'
 import RevenueByResourceTypeChart from '../../app/components/dashboard-charts/resources-charts/RevenueByResourceType'
 import AverageUtilizationChart from '../../app/components/dashboard-charts/resources-charts/AverageUtilizationChart';
-import HighestUtilizedResourcesChart from '../../app/components/dashboard-charts/resources-charts/HighestUtilizedResourcesChart'
-import LowestUtlizedResourcesChart from '../../app/components/dashboard-charts/resources-charts/LowestUtilizedResourcesChart'
+import RevenueForecastChart from '@/app/components/dashboard-charts/resources-charts/RevenueForecastChart'
 
 
 type ResourceCostItem = {
@@ -114,6 +112,16 @@ export default function ResourceDashboardComponent() {
             </CardContent>
           </Card>
         </div>
+      </div>
+      <div className="grid grid-cols-1 mb-8">
+        <Card className={`${loading ? 'animate-pulse' : ''}`}>
+          <CardHeader>
+            <CardTitle className='text-lg font-bold'>Revenue Forecast</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading ? <div className="h-48"></div> : <RevenueForecastChart data={averageUtilization}/>}
+          </CardContent>
+        </Card>
       </div>
 
       {/* 3. Capacity and Utilization Insights */}

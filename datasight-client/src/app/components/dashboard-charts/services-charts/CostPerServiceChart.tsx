@@ -29,7 +29,7 @@ function CostPerService({ data }) {
     });
 
     // Formatter function for displaying numbers in 000,000,000 format
-    const formatNumber = (value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+    const formatNumber = (value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
 
     return (
         <ChartContainer config={{ cost: { label: "Total Service Cost", color: "hsl(var(--chart-1))" } }} className="h-[470px] w-[650px]">
