@@ -1,5 +1,5 @@
 import { PieChart, Pie, Tooltip as ChartTooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
-import { ChartContainer, ChartTooltipContent } from "@/vcomponents/dashboard-ui/service-components/chart";
+import { ChartContainer } from "@/vcomponents/dashboard-ui/service-components/chart";
 
 const COLORS = [
     "#4B0082", "#2E8B57", "#B8860B", "#556B2F", "#4682B4",
@@ -18,25 +18,25 @@ const renderCustomLabel = ({ name, value, total }) => {
     return ` $${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${percentage}%)`;
 };
 
-function CostByProductChart({ data }) {
-    // Sort the data by product_id
-    const sortedData = [...data].sort((a, b) => a.product_id.localeCompare(b.product_id));
+function RevenueByOfferingChart({ data }) {
+    // Sort the data by offering_id
+    const sortedData = [...data].sort((a, b) => a.offering_id.localeCompare(b.offering_id));
 
-    // Calculate the total cost
-    const totalCost = sortedData.reduce((acc, entry) => acc + (entry.total_product_cost || 0), 0);
+    // Calculate the total revenue
+    const totalRevenue = sortedData.reduce((acc, entry) => acc + (entry.total_offering_revenue || 0), 0);
 
     return (
-        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[410px] w-[600px]">
+        <ChartContainer config={{ revenue: { label: "Total Offering Revenue", color: "hsl(var(--chart-2))" } }} className="h-[410px]">
             <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                     <Pie
                         data={sortedData}
-                        dataKey="total_product_cost"
-                        nameKey="product_id"
-                        cx="50%"
+                        dataKey="total_offering_revenue"
+                        nameKey="offering_id"
+                        cx="45%"
                         cy="50%"
                         outerRadius={160}
-                        label={(props) => renderCustomLabel({ ...props, total: totalCost })} // Add total to props
+                        label={(props) => renderCustomLabel({ ...props, total: totalRevenue })} // Add total to props
                         labelLine={{ stroke: '#8884d8', strokeWidth: 1 }}
                         style={{ fontSize: '9px', fontWeight: 'bold' }}
                     >
@@ -47,12 +47,13 @@ function CostByProductChart({ data }) {
                     <ChartTooltip
                         content={({ active, payload }) => {
                             if (active && payload && payload.length) {
-                                const { product_id, total_product_cost } = payload[0].payload;
-                                const percentage = calculatePercentage(total_product_cost, totalCost);
+                                const { offering_id, total_offering_revenue } = payload[0].payload;
+                                const percentage = calculatePercentage(total_offering_revenue, totalRevenue);
                                 return (
                                     <div style={{ backgroundColor: "#fff", padding: "8px", border: "1px solid #ccc", borderRadius: "4px" }}>
-                                        <p><strong>{product_id}</strong></p>
-                                        <p>Cost: ${total_product_cost.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                                        <p><strong>{offering_id}</strong></p>
+                                        <p>Revenue: ${total_offering_revenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                                        <p>Percentage: {percentage}%</p>
                                     </div>
                                 );
                             }
@@ -64,14 +65,14 @@ function CostByProductChart({ data }) {
                         verticalAlign="bottom"
                         height={36}
                         wrapperStyle={{
-                            bottom: -20,
-                            left: '50%',
+                            bottom: -10, // Adjusts the distance from the bottom of the container
+                            left: '45%',
                             transform: 'translateX(-50%)',
                         }}
                         payload={sortedData.map((entry, index) => ({
-                            id: entry.product_id,
+                            id: entry.offering_id,
                             type: "square",
-                            value: `${entry.product_id}`,
+                            value: `${entry.offering_id}`,
                             color: COLORS[index % COLORS.length],
                         }))}
                     />
@@ -81,4 +82,4 @@ function CostByProductChart({ data }) {
     );
 }
 
-export default CostByProductChart;
+export default RevenueByOfferingChart;

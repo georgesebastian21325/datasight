@@ -6,14 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/vcomponents/dashboar
 
 import CostByProductChart from '@/app/components/dashboard-charts/products-charts/CostByProductChart.tsx';
 import RevenueByProductChart from '@/app/components/dashboard-charts/products-charts/RevenueByProductChart';
-import ProductRevenueContributionChart from '@/app/components/dashboard-charts/products-charts/ProductRevenueContributionChart';
-import ProductUtilizationRateChart from '@/app/components/dashboard-charts/products-charts/ProductUtilizationRateChart';
 import ProductUtilizationTrendChart from '@/app/components/dashboard-charts/products-charts/ProductUtilizationTrendChart';
-
+import ProductRevenueForecastChart from '@/app/components/dashboard-charts/products-charts/ProductRevenueForecastChart';
 
 import { fetchTotalProductCost, fetchTotalProductRevenue, fetchProductCostByCategory, 
-         fetchRevenueByProduct, fetchProductRevenueContribution, fetchProductUtilizationRate,
-         fetchProductUtilizationTrend } from '../../app/api/dashboardFunctions/products-functions'
+          fetchRevenueByProduct, fetchProductRevenueContribution, fetchProductUtilizationRate, 
+          fetchProductRevenueForecast, fetchProductUtilizationTrend } from '../../app/api/dashboardFunctions/products-functions'
 import { formatCustom } from '@/app/api/dashboardFunctions/global-dashboard-functions'
 
 type ProductCostItem = {
@@ -43,6 +41,14 @@ type ProductUtilizationTrendItems = {
   monthly_avg_usage_percentage: string;
 };
 
+type ProductRevenueForecastItems = {
+  product_id: string;
+  month_year: string;
+  total_product_revenue: string;
+  predicted_revenue: string;
+  forecast_revenue: string;
+}
+
 
 export default function ProductLayerDashboard() {
   const [loading, setLoading] = useState(true);  // Loading state
@@ -50,9 +56,9 @@ export default function ProductLayerDashboard() {
   const [totalProductRevenue, setTotalProductRevenue] = useState<string | null>(null)
   const [costPerProduct, setCostPerProduct] = useState<ProductCostItem[]>([]);
   const [revenuePerProduct, setRevenuePerProduct] = useState<ProductRevenueItem[]>([]);
-  const [productContribution, setProductContribution] = useState<ProductRevenueContributionItems[]>([]);
-  const [productUtilizationRate, setProductUtilizationRate] = useState < ProductUtilizationRateItems[]>([]);
   const [productUtilizationTrend, setProductUtilizationTrend] = useState <ProductUtilizationTrendItems[]>([]);
+  const [productRevenueForecast, setProductRevenueForecast] = useState<ProductRevenueForecastItems[]>([]);
+
 
   useEffect(() => {
     async function fetchData() {
@@ -61,9 +67,9 @@ export default function ProductLayerDashboard() {
       const totalProductRevenueData = await fetchTotalProductRevenue();
       const costPerProductData = await fetchProductCostByCategory();
       const revenuePerProductData = await fetchRevenueByProduct();
-      const productContributionData = await fetchProductRevenueContribution();
-      const productUtilizationRateData = await fetchProductUtilizationRate();
+
       const productUtilizationTrendData = await fetchProductUtilizationTrend();
+      const productRevenueForecastData = await fetchProductRevenueForecast();
 
       if (totalProductCostData !== null) {
         setTotalProductCost(formatCustom(totalProductCostData));
@@ -75,9 +81,8 @@ export default function ProductLayerDashboard() {
 
       setCostPerProduct(costPerProductData);
       setRevenuePerProduct(revenuePerProductData);
-      setProductContribution(productContributionData);
-      setProductUtilizationRate(productUtilizationRateData);
       setProductUtilizationTrend(productUtilizationTrendData);
+      setProductRevenueForecast(productRevenueForecastData);
 
       setLoading(false);  // Stop loading after data is fetched
     }
@@ -114,7 +119,7 @@ export default function ProductLayerDashboard() {
 
       <section className="mb-8">
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="grid grid-cols-1 gap-4">
+ 
             <Card className={`${loading ? 'skeleton animate-pulse' : ''}`}>
               <CardHeader>
                 <CardTitle className='text-lg font-bold'>Cost Per Product</CardTitle>
@@ -132,26 +137,19 @@ export default function ProductLayerDashboard() {
               </CardContent>
             </Card>
           </div>
-          <Card className={`${loading ? 'animate-pulse' : ''}`}>
-            <CardHeader>
-              <CardTitle className='text-lg font-bold'>Product Revenue Contribution to Total Revenue</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? <div className="skeleton animate-pulse"></div> : <ProductRevenueContributionChart data={productContribution} />}
-            </CardContent>
-          </Card>
-        </div>
       </section>
+      <div className="grid grid-cols-1 mb-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className='text-lg font-bold'> Product Revenue Forecast </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ProductRevenueForecastChart data={productRevenueForecast} />
+          </CardContent>
+        </Card>
+      </div>
       <section>
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card className={`${loading ? 'animate-pulse' : ''}`}>
-            <CardHeader>
-              <CardTitle className='text-lg font-bold'>Product Utilization Rate</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? <div className="skeleton animate-pulse"></div> : <ProductUtilizationRateChart data={productUtilizationRate} />}
-            </CardContent>
-          </Card>
+        <div className="grid gap-4 md:grid-cols-1">
           <Card className={`${loading ? 'animate-pulse' : ''}`}>
             <CardHeader>
               <CardTitle className='text-lg font-bold'>Monthly Utilization Trends by Product</CardTitle>

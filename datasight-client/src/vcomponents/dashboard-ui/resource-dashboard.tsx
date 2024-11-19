@@ -4,14 +4,13 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/vcomponents/dashboard-ui/resource-components/card"
 import {
   fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType,
-  fetchTopRevenueGeneratingResources, formatCustom, fetchAverageUtilizationResource,
+  fetchTopRevenueGeneratingResources, formatCustom, fetchAverageUtilizationResource,fetchResourceRevenueForecast
 } from '../../app/api/dashboardFunctions/resources-functions'
 
 import CostByResourceTypeChart from '../../app/components/dashboard-charts/resources-charts/CostByResourceTypeChart'
 import RevenueByResourceTypeChart from '../../app/components/dashboard-charts/resources-charts/RevenueByResourceType'
 import AverageUtilizationChart from '../../app/components/dashboard-charts/resources-charts/AverageUtilizationChart';
-import RevenueForecastChart from '@/app/components/dashboard-charts/resources-charts/RevenueForecastChart'
-
+import ResourceRevenueForecastChart from '@/app/components/dashboard-charts/resources-charts/ResourceRevenueForecastChart'
 
 type ResourceCostItem = {
   resource_id: string;
@@ -30,7 +29,13 @@ type AverageUtilizationItems = {
   average_monthly_utilization_percentage: number;
 };
 
-
+type ResourceRevenueForecastItems = {
+  resource_id: string;
+  month_year: string;
+  total_resource_revenue: string;
+  predicted_revenue: string;
+  forecast_revenue: string;
+};
 
 export default function ResourceDashboardComponent() {
   const [loading, setLoading] = useState(true);  // Loading state
@@ -38,6 +43,7 @@ export default function ResourceDashboardComponent() {
   const [totalResourceRevenue, setTotalResourceRevenue] = useState<string | null>(null)
   const [costByResourceType, setCostByResourceType] = useState<ResourceCostItem[]>([]);
   const [revenueByResourceType, setRevenueResource] = useState<ResourceRevenueItem[]>([]);
+  const [resourceRevenueForecast, setResourceRevenueForecast] = useState < ResourceRevenueForecastItems[]>([])
   const [averageUtilization, setAverageUtilization] = useState<AverageUtilizationItems[]>([]);
 
   useEffect(() => {
@@ -48,6 +54,7 @@ export default function ResourceDashboardComponent() {
       const costByResourceType = await fetchCostByResourceType();
       const revenueByResourceTypeData = await fetchTopRevenueGeneratingResources();
       const aveUtilizationResource = await fetchAverageUtilizationResource();
+      const resourceRevenueForecastData = await fetchResourceRevenueForecast();
 
       if (resourceCost !== null) {
         setTotalResourceCost(formatCustom(resourceCost));
@@ -60,6 +67,7 @@ export default function ResourceDashboardComponent() {
       setCostByResourceType(costByResourceType);
       setRevenueResource(revenueByResourceTypeData);
       setAverageUtilization(aveUtilizationResource);
+      setResourceRevenueForecast(resourceRevenueForecastData);
       setLoading(false);  // Stop loading after data is fetched
     }
 
@@ -116,12 +124,13 @@ export default function ResourceDashboardComponent() {
       <div className="grid grid-cols-1 mb-8">
         <Card className={`${loading ? 'animate-pulse' : ''}`}>
           <CardHeader>
-            <CardTitle className='text-lg font-bold'>Revenue Forecast</CardTitle>
+            <CardTitle className='text-lg font-bold'>Resource Revenue Forecast</CardTitle>
           </CardHeader>
           <CardContent>
-            {loading ? <div className="h-48"></div> : <RevenueForecastChart data={averageUtilization}/>}
+            {loading ? <div className="h-48"></div> : <ResourceRevenueForecastChart data={resourceRevenueForecast}/>}
           </CardContent>
-        </Card>
+        </Card>        
+
       </div>
 
       {/* 3. Capacity and Utilization Insights */}

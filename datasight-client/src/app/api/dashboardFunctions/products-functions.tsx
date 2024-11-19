@@ -51,7 +51,7 @@ async function fetchProductCostByCategory() {
         // Convert `total_resource_cost` to a number for each item
         const formattedData = bodyData.map((item: ProductCostItem) => ({
             ...item,
-            total_resource_cost: parseFloat(item.total_product_cost)
+            total_product_cost: parseFloat(item.total_product_cost)
         }));
 
         console.log('Cost By Product Type', formattedData);
@@ -80,7 +80,7 @@ async function fetchRevenueByProduct() {
         // Convert `total_resource_cost` to a number for each item
         const formattedData = bodyData.map((item: ProductRevenueItem) => ({
             ...item,
-            total_resource_cost: parseFloat(item.total_product_revenue)
+            total_product_revenue: parseFloat(item.total_product_revenue)
         }));
 
         console.log('Revenue By Product Type', formattedData);
@@ -180,6 +180,40 @@ async function fetchProductUtilizationTrend() {
     }
 }
 
+async function fetchProductRevenueForecast() {
+    type ProductRevenueForecastItems = {
+        product_id: string;
+        month_year: string;
+        total_product_revenue: string;
+        predicted_revenue: string;
+        forecast_revenue: string;
+    }
+
+    try {
+        const response = await fetch('https://ud2luybs5l.execute-api.ap-southeast-2.amazonaws.com/development/getProductRevenueForecast');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        // Ensure the correct field name `average_usage_percentage` is used
+        const formattedData = bodyData.map((item: ProductRevenueForecastItems) => ({
+            ...item,
+            total_product_revenue: parseFloat(item.total_product_revenue),
+            predicted_revenue: parseFloat(item.predicted_revenue),
+            forecast_revenue: parseFloat(item.forecast_revenue)
+        }));
+
+        console.log('Product Revenue Forecast', formattedData);
+
+        return formattedData;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+
 
 
 export  {
@@ -189,5 +223,6 @@ export  {
     fetchRevenueByProduct, 
     fetchProductRevenueContribution,
     fetchProductUtilizationRate, 
-    fetchProductUtilizationTrend
+    fetchProductUtilizationTrend,
+    fetchProductRevenueForecast
 }

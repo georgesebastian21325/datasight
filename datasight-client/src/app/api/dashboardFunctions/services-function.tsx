@@ -152,7 +152,36 @@ async function fetchServiceResourceList() {
             revenue_generated_based_on_resource_id: parseFloat(item.revenue_generated_based_on_resource_id)
         }));
 
-        console.log('Service with Resource List', formattedData);
+        console.log('Service Revenue with Resource List', formattedData);
+
+        return formattedData;
+
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+async function fetchServiceCostTableList() {
+    type ServiceCostTableListItems = {
+        service_id: string;
+        resource_id: string;
+        resource_type: string;
+        cost_generated_based_on_resource_id: string;
+    }
+
+    try {
+        const response = await fetch('https://ugdwdejp73.execute-api.ap-southeast-2.amazonaws.com/development/getServiceCostTableList');
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        const formattedData = bodyData.map((item: ServiceCostTableListItems) => ({
+            ...item,
+            cost_generated_based_on_resource_id: parseFloat(item.cost_generated_based_on_resource_id)
+        }));
+
+        console.log('Service Cost with Resource List', formattedData);
 
         return formattedData;
 
@@ -193,6 +222,39 @@ async function fetchServiceUtilizationTrend() {
     }
 }
 
+async function fetchServiceRevenueForecast() {
+    type ServiceRevenueForecastItems = {
+        service_id: string;
+        month_year: string;
+        total_service_revenue: string;
+        predicted_revenue: string;
+        forecast_revenue: string;
+    }
+
+    try {
+        const response = await fetch('https://ugdwdejp73.execute-api.ap-southeast-2.amazonaws.com/development/getServiceRevenueForecast');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        // Ensure the correct field name `average_usage_percentage` is used
+        const formattedData = bodyData.map((item: ServiceRevenueForecastItems) => ({
+            ...item,
+            total_service_revenue: parseFloat(item.total_service_revenue),
+            predicted_revenue: parseFloat(item.predicted_revenue),
+            forecast_revenue: parseFloat(item.forecast_revenue)
+        }));
+
+        console.log('Service Revenue Forecast', formattedData);
+
+        return formattedData;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
 
 
 
@@ -207,7 +269,9 @@ export {
     fetchCostPerService,
     fetchRevenuePerService,
     compareCostAndRevenue,
+    fetchServiceCostTableList,
     fetchServiceResourceList,
     fetchServiceUtilizationTrend,
+    fetchServiceRevenueForecast,
     formatCustom
 }

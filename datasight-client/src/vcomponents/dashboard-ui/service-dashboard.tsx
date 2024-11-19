@@ -5,15 +5,17 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/vco
 
 import {
   fetchTotalServiceCost, fetchTotalServiceRevenue, fetchCostPerService,
-  fetchRevenuePerService, compareCostAndRevenue, fetchServiceResourceList,
-  fetchServiceUtilizationTrend, formatCustom
+  fetchRevenuePerService, compareCostAndRevenue, fetchServiceResourceList, fetchServiceCostTableList,
+  fetchServiceUtilizationTrend, fetchServiceRevenueForecast, formatCustom
 } from "../../app/api/dashboardFunctions/services-function"
 
 import CostPerServiceChart from "@/app/components/dashboard-charts/services-charts/CostPerServiceChart"
 import RevenuePerServiceChart from "@/app/components/dashboard-charts/services-charts/RevenuePerServiceChart"
 import CompareRevenueCostServicesChart from "@/app/components/dashboard-charts/services-charts/CompareRevenueCostServicesChart"
 import ServicesTableList from "@/app/components/dashboard-charts/services-charts/ServicesRevenueTableList"
+import ServiceCostTableList from "@/app/components/dashboard-charts/services-charts/ServiceCostTableList"
 import ServiceUtilTrendChart from "@/app/components/dashboard-charts/services-charts/ServiceUtilTrendChart"
+import ServiceRevenueForecastChart from "@/app/components/dashboard-charts/services-charts/ServiceRevenueForecastChart"
 
 type TotalServiceRevenueItems = {
   service_id: string;
@@ -46,10 +48,25 @@ type ServiceResourceListItems = {
   revenue_generated_based_on_resource_id: string;
 }
 
+type ServiceCostTableListItems = {
+  service_id: string;
+  resource_id: string;
+  resource_type: string;
+  cost_generated_based_on_resource_id: string;
+}
+
 type ServiceUtilizationTrendItems = {
   service_id: string;
   date: string;
   avg_daily_service_utilization: string;
+}
+
+type ServiceRevenueForecastItems = {
+  service_id: string;
+  month_year: string;
+  total_service_revenue: string;
+  predicted_revenue: string;
+  forecast_revenue: string;
 }
 
 export default function ServiceDashboardComponent() {
@@ -61,7 +78,9 @@ export default function ServiceDashboardComponent() {
   const [revenuePerService, setRevenuePerService] = useState<ServiceRevenueItems[]>([]);
   const [costRevenueService, setCostRevenueService] = useState<CostRevenueServiceItems[]>([]);
   const [serviceUtilizationTrend, setServiceUtilizationTrend] = useState<ServiceUtilizationTrendItems[]>([]);
+  const [serviceCostList, setServiceCostList] = useState<ServiceCostTableListItems[]>([]);
   const [serviceResourceList, setServiceResourceList] = useState<ServiceResourceListItems[]>([]);
+  const [serviceRevenueForecast, setServiceRevenueForecast] = useState<ServiceRevenueForecastItems[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -72,7 +91,9 @@ export default function ServiceDashboardComponent() {
       const revenueByServiceData = await fetchRevenuePerService();
       const comparedCostRevenueServiceData = await compareCostAndRevenue();
       const serviceResourceListData = await fetchServiceResourceList();
+      const serviceCostListData = await fetchServiceCostTableList();
       const serviceUtilizationTrendData = await fetchServiceUtilizationTrend();
+      const serviceRevenueForecastData = await fetchServiceRevenueForecast();
 
 
       if (serviceCost !== null) {
@@ -87,8 +108,10 @@ export default function ServiceDashboardComponent() {
       setCostPerService(costByServiceData);
       setRevenuePerService(revenueByServiceData);
       setCostRevenueService(comparedCostRevenueServiceData);
+      setServiceCostList(serviceCostListData);
       setServiceResourceList(serviceResourceListData);
       setServiceUtilizationTrend(serviceUtilizationTrendData);
+      setServiceRevenueForecast(serviceRevenueForecastData);
       setLoading(false);  // Stop loading after data is fetched
     }
 
@@ -142,12 +165,13 @@ export default function ServiceDashboardComponent() {
           </Card>
         </div>
         <div className="grid grid-cols-2 gap-4 mb-4">
-          <Card className={`${loading ? 'animate-pulse' : ''}`}>
+          <Card>
             <CardHeader>
-              <CardTitle className='text-lg font-bold'>Revenue vs. Cost Comparison per Service</CardTitle>
+              <CardTitle className='text-lg font-bold'> Associated Services Per Resources (Cost) </CardTitle>
+              <CardDescription> List of resources associated for each service by cost. </CardDescription>
             </CardHeader>
             <CardContent>
-              {loading ? <div className="h-48"></div> : <CompareRevenueCostServicesChart data={costRevenueService} />}
+              <ServiceCostTableList data={serviceCostList} />
             </CardContent>
           </Card>
           <Card>
@@ -158,6 +182,24 @@ export default function ServiceDashboardComponent() {
 
             <CardContent>
               <ServicesTableList data={serviceResourceList} />
+            </CardContent>
+          </Card>
+          <Card className={`${loading ? 'animate-pulse' : ''}`}>
+            <CardHeader>
+              <CardTitle className='text-lg font-bold'>Revenue vs. Cost Comparison per Service</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loading ? <div className="h-48"></div> : <CompareRevenueCostServicesChart data={costRevenueService} />}
+            </CardContent>
+          </Card>
+        </div>
+        <div className="grid grid-cols-1 mb-8">
+          <Card className={`${loading ? 'animate-pulse' : ''}`}>
+            <CardHeader>
+              <CardTitle className='text-lg font-bold'>Service Forecast Revenue</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loading ? <div className="h-48"></div> : <ServiceRevenueForecastChart data={serviceRevenueForecast} />}
             </CardContent>
           </Card>
         </div>

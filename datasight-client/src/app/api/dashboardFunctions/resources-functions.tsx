@@ -133,6 +133,7 @@ async function fetchTopRevenueGeneratingResources() {
 async function fetchAverageUtilizationResource() {
     type AverageUtilizationItems = {
         resource_id: string;
+        resource_type: string;
         month: string;
         average_monthly_utilization_percentage: string;
     };
@@ -218,6 +219,40 @@ async function fetchLowestUtilizedResources() {
     }
 }
 
+async function fetchResourceRevenueForecast() {
+    type ResourceRevenueForecastItems = {
+        resource_id: string;
+        month_year: string;
+        total_resource_revenue: string;
+        predicted_revenue: string;
+        forecast_revenue: string;
+    };
+
+    try {
+        const response = await fetch('https://81lsv00jqf.execute-api.ap-southeast-2.amazonaws.com/development/getResourceRevenueForecast');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        // Ensure the correct field name `average_usage_percentage` is used
+        const formattedData = bodyData.map((item: ResourceRevenueForecastItems) => ({
+            ...item,
+            total_resource_revenue: parseFloat(item.total_resource_revenue),
+            predicted_revenue: parseFloat(item.predicted_revenue),
+            forecast_revenue: parseFloat(item.forecast_revenue)
+        }));
+
+        console.log('Resource Revenue Forecast', formattedData);
+
+        return formattedData;
+
+    } catch (error) {
+        console.error('Fetch Error:', error);
+        return [];
+    }
+}
+
 
 function formatCustom(number: number): string {
     return number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -230,6 +265,7 @@ export {
     fetchTopCostliestResources,
     fetchTopRevenueGeneratingResources,
     fetchAverageUtilizationResource,
+    fetchResourceRevenueForecast,
     fetchHighestUtilizedResources,
     fetchLowestUtilizedResources,
     formatCustom

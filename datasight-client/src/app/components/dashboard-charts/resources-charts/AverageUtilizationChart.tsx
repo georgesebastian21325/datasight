@@ -13,26 +13,25 @@ import {
 } from 'recharts';
 
 function AverageUtilizationChart({ data }) {
+    // Format the data and ensure utilization percentage is valid
     const formattedData = data.map((item) => ({
         ...item,
         resource_id: item.resource_id.trim().toUpperCase(),
-        average_monthly_utilization_percentage: Math.min(
+        month: item.month.trim().toUpperCase(),
+        average_monthly_resource_utilization: Math.min(
             Math.max(
-                isNaN(item.average_monthly_utilization_percentage)
-                    ? 0
-                    : item.average_monthly_utilization_percentage,
+                parseFloat(item.average_monthly_resource_utilization || 0),
                 0
             ),
             100
         ),
     }));
 
-
-    // Get unique resource_ids for the filter dropdown
+    // Get unique resource IDs for the filter dropdown
     const resourceIds = [...new Set(formattedData.map((item) => item.resource_id))];
     const [selectedResourceId, setSelectedResourceId] = useState(resourceIds[0] || '');
 
-    // Filter data based on the selected resource_id
+    // Filter data based on the selected resource ID
     const filteredData = formattedData.filter(
         (item) => item.resource_id === selectedResourceId
     );
@@ -40,7 +39,7 @@ function AverageUtilizationChart({ data }) {
     // Prepare data for the chart
     const dataByMonth = filteredData.map((item) => ({
         month: item.month,
-        average_monthly_utilization_percentage: item.average_monthly_utilization_percentage,
+        average_monthly_resource_utilization: item.average_monthly_resource_utilization,
     }));
 
     // Sort the data by month
@@ -135,7 +134,7 @@ function AverageUtilizationChart({ data }) {
 
                     <Line
                         type="monotone"
-                        dataKey="average_monthly_utilization_percentage"
+                        dataKey="average_monthly_resource_utilization"
                         stroke="#8884d8"
                         strokeWidth={2}
                         dot={{ r: 2 }}
