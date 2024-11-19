@@ -123,10 +123,44 @@ async function fetchOfferingRevenueStability() {
     }
 }
 
+async function fetchOfferingRevenueForecast() {
+    type OfferingRevenueForecastItems = {
+        offering_id: string;
+        month_year: string;
+        offering_revenue: string;
+        predicted_revenue: string;
+        forecast_revenue: string;
+    }
+
+    try {
+        const response = await fetch('https://u4cav55e95.execute-api.ap-southeast-2.amazonaws.com/development/getOfferingRevenueForecast');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        // Ensure the correct field name `average_usage_percentage` is used
+        const formattedData = bodyData.map((item: OfferingRevenueForecastItems) => ({
+            ...item,
+            offering_revenue: parseFloat(item.offering_revenue),
+            predicted_revenue: parseFloat(item.predicted_revenue),
+            forecast_revenue: parseFloat(item.forecast_revenue)
+        }));
+
+        console.log('Offering Revenue Forecast', formattedData);
+
+        return formattedData;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
 export {
     fetchTotalOfferingCost,
     fetchTotalOfferingRevenue,
     fetchCostByOffering,
     fetchRevenueByOffering,
-    fetchOfferingRevenueStability
+    fetchOfferingRevenueStability,
+    fetchOfferingRevenueForecast
 }

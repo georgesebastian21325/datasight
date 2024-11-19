@@ -4,13 +4,13 @@ import { useState, useEffect } from 'react'
 import { DollarSign } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/vcomponents/dashboard-ui/offering-components/card'
 
-import { fetchTotalOfferingCost, fetchTotalOfferingRevenue, fetchCostByOffering, fetchRevenueByOffering, fetchOfferingRevenueStability } from '@/app/api/dashboardFunctions/offerings-functions'
+import { fetchTotalOfferingCost, fetchTotalOfferingRevenue, fetchCostByOffering, fetchRevenueByOffering, fetchOfferingRevenueStability, fetchOfferingRevenueForecast } from '@/app/api/dashboardFunctions/offerings-functions'
 import { formatCustom } from '@/app/api/dashboardFunctions/global-dashboard-functions'
 
 import CostByOfferingChart from '@/app/components/dashboard-charts/offerings-charts/CostByOfferingChart'
 import RevenueByOfferingChart from '@/app/components/dashboard-charts/offerings-charts/RevenueByOfferingChart'
 import OfferingRevenueStabiityChart from '@/app/components/dashboard-charts/offerings-charts/OfferingRevenueStabilityChart'
-
+import OfferingRevenueForecastChart from '@/app/components/dashboard-charts/offerings-charts/OfferingRevenueForecast'
 
 type OfferingCostItems = {
   offering_id: string;
@@ -20,6 +20,14 @@ type OfferingCostItems = {
 type OfferingRevenueItems = {
   offering_id: string;
   total_offering_revenue: string;
+}
+
+type OfferingRevenueForecastItems = {
+  offering_id: string;
+  month_year: string;
+  offering_revenue: string;
+  predicted_revenue: string;
+  forecast_revenue: string;
 }
 
 type OfferingRevenueStabilityItems = {
@@ -37,6 +45,7 @@ export default function OfferingDashboardComponent() {
   const [costByOffering, setCostByOffering] = useState<OfferingCostItems[]>([]);
   const [revenueByOffering, setRevenueByOffering] = useState<OfferingRevenueItems[]>([]);
   const [offeringRevenueStability, setOfferingRevenueStability] = useState<OfferingRevenueStabilityItems[]>([]);
+  const [offeringRevenueForecast, setOfferingRevenueForecast] = useState<OfferingRevenueForecastItems[]>([]);
 
 
 
@@ -47,6 +56,7 @@ export default function OfferingDashboardComponent() {
       const costByOfferingData = await fetchCostByOffering();
       const revenueByOfferingData = await fetchRevenueByOffering();
       const offeringRevenueStabilityData = await fetchOfferingRevenueStability();
+      const offeringRevenueForecast = await fetchOfferingRevenueForecast();
 
       if (offeringCostData !== null) {
         setOfferingCost(formatCustom(offeringCostData));
@@ -61,6 +71,7 @@ export default function OfferingDashboardComponent() {
       setCostByOffering(costByOfferingData);
       setRevenueByOffering(revenueByOfferingData);
       setOfferingRevenueStability(offeringRevenueStabilityData)
+      setOfferingRevenueForecast(offeringRevenueForecast)
 
       setLoading(false);  // Stop loading after data is fetched
     }
@@ -108,6 +119,17 @@ export default function OfferingDashboardComponent() {
             <RevenueByOfferingChart data={revenueByOffering} />
           </CardContent>
         </Card>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4"> 
+        <Card> 
+          <CardHeader>
+            <CardTitle> Offering Revenue Forecast</CardTitle>
+          </CardHeader>
+          <CardContent>
+              <OfferingRevenueForecastChart data={offeringRevenueForecast} />
+          </CardContent>
+        </Card>
+
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4"> 
         <Card>
