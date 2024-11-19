@@ -10,25 +10,25 @@ import {
     Legend,
 } from 'recharts';
 
-function ResourceRevenueForecastChart({ data }) {
+function ServiceRevenueForecastChart({ data }) {
     // Format the data and ensure proper parsing
     const formattedData = data.map((item) => ({
         ...item,
-        resource_id: item.resource_id.trim(),
+        service_id: item.service_id.trim(),
         month_year: item.month_year.trim(),
         year: parseInt(item.month_year.split('-')[0], 10),
         month: item.month_year.split('-')[1],
-        total_resource_revenue: parseFloat(item.total_resource_revenue || 0),
+        total_service_revenue: parseFloat(item.total_service_revenue || 0),
         predicted_revenue: parseFloat(item.predicted_revenue || 0),
         forecast_revenue: parseFloat(item.forecast_revenue || 0),
     }));
 
     // Get unique resource IDs, years, and months for filtering
-    const resourceIds = [...new Set(formattedData.map((item) => item.resource_id))];
+    const serviceIds = [...new Set(formattedData.map((item) => item.service_id))];
     const years = [...new Set(formattedData.map((item) => item.year))].sort();
 
     // State for selected filters
-    const [selectedResourceId, setSelectedResourceId] = useState(resourceIds[0] || '');
+    const [selectedServiceId, setSelectedServiceId] = useState(serviceIds[0] || '');
     const [startYear, setStartYear] = useState(years[0] || '');
     const [endYear, setEndYear] = useState(years[years.length - 1] || '');
     const [selectedMonth, setSelectedMonth] = useState('');
@@ -36,7 +36,7 @@ function ResourceRevenueForecastChart({ data }) {
     // Filter data by selected resource ID, date range, and month
     const filteredData = formattedData.filter((item) => {
         return (
-            item.resource_id === selectedResourceId &&
+            item.service_id === selectedServiceId &&
             (!startYear || item.year >= startYear) &&
             (!endYear || item.year <= endYear) &&
             (!selectedMonth || item.month === selectedMonth)
@@ -56,11 +56,11 @@ function ResourceRevenueForecastChart({ data }) {
                 </label>
                 <select
                     id="resource-filter"
-                    value={selectedResourceId}
-                    onChange={(e) => setSelectedResourceId(e.target.value)}
+                    value={selectedServiceId}
+                    onChange={(e) => setSelectedServiceId(e.target.value)}
                     style={{ marginRight: '1rem' }}
                 >
-                    {resourceIds.map((id) => (
+                    {serviceIds.map((id) => (
                         <option key={id} value={id}>
                             {id}
                         </option>
@@ -146,7 +146,7 @@ function ResourceRevenueForecastChart({ data }) {
                     {/* Lines for each metric */}
                     <Line
                         type="monotone"
-                        dataKey="total_resource_revenue"
+                        dataKey="total_service_revenue"
                         stroke="#8884d8"
                         strokeWidth={2}
                         dot={{ r: 2 }}
@@ -174,4 +174,4 @@ function ResourceRevenueForecastChart({ data }) {
     );
 }
 
-export default ResourceRevenueForecastChart;
+export default ServiceRevenueForecastChart;

@@ -222,6 +222,39 @@ async function fetchServiceUtilizationTrend() {
     }
 }
 
+async function fetchServiceRevenueForecast() {
+    type ServiceRevenueForecastItems = {
+        service_id: string;
+        month_year: string;
+        total_service_revenue: string;
+        predicted_revenue: string;
+        forecast_revenue: string;
+    }
+
+    try {
+        const response = await fetch('https://ugdwdejp73.execute-api.ap-southeast-2.amazonaws.com/development/getServiceRevenueForecast');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        // Ensure the correct field name `average_usage_percentage` is used
+        const formattedData = bodyData.map((item: ServiceRevenueForecastItems) => ({
+            ...item,
+            total_service_revenue: parseFloat(item.total_service_revenue),
+            predicted_revenue: parseFloat(item.predicted_revenue),
+            forecast_revenue: parseFloat(item.forecast_revenue)
+        }));
+
+        console.log('Service Revenue Forecast', formattedData);
+
+        return formattedData;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
 
 
 
@@ -239,5 +272,6 @@ export {
     fetchServiceCostTableList,
     fetchServiceResourceList,
     fetchServiceUtilizationTrend,
+    fetchServiceRevenueForecast,
     formatCustom
 }
