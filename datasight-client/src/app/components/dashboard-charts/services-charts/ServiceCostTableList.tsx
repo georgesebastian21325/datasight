@@ -67,7 +67,7 @@ export default function ServiceCostTableList({ data }) {
                         <TableHead>Service ID</TableHead>
                         <TableHead>Resource ID</TableHead>
                         <TableHead>Resource Type</TableHead>
-                        <TableHead className="text-right">Revenue Generated</TableHead>
+                        <TableHead className="text-right">Cost Generated</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -78,7 +78,7 @@ export default function ServiceCostTableList({ data }) {
                                 <TableCell>{item.resource_id}</TableCell>
                                 <TableCell>{item.resource_type}</TableCell>
                                 <TableCell className="text-right">
-                                    ${parseFloat(item.revenue_generated_based_on_resource_id).toFixed(2)}
+                                    ${parseFloat(item.cost_generated_based_on_resource_id).toFixed(2)}
                                 </TableCell>
                             </TableRow>
                         ))

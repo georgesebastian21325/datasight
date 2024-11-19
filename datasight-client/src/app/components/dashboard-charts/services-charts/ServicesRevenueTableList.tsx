@@ -12,7 +12,7 @@ import {
 import { Button } from "@/vcomponents/file-upload-components/button";
 
 
-export default function ServicesRevenueTableList({ data }) {
+export default function ServicesTableList({ data }) {
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedServiceId, setSelectedServiceId] = useState("All");
     const itemsPerPage = 5;

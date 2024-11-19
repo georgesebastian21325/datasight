@@ -134,7 +134,7 @@ async function fetchAverageUtilizationResource() {
     type AverageUtilizationItems = {
         resource_id: string;
         month: string;
-        average_monthly_utilization_percentage: string;
+        average_daily_utilization_percentage: string;
     };
 
     try {

@@ -10,7 +10,6 @@ import {
 import CostByResourceTypeChart from '../../app/components/dashboard-charts/resources-charts/CostByResourceTypeChart'
 import RevenueByResourceTypeChart from '../../app/components/dashboard-charts/resources-charts/RevenueByResourceType'
 import AverageUtilizationChart from '../../app/components/dashboard-charts/resources-charts/AverageUtilizationChart';
-import RevenueForecastChart from '@/app/components/dashboard-charts/resources-charts/RevenueForecastChart'
 
 
 type ResourceCostItem = {
@@ -27,7 +26,7 @@ type ResourceRevenueItem = {
 type AverageUtilizationItems = {
   resource_id: string;
   month: string;
-  average_monthly_utilization_percentage: number;
+  average_daily_utilization_percentage: number;
 };
 
 
@@ -114,6 +113,7 @@ export default function ResourceDashboardComponent() {
         </div>
       </div>
       <div className="grid grid-cols-1 mb-8">
+        {/* 
         <Card className={`${loading ? 'animate-pulse' : ''}`}>
           <CardHeader>
             <CardTitle className='text-lg font-bold'>Revenue Forecast</CardTitle>
@@ -121,7 +121,9 @@ export default function ResourceDashboardComponent() {
           <CardContent>
             {loading ? <div className="h-48"></div> : <RevenueForecastChart data={averageUtilization}/>}
           </CardContent>
-        </Card>
+        </Card>        
+      */}
+
       </div>
 
       {/* 3. Capacity and Utilization Insights */}

@@ -152,7 +152,36 @@ async function fetchServiceResourceList() {
             revenue_generated_based_on_resource_id: parseFloat(item.revenue_generated_based_on_resource_id)
         }));
 
-        console.log('Service with Resource List', formattedData);
+        console.log('Service Revenue with Resource List', formattedData);
+
+        return formattedData;
+
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+async function fetchServiceCostTableList() {
+    type ServiceCostTableListItems = {
+        service_id: string;
+        resource_id: string;
+        resource_type: string;
+        cost_generated_based_on_resource_id: string;
+    }
+
+    try {
+        const response = await fetch('https://ugdwdejp73.execute-api.ap-southeast-2.amazonaws.com/development/getServiceCostTableList');
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        const formattedData = bodyData.map((item: ServiceCostTableListItems) => ({
+            ...item,
+            cost_generated_based_on_resource_id: parseFloat(item.cost_generated_based_on_resource_id)
+        }));
+
+        console.log('Service Cost with Resource List', formattedData);
 
         return formattedData;
 
@@ -207,6 +236,7 @@ export {
     fetchCostPerService,
     fetchRevenuePerService,
     compareCostAndRevenue,
+    fetchServiceCostTableList,
     fetchServiceResourceList,
     fetchServiceUtilizationTrend,
     formatCustom
