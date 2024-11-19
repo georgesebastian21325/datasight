@@ -26,15 +26,15 @@ function CostByOfferingChart({ data }) {
     const totalCost = sortedData.reduce((acc, entry) => acc + (entry.total_offering_cost || 0), 0);
 
     return (
-        <ChartContainer config={{ cost: { label: "Total Offering Cost", color: "hsl(var(--chart-1))" } }} className="h-[410px] w-[600px]">
+        <ChartContainer config={{ cost: { label: "Total Offering Cost", color: "hsl(var(--chart-1))" } }} className="h-[410px]">
             <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                     <Pie
                         data={sortedData}
                         dataKey="total_offering_cost"
                         nameKey="offering_id"
-                        cx="50%"
-                        cy="60%"
+                        cx="40%"
+                        cy="50%"
                         outerRadius={160}
                         label={(props) => renderCustomLabel({ ...props, total: totalCost })} // Add total to props
                         labelLine={{ stroke: '#8884d8', strokeWidth: 1 }}
@@ -65,8 +65,8 @@ function CostByOfferingChart({ data }) {
                         verticalAlign="bottom"
                         height={36}
                         wrapperStyle={{
-                            bottom: -20,
-                            left: '50%',
+                            bottom: -10, // Adjusts the distance from the bottom of the container
+                            left: '40%',
                             transform: 'translateX(-50%)',
                         }}
                         payload={sortedData.map((entry, index) => ({
