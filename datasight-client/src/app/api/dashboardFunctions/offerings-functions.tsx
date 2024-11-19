@@ -1,60 +1,38 @@
 
 
 
-async function fetchOfferingCost() {
-    type OfferingCostItems = {
-        offering_id: string;
-        total_offering_cost: string;
-    };
-
+async function fetchTotalOfferingCost() {
     try {
         const response = await fetch('https://u4cav55e95.execute-api.ap-southeast-2.amazonaws.com/development/getOfferingCost');
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
         const data = await response.json();
         const bodyData = JSON.parse(data.body);
+        const totalOfferingCost = parseFloat(bodyData[0].total_offering_cost);
 
-        // Convert `total_resource_cost` to a number for each item
-        const formattedData = bodyData.map((item: OfferingCostItems) => ({
-            ...item,
-            total_resource_cost: parseFloat(item.total_offering_cost)
-        }));
 
-        console.log('Total Offering Costs', formattedData);
-
-        return formattedData;
-
+        console.log('Total Resource Cost:', totalOfferingCost);
+        return totalOfferingCost; // Return the fetched data
     } catch (error) {
-        console.error('Fetch Error:', error);
+        console.error('Fetch error:', error);
         return null;
     }
 }
 
-async function fetchOfferingRevenue() {
-    type OfferingRevenueItems = {
-        offering_id: string;
-        total_offering_revenue: string;
-    };
-
+async function fetchTotalOfferingRevenue() {
     try {
         const response = await fetch('https://u4cav55e95.execute-api.ap-southeast-2.amazonaws.com/development/getOfferingRevenues');
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
         const data = await response.json();
         const bodyData = JSON.parse(data.body);
+        const totalOfferingRevenue = parseFloat(bodyData[0].total_offering_revenue);
 
-        // Convert `total_resource_cost` to a number for each item
-        const formattedData = bodyData.map((item: OfferingRevenueItems) => ({
-            ...item,
-            total_resource_cost: parseFloat(item.total_offering_revenue)
-        }));
 
-        console.log('Total Offering Revenue', formattedData);
-
-        return formattedData;
-
+        console.log('Total Resource Cost:', totalOfferingRevenue);
+        return totalOfferingRevenue; // Return the fetched data
     } catch (error) {
-        console.error('Fetch Error:', error);
+        console.error('Fetch error:', error);
         return null;
     }
 }
@@ -151,8 +129,8 @@ async function fetchOfferingRevenueStability() {
 }
 
 export {
-    fetchOfferingCost,
-    fetchOfferingRevenue,
+    fetchTotalOfferingCost,
+    fetchTotalOfferingRevenue,
     fetchOfferingProductionCostContribution,
     fetchOfferingProductRevenueContribution,
     fetchOfferingRevenueStability

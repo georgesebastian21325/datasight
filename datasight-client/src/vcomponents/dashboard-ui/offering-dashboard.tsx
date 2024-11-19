@@ -4,10 +4,9 @@ import { useState, useEffect } from 'react'
 import { DollarSign } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/vcomponents/dashboard-ui/offering-components/card'
 
-import { fetchOfferingCost, fetchOfferingRevenue, fetchOfferingProductionCostContribution, fetchOfferingProductRevenueContribution, fetchOfferingRevenueStability } from '@/app/api/dashboardFunctions/offerings-functions'
+import { fetchTotalOfferingCost, fetchTotalOfferingRevenue, fetchOfferingProductionCostContribution, fetchOfferingProductRevenueContribution, fetchOfferingRevenueStability } from '@/app/api/dashboardFunctions/offerings-functions'
+import { formatCustom } from '@/app/api/dashboardFunctions/global-dashboard-functions'
 
-import OfferingCostChart from '@/app/components/dashboard-charts/offerings-charts/OfferingsCostChart'
-import OfferingRevenueChart from '@/app/components/dashboard-charts/offerings-charts/OfferingRevenueChart'
 import OfferingProductCostContributionChart from '@/app/components/dashboard-charts/offerings-charts/OfferingProductCostContributionChart'
 import OfferingProductRevenuetContributionChart from '@/app/components/dashboard-charts/offerings-charts/OfferingProductRevenueContribution'
 import OfferingRevenueStabiityChart from '@/app/components/dashboard-charts/offerings-charts/OfferingRevenueStabilityChart'
@@ -42,8 +41,10 @@ type OfferingRevenueStabilityItems = {
 
 
 export default function OfferingDashboardComponent() {
-  const [offeringCost, setOfferingCost] = useState<OfferingCostItems[]>([]);
-  const [offeringRevenue, setOfferingRevenue] = useState<OfferingRevenueItems[]>([]);
+  const [loading, setLoading] = useState(true);  // Loading state
+
+  const [offeringCost, setOfferingCost] = useState<string | null>(null)
+  const [offeringRevenue, setOfferingRevenue] = useState<string | null>(null)
   const [offeringProdCostContribution, setOfferingProdCostContribution] = useState<OfferingProductContributionCostItems[]>([]);
   const [offeringProdRevenueContribution, setOfferingProdRevenueContribution] = useState<OfferingProductContributionRevenueItems[]>([]);
   const [offeringRevenueStability, setOfferingRevenueStability] = useState<OfferingRevenueStabilityItems[]>([]);
@@ -52,17 +53,27 @@ export default function OfferingDashboardComponent() {
 
   useEffect(() => {
     async function fetchData() {
-      const offeringCostData = await fetchOfferingCost();
-      const offeringRevenueData = await fetchOfferingRevenue();
+      const offeringCostData = await fetchTotalOfferingCost();
+      const offeringRevenueData = await fetchTotalOfferingRevenue();
       const offeringProdCostContributionData = await fetchOfferingProductionCostContribution();
       const offeringProdRevenueContributionData = await fetchOfferingProductRevenueContribution();
       const offeringRevenueStabilityData = await fetchOfferingRevenueStability();
 
-      setOfferingCost(offeringCostData);
-      setOfferingRevenue(offeringRevenueData);
+      if (offeringCostData !== null) {
+        setOfferingCost(formatCustom(offeringCostData));
+
+      }
+
+      if (offeringRevenueData !== null) {
+        setOfferingRevenue(formatCustom(offeringRevenueData));
+
+      }
+
       setOfferingProdCostContribution(offeringProdCostContributionData);
       setOfferingProdRevenueContribution(offeringProdRevenueContributionData);
       setOfferingRevenueStability(offeringRevenueStabilityData)
+
+      setLoading(false);  // Stop loading after data is fetched
     }
 
     fetchData();
@@ -74,22 +85,21 @@ export default function OfferingDashboardComponent() {
       <h1 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820] ">Offering Layer Dashboard</h1>
       {/* Key Offering Metrics Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-        <Card>
+        <Card className={`${loading ? 'skeleton bg-blue-950' : 'bg-brand-blue '} text-white`}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xl font-bold">Total Offering Cost</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Total Service Cost</CardTitle>
           </CardHeader>
           <CardContent>
-            <OfferingCostChart data={offeringCost} />
+            <div className="text-2xl font-bold">{loading ? '...' : `$ ${offeringCost}`}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className={`${loading ? 'skeleton bg-black' : 'bg-black '} text-white`}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xl font-bold">Total Offering Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Service Revenue</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <OfferingRevenueChart data={offeringRevenue} />
+            <div className="text-2xl font-bold">{loading ? '...' : `$ ${offeringRevenue}`}</div>
           </CardContent>
         </Card>
       </div>

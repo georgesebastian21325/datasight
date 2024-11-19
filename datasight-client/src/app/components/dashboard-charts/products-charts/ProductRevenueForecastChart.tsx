@@ -10,33 +10,33 @@ import {
     Legend,
 } from 'recharts';
 
-function ServiceRevenueForecastChart({ data }) {
+function ProductRevenueForecastChart({ data }) {
     // Format the data and ensure proper parsing
     const formattedData = data.map((item) => ({
         ...item,
-        service_id: item.service_id.trim(),
+        product_id: item.product_id.trim(),
         month_year: item.month_year.trim(),
         year: parseInt(item.month_year.split('-')[0], 10),
         month: item.month_year.split('-')[1],
-        total_service_revenue: parseFloat(item.total_service_revenue || 0),
+        total_product_revenue: parseFloat(item.total_product_revenue || 0),
         predicted_revenue: parseFloat(item.predicted_revenue || 0),
         forecast_revenue: parseFloat(item.forecast_revenue || 0),
     }));
 
-    // Get unique resource IDs, years, and months for filtering
-    const serviceIds = [...new Set(formattedData.map((item) => item.service_id))];
+    // Get unique product IDs, years, and months for filtering
+    const productIds = [...new Set(formattedData.map((item) => item.product_id))];
     const years = [...new Set(formattedData.map((item) => item.year))].sort();
 
     // State for selected filters
-    const [selectedServiceId, setSelectedServiceId] = useState(serviceIds[0] || '');
+    const [selectedProductId, setSelectedProductId] = useState(productIds[0] || '');
     const [startYear, setStartYear] = useState(years[0] || '');
     const [endYear, setEndYear] = useState(years[years.length - 1] || '');
     const [selectedMonth, setSelectedMonth] = useState('');
 
-    // Filter data by selected resource ID, date range, and month
+    // Filter data by selected product ID, date range, and month
     const filteredData = formattedData.filter((item) => {
         return (
-            item.service_id === selectedServiceId &&
+            item.product_id === selectedProductId &&
             (!startYear || item.year >= startYear) &&
             (!endYear || item.year <= endYear) &&
             (!selectedMonth || item.month === selectedMonth)
@@ -50,17 +50,17 @@ function ServiceRevenueForecastChart({ data }) {
         <div style={{ margin: '2rem' }}>
             {/* Filters */}
             <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
-                {/* Resource Filter */}
-                <label htmlFor="resource-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
-                    Select Resource ID:
+                {/* Product Filter */}
+                <label htmlFor="product-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
+                    Select Product ID:
                 </label>
                 <select
-                    id="resource-filter"
-                    value={selectedServiceId}
-                    onChange={(e) => setSelectedServiceId(e.target.value)}
+                    id="product-filter"
+                    value={selectedProductId}
+                    onChange={(e) => setSelectedProductId(e.target.value)}
                     style={{ marginRight: '1rem' }}
                 >
-                    {serviceIds.map((id) => (
+                    {productIds.map((id) => (
                         <option key={id} value={id}>
                             {id}
                         </option>
@@ -146,11 +146,11 @@ function ServiceRevenueForecastChart({ data }) {
                     {/* Lines for each metric */}
                     <Line
                         type="monotone"
-                        dataKey="total_service_revenue"
+                        dataKey="total_product_revenue"
                         stroke="#8884d8"
                         strokeWidth={2}
                         dot={{ r: 2 }}
-                        name="Total Service Revenue"
+                        name="Total Product Revenue"
                     />
                     <Line
                         type="monotone"
@@ -174,4 +174,4 @@ function ServiceRevenueForecastChart({ data }) {
     );
 }
 
-export default ServiceRevenueForecastChart;
+export default ProductRevenueForecastChart;
