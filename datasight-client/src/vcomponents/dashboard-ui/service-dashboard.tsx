@@ -184,6 +184,8 @@ export default function ServiceDashboardComponent() {
               <ServicesTableList data={serviceResourceList} />
             </CardContent>
           </Card>
+        </div>
+        <div className='grid grid-cols-1'>
           <Card className={`${loading ? 'animate-pulse' : ''}`}>
             <CardHeader>
               <CardTitle className='text-lg font-bold'>Revenue vs. Cost Comparison per Service</CardTitle>

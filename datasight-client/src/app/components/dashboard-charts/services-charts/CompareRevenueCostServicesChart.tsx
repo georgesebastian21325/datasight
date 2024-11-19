@@ -20,7 +20,7 @@ export default function CompareRevenueCostServicesChart({ data }) {
         .sort((a, b) => a.service_id.localeCompare(b.service_id));
 
     return (
-        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[500px] w-[600px] py-4">
+        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[500px] py-4">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     data={formattedData}
