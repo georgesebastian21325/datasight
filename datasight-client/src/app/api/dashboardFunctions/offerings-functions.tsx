@@ -1,6 +1,3 @@
-
-
-
 async function fetchTotalOfferingCost() {
     try {
         const response = await fetch('https://u4cav55e95.execute-api.ap-southeast-2.amazonaws.com/development/getOfferingCost');
@@ -37,11 +34,10 @@ async function fetchTotalOfferingRevenue() {
     }
 }
 
-async function fetchOfferingProductionCostContribution() {
-    type OfferingProductContributionCostItems = {
+async function fetchCostByOffering() {
+    type CostByOfferingItems = {
         offering_id: string;
-        product_id: string;
-        product_contribution_to_offering_cost: string;
+        total_offering_cost: string;
     };
 
     try {
@@ -52,12 +48,12 @@ async function fetchOfferingProductionCostContribution() {
         const bodyData = JSON.parse(data.body);
 
         // Convert `total_resource_cost` to a number for each item
-        const formattedData = bodyData.map((item: OfferingProductContributionCostItems) => ({
+        const formattedData = bodyData.map((item: CostByOfferingItems) => ({
             ...item,
-            product_contribution_to_offering_cost: parseFloat(item.product_contribution_to_offering_cost)
+            total_offering_cost: parseFloat(item.total_offering_cost)
         }));
 
-        console.log('Offering & Product Cost Contribution', formattedData);
+        console.log('Cost By Offering', formattedData);
 
         return formattedData;
 
@@ -68,11 +64,10 @@ async function fetchOfferingProductionCostContribution() {
 }
 
 
-async function fetchOfferingProductRevenueContribution() {
-    type OfferingProductContributionCostItems = {
+async function fetchRevenueByOffering() {
+    type RevenueByOfferingItems = {
         offering_id: string;
-        product_id: string;
-        product_contribution_to_offering_revenue: string;
+        total_offering_revenue:string;
     };
 
     try {
@@ -83,12 +78,12 @@ async function fetchOfferingProductRevenueContribution() {
         const bodyData = JSON.parse(data.body);
 
         // Convert `total_resource_cost` to a number for each item
-        const formattedData = bodyData.map((item: OfferingProductContributionCostItems) => ({
+        const formattedData = bodyData.map((item: RevenueByOfferingItems) => ({
             ...item,
-            product_contribution_to_offering_revenue: parseFloat(item.product_contribution_to_offering_revenue)
+            total_offering_revenue: parseFloat(item.total_offering_revenue)
         }));
 
-        console.log('Offering & Product Revenue Contribution', formattedData);
+        console.log('Revenue By Offering', formattedData);
 
         return formattedData;
 
@@ -131,7 +126,7 @@ async function fetchOfferingRevenueStability() {
 export {
     fetchTotalOfferingCost,
     fetchTotalOfferingRevenue,
-    fetchOfferingProductionCostContribution,
-    fetchOfferingProductRevenueContribution,
+    fetchCostByOffering,
+    fetchRevenueByOffering,
     fetchOfferingRevenueStability
 }
