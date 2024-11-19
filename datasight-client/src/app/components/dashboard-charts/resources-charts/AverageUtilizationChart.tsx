@@ -16,64 +16,60 @@ function AverageUtilizationChart({ data }) {
     // Format the data and ensure utilization percentage is valid
     const formattedData = data.map((item) => ({
         ...item,
-        resource_type: item.resource_type.trim(),
-        average_monthly_utilization_percentage: Math.min(
+        resource_id: item.resource_id.trim().toUpperCase(),
+        month: item.month.trim().toUpperCase(),
+        average_monthly_resource_utilization: Math.min(
             Math.max(
-                isNaN(item.average_monthly_utilization_percentage)
-                    ? parseFloat(item.average_daily_resource_utilization || 0)
-                    : item.average_monthly_utilization_percentage,
+                parseFloat(item.average_monthly_resource_utilization || 0),
                 0
             ),
             100
         ),
     }));
 
-    // Get unique resource types for the filter dropdown
-    const resourceTypes = [...new Set(formattedData.map((item) => item.resource_type))];
-    const [selectedResourceType, setSelectedResourceType] = useState(resourceTypes[0] || '');
+    // Get unique resource IDs for the filter dropdown
+    const resourceIds = [...new Set(formattedData.map((item) => item.resource_id))];
+    const [selectedResourceId, setSelectedResourceId] = useState(resourceIds[0] || '');
 
-    // Filter data based on the selected resource type
+    // Filter data based on the selected resource ID
     const filteredData = formattedData.filter(
-        (item) => item.resource_type === selectedResourceType
+        (item) => item.resource_id === selectedResourceId
     );
 
     // Prepare data for the chart
     const dataByMonth = filteredData.map((item) => ({
-        month: item.day, // Replace 'day' with 'month' if available
-        average_monthly_utilization_percentage: item.average_monthly_utilization_percentage,
+        month: item.month,
+        average_monthly_resource_utilization: item.average_monthly_resource_utilization,
     }));
 
     // Sort the data by month
     dataByMonth.sort((a, b) => {
         const parseMonth = (monthStr) => {
-            const monthMap = {
-                JAN: 0, FEB: 1, MAR: 2, APR: 3, MAY: 4, JUN: 5,
-                JUL: 6, AUG: 7, SEP: 8, OCT: 9, NOV: 10, DEC: 11,
-            };
-            const [month, year] = [monthStr.slice(0, 3).toUpperCase(), monthStr.slice(3)];
-            return new Date(parseInt(year, 10), monthMap[month]).getTime();
+            const monthNumber = parseInt(monthStr.slice(1, 3), 10);
+            const yearNumber = parseInt('20' + monthStr.slice(3), 10);
+            return new Date(yearNumber, monthNumber - 1).getTime();
         };
         return parseMonth(a.month) - parseMonth(b.month);
     });
 
     return (
         <ChartContainer
-            config={{ cost: { label: "Average Monthly Utilization by Resource Type", color: "hsl(var(--chart-1))" } }}
+            config={{ cost: { label: "Average Monthly Utilization by Resource ID", color: "hsl(var(--chart-1))" } }}
             className="h-[500px] w-[1300px] py-[3rem]"
         >
             {/* Filter Dropdown */}
             <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
                 <label htmlFor="resource-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
-                    Select Resource Type:
+                    Select Resource ID:
                 </label>
                 <select
                     id="resource-filter"
-                    value={selectedResourceType}
-                    onChange={(e) => setSelectedResourceType(e.target.value)}
+                    value={selectedResourceId}
+                    onChange={(e) => setSelectedResourceId(e.target.value)}
                 >
-                    {resourceTypes.map((type) => (
-                        <option key={type} value={type}>
-                            {type}
+                    {resourceIds.map((id) => (
+                        <option key={id} value={id}>
+                            {id}
                         </option>
                     ))}
                 </select>
@@ -138,11 +134,11 @@ function AverageUtilizationChart({ data }) {
 
                     <Line
                         type="monotone"
-                        dataKey="average_monthly_utilization_percentage"
+                        dataKey="average_monthly_resource_utilization"
                         stroke="#8884d8"
                         strokeWidth={2}
                         dot={{ r: 2 }}
-                        name={selectedResourceType}
+                        name={selectedResourceId}
                         connectNulls={true}
                     />
                 </LineChart>

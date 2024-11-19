@@ -26,7 +26,7 @@ type ResourceRevenueItem = {
 type AverageUtilizationItems = {
   resource_id: string;
   month: string;
-  average_daily_utilization_percentage: number;
+  average_monthly_utilization_percentage: number;
 };
 
 
