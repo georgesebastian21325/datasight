@@ -6,9 +6,6 @@ import React, {
 	useCallback,
 } from "react";
 import ReactFlow, {
-	Background,
-	Controls,
-	MiniMap,
 	Node,
 	Edge,
 } from "reactflow";
