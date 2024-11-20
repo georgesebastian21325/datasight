@@ -141,7 +141,7 @@ export default function ProductLayerDashboard() {
       <div className="grid grid-cols-1 mb-8">
         <Card>
           <CardHeader>
-            <CardTitle className='text-lg font-bold'> Product Revenue Forecast </CardTitle>
+            <CardTitle className='text-lg font-bold'> Product Revenue Trend </CardTitle>
           </CardHeader>
           <CardContent>
             <ProductRevenueForecastChart data={productRevenueForecast} />

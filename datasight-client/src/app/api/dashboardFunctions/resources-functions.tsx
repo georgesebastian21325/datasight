@@ -135,7 +135,8 @@ async function fetchAverageUtilizationResource() {
         resource_id: string;
         resource_type: string;
         month: string;
-        average_monthly_utilization_percentage: string;
+        year:string;
+        avg_monthly_resource_utilization: string;
     };
 
     try {
