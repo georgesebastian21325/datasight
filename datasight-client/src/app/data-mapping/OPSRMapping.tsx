@@ -336,7 +336,7 @@ export default function OPSRMapping() {
 						cursor: "pointer",
 						borderColor: "black",
 						boxShadow: highlightedNodes.has(productNodeId)
-							? "0 0 15px 5px #4169E1"
+							? "0 0 15px 5px purple"
 							: "none",
 					},
 				});
@@ -361,7 +361,7 @@ export default function OPSRMapping() {
 					stroke:
 						highlightedNodes.has(productNodeId) &&
 							highlightedNodes.has(serviceNodeId)
-							? "blue"
+							? "purple"
 							: "gray",
 					strokeWidth:
 						highlightedNodes.has(productNodeId) &&
@@ -371,7 +371,7 @@ export default function OPSRMapping() {
 					boxShadow:
 						highlightedNodes.has(productNodeId) &&
 							highlightedNodes.has(serviceNodeId)
-							? "0 0 15px blue"
+							? "0 0 15px purple"
 							: "none",
 				},
 			});
@@ -419,7 +419,7 @@ export default function OPSRMapping() {
 						cursor: "pointer",
 						borderColor: "black",
 						boxShadow: highlightedNodes.has(serviceNodeId)
-							? "0 0 15px 5px #2E8B57"
+							? "0 0 15px 5px purple"
 							: "none",
 					},
 				});
@@ -444,7 +444,7 @@ export default function OPSRMapping() {
 					stroke:
 						highlightedNodes.has(resourceNodeId) &&
 							highlightedNodes.has(serviceNodeId)
-							? "green"
+							? "purple"
 							: "gray",
 					strokeWidth:
 						highlightedNodes.has(resourceNodeId) &&
@@ -454,7 +454,7 @@ export default function OPSRMapping() {
 					boxShadow:
 						highlightedNodes.has(resourceNodeId) &&
 							highlightedNodes.has(serviceNodeId)
-							? "0 0 15px green"
+							? "0 0 15px purple"
 							: "none",
 				},
 			});
@@ -495,7 +495,7 @@ export default function OPSRMapping() {
 				style: {
 					cursor: "pointer",
 					borderColor: "black",
-					boxShadow: highlightedNodes.has(resourceNodeId) ? `0 0 15px 5px green` : "none",
+					boxShadow: highlightedNodes.has(resourceNodeId) ? `0 0 15px 5px purple` : "none",
 				},
 
 			});
