@@ -141,8 +141,6 @@ export default function OPSRMapping() {
 	}, []);
 
 
-
-
 	const handleNodeClick = (event: any, node: Node) => {
 		handleSetSelectedNodeId(node.id);
 

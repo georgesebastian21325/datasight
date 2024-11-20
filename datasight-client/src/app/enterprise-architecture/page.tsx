@@ -28,7 +28,7 @@ export default function Page() {
 
 		setTimeout(() => {
 			setLoading(false);
-		}, 2000);
+		}, 5000);
 	};
 
 	const handleGenerateOptimizedMapping = () => {
@@ -38,7 +38,7 @@ export default function Page() {
 
 		setTimeout(() => {
 			setOptimizedLoading(false); // Clear optimized loading state after 2 seconds
-		}, 2000);
+		}, 6000);
 	};
 
 	const [isFileUploadModalOpen, setIsFileUploadModalOpen] =
