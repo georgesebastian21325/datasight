@@ -504,14 +504,6 @@ export default function OPSRMapping() {
 		return { nodes, edges };
 	}, [resourceMappingData, productMappingData, offeringMappingData, highlightedNodes, healthResourceData, healthServiceData, healthProductData, healthOfferingData]);
 
-	if (loading) {
-		return <DataMappingLoadingState />;
-	}
-
-	if (error) {
-        return <DataMappingLoadingState />;
-	}
-
 	const { nodes, edges } = generateNodesAndEdges();
 
 	return (
