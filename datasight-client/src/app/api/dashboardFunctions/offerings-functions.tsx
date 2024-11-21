@@ -156,11 +156,70 @@ async function fetchOfferingRevenueForecast() {
     }
 }
 
+async function fetchOfferingCostTableList() {
+    type OfferingCostTableListItems = {
+        offering_id: string;
+        product_id: string;
+        product_contribution_cost: string;
+    }
+
+    try {
+        const response = await fetch('https://u4cav55e95.execute-api.ap-southeast-2.amazonaws.com/development/getOfferingCostTableList');
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        const formattedData = bodyData.map((item: OfferingCostTableListItems) => ({
+            ...item,
+            product_contribution_cost: parseFloat(item.product_contribution_cost)
+        }));
+
+        console.log('Offering Cost with Product List', formattedData);
+
+        return formattedData;
+
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+
+async function fetchOfferingRevenueTableList() {
+    type OfferingCostTableListItems = {
+        offering_id: string;
+        product_id: string;
+        product_contribution_revenue: string;
+    }
+
+    try {
+        const response = await fetch('https://u4cav55e95.execute-api.ap-southeast-2.amazonaws.com/development/getOfferingRevenueTableList');
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        const formattedData = bodyData.map((item: OfferingCostTableListItems) => ({
+            ...item,
+            product_contribution_revenue: parseFloat(item.product_contribution_revenue)
+        }));
+
+        console.log('Offering Revenue with Product List', formattedData);
+
+        return formattedData;
+
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
 export {
     fetchTotalOfferingCost,
     fetchTotalOfferingRevenue,
     fetchCostByOffering,
     fetchRevenueByOffering,
     fetchOfferingRevenueStability,
-    fetchOfferingRevenueForecast
+    fetchOfferingRevenueForecast,
+    fetchOfferingCostTableList,
+    fetchOfferingRevenueTableList
 }
