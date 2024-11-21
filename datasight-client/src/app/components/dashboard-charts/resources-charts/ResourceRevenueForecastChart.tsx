@@ -11,6 +11,12 @@ import {
 } from 'recharts';
 
 function ResourceRevenueForecastChart({ data }) {
+    // Helper to map month numbers to full month names
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
     // Format the data and ensure proper parsing
     const formattedData = data.map((item) => ({
         ...item,
@@ -18,6 +24,7 @@ function ResourceRevenueForecastChart({ data }) {
         month_year: item.month_year.trim(),
         year: parseInt(item.month_year.split('-')[0], 10),
         month: item.month_year.split('-')[1],
+        monthName: monthNames[parseInt(item.month_year.split('-')[1], 10) - 1], // Map month to full name
         total_resource_revenue: parseFloat(item.total_resource_revenue || 0),
         predicted_revenue: parseFloat(item.predicted_revenue || 0),
         forecast_revenue: parseFloat(item.forecast_revenue || 0),
@@ -26,21 +33,24 @@ function ResourceRevenueForecastChart({ data }) {
     // Get unique resource IDs, years, and months for filtering
     const resourceIds = [...new Set(formattedData.map((item) => item.resource_id))];
     const years = [...new Set(formattedData.map((item) => item.year))].sort();
+    const months = monthNames; // Use monthNames directly for dropdowns
 
     // State for selected filters
     const [selectedResourceId, setSelectedResourceId] = useState(resourceIds[0] || '');
     const [startYear, setStartYear] = useState(years[0] || '');
     const [endYear, setEndYear] = useState(years[years.length - 1] || '');
-    const [selectedMonth, setSelectedMonth] = useState('');
+    const [startMonth, setStartMonth] = useState(months[0] || ''); // Default to January
+    const [endMonth, setEndMonth] = useState(months[months.length - 1] || ''); // Default to December
 
-    // Filter data by selected resource ID, date range, and month
+    // Filter data by selected resource ID, date range, and month range
     const filteredData = formattedData.filter((item) => {
-        return (
-            item.resource_id === selectedResourceId &&
-            (!startYear || item.year >= startYear) &&
-            (!endYear || item.year <= endYear) &&
-            (!selectedMonth || item.month === selectedMonth)
-        );
+        const isWithinYearRange =
+            (!startYear || item.year >= startYear) && (!endYear || item.year <= endYear);
+        const isWithinMonthRange =
+            (!startMonth || monthNames.indexOf(item.monthName) >= monthNames.indexOf(startMonth)) &&
+            (!endMonth || monthNames.indexOf(item.monthName) <= monthNames.indexOf(endMonth));
+
+        return item.resource_id === selectedResourceId && isWithinYearRange && isWithinMonthRange;
     });
 
     // Sort data by month_year for proper rendering
@@ -101,17 +111,33 @@ function ResourceRevenueForecastChart({ data }) {
                     ))}
                 </select>
 
-                {/* Month Filter */}
-                <label htmlFor="month-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
-                    Select Month:
+                {/* Start Month Filter */}
+                <label htmlFor="start-month-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
+                    Start Month:
                 </label>
                 <select
-                    id="month-filter"
-                    value={selectedMonth}
-                    onChange={(e) => setSelectedMonth(e.target.value)}
+                    id="start-month-filter"
+                    value={startMonth}
+                    onChange={(e) => setStartMonth(e.target.value)}
+                    style={{ marginRight: '1rem' }}
                 >
-                    <option value="">All Months</option>
-                    {Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0')).map((month) => (
+                    {months.map((month) => (
+                        <option key={month} value={month}>
+                            {month}
+                        </option>
+                    ))}
+                </select>
+
+                {/* End Month Filter */}
+                <label htmlFor="end-month-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
+                    End Month:
+                </label>
+                <select
+                    id="end-month-filter"
+                    value={endMonth}
+                    onChange={(e) => setEndMonth(e.target.value)}
+                >
+                    {months.map((month) => (
                         <option key={month} value={month}>
                             {month}
                         </option>
