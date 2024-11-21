@@ -162,7 +162,7 @@ export default function OfferingDashboardComponent() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4"> 
         <Card> 
           <CardHeader>
-            <CardTitle> Offering Revenue Forecast</CardTitle>
+            <CardTitle className="text-xl font-bold"> Offering Revenue Forecast</CardTitle>
           </CardHeader>
           <CardContent>
               <OfferingRevenueForecastChart data={offeringRevenueForecast} />
