@@ -16,11 +16,13 @@ import {
 	fetchProductHealthStatus,
 	fetchOfferingHealthStatus,
 } from "../api/dataMapping/mapping-functions";
+import { ListBucketInventoryConfigurationsOutputFilterSensitiveLog } from "@aws-sdk/client-s3";
 
 interface ResourceServiceMappingData {
 	service_id: string;
 	resource_id: string;
 	resource_type: string;
+	status?: string;
 }
 
 interface ProductServiceMappingData {
@@ -140,10 +142,85 @@ export default function OptimizedOPSRMapping() {
 					]);
 
 				// Use fallback for JSON parsing to handle inconsistent structures
-				const parsedResourceData = JSON.parse(
-					resourceData.body,
+
+				const parsedResourceData: {
+					service_id: string;
+					resource_id: string;
+					resource_type: string;
+					status: string;
+				}[] = JSON.parse(resourceData.body);
+
+				// Compute Service Health Status
+				const statusToScore: Record<string, number> = {
+					green: 1,
+					yellow: 4,
+					red: 9,
+				};
+
+				// Group by service and calculate scores
+				const serviceScores = parsedResourceData.reduce(
+					(
+						acc: Record<
+							string,
+							{ totalScore: number; resourceCount: number }
+						>,
+						resource: ResourceServiceMappingData,
+					) => {
+						const { service_id, status } = resource;
+						const score =
+							statusToScore[status!.toLowerCase()] || 1;
+
+						if (!acc[service_id]) {
+							acc[service_id] = {
+								totalScore: 0,
+								resourceCount: 0,
+							};
+						}
+
+						acc[service_id].totalScore += score;
+						acc[service_id].resourceCount += 1; // Count the resources for averaging
+
+						return acc;
+					},
+					{},
 				);
 
+				console.log("service Scores: ", serviceScores);
+
+				// Compute average score and derive health status
+				const derivedServiceHealthData = Object.entries(
+					serviceScores,
+				).map(
+					([service_id, { totalScore, resourceCount }]) => {
+						const averageScore = totalScore / resourceCount; // Calculate the average score
+						let service_risk_status = "";
+
+						console.log(service_id, averageScore);
+
+						if (averageScore < 1.5) {
+							service_risk_status = "green";
+						} else if (
+							averageScore >= 1.5 &&
+							averageScore <= 2.0
+						) {
+							service_risk_status = "yellow";
+						} else {
+							service_risk_status = "red";
+						}
+
+						return {
+							service_id,
+							service_risk_status,
+						};
+					},
+				);
+
+				console.log(
+					"Derived Service Health Data:",
+					derivedServiceHealthData,
+				);
+
+				console.log(parsedResourceData);
 				const parsedProductData = Array.isArray(productData)
 					? productData
 					: Object.values(productData);
@@ -153,11 +230,13 @@ export default function OptimizedOPSRMapping() {
 					? offeringData
 					: Object.values(offeringData);
 
+				console.log(parsedResourceData);
+				console.log(productHealthStatusData);
 				setResourceMappingData(parsedResourceData);
 				setProductMappingData(parsedProductData);
 				setOfferingMappingData(parsedOfferingData);
 				// setResourceHealthData(resourceHealthStatusData);
-				// setServiceHealthData(serviceHealthStatusData);
+				setServiceHealthData(derivedServiceHealthData);
 				setProductHealthData(productHealthStatusData);
 				setOfferingHealthData(offeringHealthStatusData);
 
@@ -433,11 +512,12 @@ export default function OptimizedOPSRMapping() {
 			(serviceNodeId, index) => {
 				const healthStatus = healthServiceData.find((h) => {
 					console.log("Checking service_id:", h.service_id); // Logs each service_id
+					console.log(h.service_id, h.service_risk_status);
 					return h.service_id === serviceNodeId;
 				});
 
 				const healthColor = healthStatus
-					? getHealthColor(healthStatus.service_risk_status)
+					? healthStatus.service_risk_status
 					: "gray";
 
 				console.log("Service Ids: ", serviceNodes);
