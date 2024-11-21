@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Header from "../components/global/header";
 import OPSRMapping from "../data-mapping/OPSRMapping";
 
-import GenerateMappingBtn from "../components/button/GenerateMappingBtn"; // Import the new button component
+import GenerateMappingBtn from "../components/button/GenerateMappingBtn";
 import DataMappingLoadingState from "../components/global/DataMappingLoadingState";
-import { useGlobalState } from "../context/GlobalStateContext"; // Import the global state
+import OptimizedDataMappingLoadingState from "../components/global/OptimizedDataMappingLoadingState";
+import { useGlobalState } from "../context/GlobalStateContext";
 
 import EntityGraphs from "../entity-graphs/entity-graphs";
 import NavigationBar from "../components/global/NavigationBar";
@@ -14,6 +15,7 @@ import GenerateOptimizedMappingBtn from "../components/button/GenerateOptimizedM
 
 export default function Page() {
 	const [loading, setLoading] = useState(false);
+	const [optimizedLoading, setOptimizedLoading] = useState(false); // Separate state for optimized loading
 	const [error, setError] = useState<string | null>(null);
 	const [showMapping, setShowMapping] = useState(false);
 	const { selectedNodeId, setSelectedNodeId } =
@@ -26,17 +28,17 @@ export default function Page() {
 
 		setTimeout(() => {
 			setLoading(false);
-		}, 2000);
+		}, 5000);
 	};
 
 	const handleGenerateOptimizedMapping = () => {
 		setError(null);
-		// setLoading(true);
-		// setShowMapping(true);
+		setOptimizedLoading(true); // Set optimized loading state
+		setShowMapping(true);
 
 		setTimeout(() => {
-			// setLoading(false);
-		}, 2000);
+			setOptimizedLoading(false); // Clear optimized loading state after 2 seconds
+		}, 6000);
 	};
 
 	const [isFileUploadModalOpen, setIsFileUploadModalOpen] =
@@ -54,12 +56,11 @@ export default function Page() {
 					Enterprise Architecture
 				</h2>
 				<p className="mb-3 text-gray-500">
-					{" "}
 					This is the current mapping of your enterprise
-					architecture.{" "}
+					architecture.
 				</p>
 
-				{/* Generate Mapping Button in separate component */}
+				{/* Generate Mapping Buttons */}
 				<div className="flex space-x-4 mb-4">
 					<GenerateMappingBtn
 						onGenerateMapping={handleGenerateMapping}
@@ -72,13 +73,13 @@ export default function Page() {
 				</div>
 
 				{/* Always show the dashed container */}
-				<div className="flex items-center justify-center w-full h-[calc(100%-80px)]  border-2 border-dashed border-gray-300 rounded-lg">
+				<div className="flex items-center justify-center w-full h-[calc(100%-80px)] border-2 border-dashed border-gray-300 rounded-lg">
 					<div className="w-full min-w-[1200px]">
-						{" "}
-						{/* Ensure full width */}
 						{/* Conditionally render the mapping data or the loading state */}
 						{loading ? (
-							<DataMappingLoadingState /> // Show loading spinner
+							<DataMappingLoadingState />
+						) : optimizedLoading ? (
+							<OptimizedDataMappingLoadingState />
 						) : showMapping ? (
 							<OPSRMapping />
 						) : (

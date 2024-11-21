@@ -25,7 +25,9 @@ type ResourceRevenueItem = {
 
 type AverageUtilizationItems = {
   resource_id: string;
+  resource_type: string;
   month: string;
+  year: string;
   average_monthly_utilization_percentage: number;
 };
 
@@ -124,7 +126,7 @@ export default function ResourceDashboardComponent() {
       <div className="grid grid-cols-1 mb-8">
         <Card className={`${loading ? 'animate-pulse' : ''}`}>
           <CardHeader>
-            <CardTitle className='text-lg font-bold'>Resource Revenue Forecast</CardTitle>
+            <CardTitle className='text-lg font-bold'>Resource Revenue Trend</CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? <div className="h-48"></div> : <ResourceRevenueForecastChart data={resourceRevenueForecast}/>}
@@ -137,7 +139,7 @@ export default function ResourceDashboardComponent() {
       <div className="grid grid-cols-1 gap-4 mb-8">
         <Card className={`${loading ? 'animate-pulse' : ''}`}>
           <CardHeader>
-            <CardTitle className='text-lg font-bold'>Average Utilization by Resource ID</CardTitle>
+            <CardTitle className='text-lg font-bold'> Utilization Per Resource </CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? <div className="h-48"></div> : <AverageUtilizationChart data={averageUtilization} />}
