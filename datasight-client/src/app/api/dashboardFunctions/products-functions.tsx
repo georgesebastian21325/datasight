@@ -213,6 +213,35 @@ async function fetchProductRevenueForecast() {
     }
 }
 
+async function fetchProductCostTableList() {
+    type ProductCostTableListItems = {
+        product_id: string;
+        service_id: string;
+        service_contribution_cost: string;
+    }
+
+    try {
+        const response = await fetch('https://ud2luybs5l.execute-api.ap-southeast-2.amazonaws.com/development/getProductCostTableList');
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        const formattedData = bodyData.map((item: ProductCostTableListItems) => ({
+            ...item,
+            service_contribution_cost: parseFloat(item.service_contribution_cost)
+        }));
+
+        console.log('Product Cost with Service List', formattedData);
+
+        return formattedData;
+
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+
 
 
 
@@ -224,5 +253,6 @@ export  {
     fetchProductRevenueContribution,
     fetchProductUtilizationRate, 
     fetchProductUtilizationTrend,
-    fetchProductRevenueForecast
+    fetchProductRevenueForecast,
+    fetchProductCostTableList
 }
