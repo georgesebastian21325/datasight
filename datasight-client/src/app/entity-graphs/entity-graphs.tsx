@@ -233,6 +233,12 @@ export default function EntityGraphs() {
 		return null;
 	};
 
+	if (!selectedNodeId) {
+		return (
+			<div className="flex items-center justify-center h-[10%]"></div>
+		);
+	}
+
 	return (
 		<>
 			{isLoading && <EntityGraphsLoadingState />}
@@ -265,37 +271,37 @@ export default function EntityGraphs() {
 								Weekly Usage
 							</button>
 							{/* <button
-								onClick={() => setActiveTab("weeklyCost")}
-								className={`px-4 py-2 text-white rounded-md ${
-									activeTab == "weeklyCost"
-										? "bg-brand-orange"
-										: "bg-black"
-								}`}
-							>
-								Weekly Cost
-							</button>
-							<button
-								onClick={() =>
-									setActiveTab("resourceTypeCost")
-								}
-								className={`px-4 py-2 text-white rounded-md ${
-									activeTab == "resourceTypeCost"
-										? "bg-brand-orange"
-										: "bg-black"
-								}`}
-							>
-								Resource Type Cost
-							</button>
-							<button
-								onClick={() => setActiveTab("dualAxis")}
-								className={`px-4 py-2 text-white rounded-md ${
-									activeTab == "dualAxis"
-										? "bg-brand-orange"
-										: "bg-black"
-								}`}
-							>
-								Dual Axis
-							</button> */}
+							onClick={() => setActiveTab("weeklyCost")}
+							className={`px-4 py-2 text-white rounded-md ${
+								activeTab == "weeklyCost"
+									? "bg-brand-orange"
+									: "bg-black"
+							}`}
+						>
+							Weekly Cost
+						</button>
+						<button
+							onClick={() =>
+								setActiveTab("resourceTypeCost")
+							}
+							className={`px-4 py-2 text-white rounded-md ${
+								activeTab == "resourceTypeCost"
+									? "bg-brand-orange"
+									: "bg-black"
+							}`}
+						>
+							Resource Type Cost
+						</button>
+						<button
+							onClick={() => setActiveTab("dualAxis")}
+							className={`px-4 py-2 text-white rounded-md ${
+								activeTab == "dualAxis"
+									? "bg-brand-orange"
+									: "bg-black"
+							}`}
+						>
+							Dual Axis
+						</button> */}
 						</div>
 						<div className="chart-container">
 							{renderChart()}
@@ -321,16 +327,7 @@ export default function EntityGraphs() {
 							>
 								Weekly Usage
 							</button>
-							{/* <button
-								onClick={() => setActiveTab("weeklyCost")}
-								className={`px-4 py-2 text-white rounded-md ${
-									activeTab === "weeklyCost"
-										? "bg-brand-orange"
-										: "bg-black"
-								}`}
-							>
-								Weekly Cost
-							</button> */}
+
 							<button
 								onClick={() =>
 									setActiveTab("usageComparison")
@@ -343,30 +340,6 @@ export default function EntityGraphs() {
 							>
 								Usage Comparison
 							</button>
-							{/* <button
-								onClick={() =>
-									setActiveTab("costComparison")
-								}
-								className={`px-4 py-2 text-white rounded-md ${
-									activeTab === "costComparison"
-										? "bg-brand-orange"
-										: "bg-black"
-								}`}
-							>
-								Cost Comparison
-							</button> */}
-							{/* <button
-								onClick={() =>
-									setActiveTab("revenueOvertime")
-								}
-								className={`px-4 py-2 text-white rounded-md ${
-									activeTab === "revenueOvertime"
-										? "bg-brand-orange"
-										: "bg-black"
-								}`}
-							>
-								Revenue Trend
-							</button> */}
 						</div>
 						<div className="chart-container">
 							{renderChart()}

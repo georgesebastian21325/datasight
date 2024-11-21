@@ -12,30 +12,36 @@ import { useGlobalState } from "../context/GlobalStateContext";
 import EntityGraphs from "../entity-graphs/entity-graphs";
 import NavigationBar from "../components/global/NavigationBar";
 import GenerateOptimizedMappingBtn from "../components/button/GenerateOptimizedMappingBtn";
+import OptimizedOPSRMapping from "../data-mapping/OptimizedOPSRMapping";
 
 export default function Page() {
 	const [loading, setLoading] = useState(false);
-	const [optimizedLoading, setOptimizedLoading] = useState(false); // Separate state for optimized loading
+	const [optimizedLoading, setOptimizedLoading] =
+		useState(false); // Separate state for optimized loading
 	const [error, setError] = useState<string | null>(null);
 	const [showMapping, setShowMapping] = useState(false);
 	const { selectedNodeId, setSelectedNodeId } =
 		useGlobalState();
+	const [isOptimizedMapping, setIsOptimizedMapping] =
+		useState(false);
 
 	const handleGenerateMapping = () => {
+		setSelectedNodeId("");
 		setError(null);
 		setLoading(true);
 		setShowMapping(true);
-
+		setIsOptimizedMapping(false);
 		setTimeout(() => {
 			setLoading(false);
 		}, 5000);
 	};
 
 	const handleGenerateOptimizedMapping = () => {
+		setSelectedNodeId("");
 		setError(null);
 		setOptimizedLoading(true); // Set optimized loading state
 		setShowMapping(true);
-
+		setIsOptimizedMapping(true);
 		setTimeout(() => {
 			setOptimizedLoading(false); // Clear optimized loading state after 2 seconds
 		}, 6000);
@@ -53,7 +59,9 @@ export default function Page() {
 			{/* Right side - Enterprise Mapping */}
 			<div className="mx-auto p-4 pt-16 h-screen w-[90%]">
 				<h2 className="text-2xl font-bold mb-1 gradient-text">
-					Enterprise Architecture
+					{isOptimizedMapping
+						? "Optimized Enterprise Architecture"
+						: "Enterprise Architecture"}
 				</h2>
 				<p className="mb-3 text-gray-500">
 					This is the current mapping of your enterprise
@@ -74,21 +82,40 @@ export default function Page() {
 
 				{/* Always show the dashed container */}
 				<div className="flex items-center justify-center w-full h-[calc(100%-80px)] border-2 border-dashed border-gray-300 rounded-lg">
-					<div className="w-full min-w-[1200px]">
-						{/* Conditionally render the mapping data or the loading state */}
-						{loading ? (
-							<DataMappingLoadingState />
-						) : optimizedLoading ? (
-							<OptimizedDataMappingLoadingState />
-						) : showMapping ? (
-							<OPSRMapping />
-						) : (
-							<p className="text-center text-gray-500">
-								Click &quot;Generate Mapping&quot; to view
-								the architecture mapping
-							</p>
-						)}
-					</div>
+					{!isOptimizedMapping && (
+						<div className="w-full min-w-[1200px]">
+							{/* Conditionally render the mapping data or the loading state */}
+							{loading ? (
+								<DataMappingLoadingState />
+							) : optimizedLoading ? (
+								<OptimizedDataMappingLoadingState />
+							) : showMapping ? (
+								<OPSRMapping />
+							) : (
+								<p className="text-center text-gray-500">
+									Click &quot;Generate Mapping&quot; to view
+									the architecture mapping
+								</p>
+							)}
+						</div>
+					)}
+					{isOptimizedMapping && (
+						<div className="w-full min-w-[1200px]">
+							{/* Conditionally render the mapping data or the loading state */}
+							{loading ? (
+								<DataMappingLoadingState />
+							) : optimizedLoading ? (
+								<OptimizedDataMappingLoadingState />
+							) : showMapping ? (
+								<OptimizedOPSRMapping />
+							) : (
+								<p className="text-center text-gray-500">
+									Click &quot;Generate Mapping&quot; to view
+									the architecture mapping
+								</p>
+							)}
+						</div>
+					)}
 				</div>
 				<EntityGraphs />
 			</div>
