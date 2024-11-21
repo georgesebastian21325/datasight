@@ -58,6 +58,19 @@ function AverageUtilizationChart({ data }) {
         return item.resource_id === selectedResourceId && isWithinMonthRange;
     });
 
+    // Calculate the average utilization
+    const averageUtilization =
+        filteredData.reduce((sum, item) => sum + item.avg_monthly_resource_utilization, 0) /
+        (filteredData.length || 1); // Avoid division by zero
+
+    // Determine the color of the average line
+    const averageLineColor =
+        averageUtilization <= 50
+            ? "green"
+            : averageUtilization <= 75
+                ? "yellow"
+                : "red";
+
     return (
         <ChartContainer
             config={{ cost: { label: "Average Monthly Utilization by Resource ID", color: "hsl(var(--chart-1))" } }}
@@ -74,6 +87,7 @@ function AverageUtilizationChart({ data }) {
                     value={selectedResourceId}
                     onChange={(e) => setSelectedResourceId(e.target.value)}
                     style={{ marginRight: '1rem' }}
+                    className="border rounded p-2"
                 >
                     {resourceIds.map((id) => (
                         <option key={id} value={id}>
@@ -91,6 +105,7 @@ function AverageUtilizationChart({ data }) {
                     value={startMonth}
                     onChange={(e) => setStartMonth(e.target.value)}
                     style={{ marginRight: '1rem' }}
+                    className="border rounded p-2"
                 >
                     {months.map((month) => (
                         <option key={month} value={month}>
@@ -107,6 +122,7 @@ function AverageUtilizationChart({ data }) {
                     id="end-month-filter"
                     value={endMonth}
                     onChange={(e) => setEndMonth(e.target.value)}
+                    className="border rounded p-2"
                 >
                     {months.map((month) => (
                         <option key={month} value={month}>
@@ -117,10 +133,10 @@ function AverageUtilizationChart({ data }) {
             </div>
 
             <ResponsiveContainer width="100%" height="80%">
-                <LineChart data={filteredData} margin={{ top: 5, right: 20, bottom: 20, left: 0 }}>
+                <LineChart data={filteredData} margin={{ top: 5, right: 70, bottom: 20, left: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" />
 
-                    {/* Reference lines at 50%, 75%, and 100% */}
+                    {/* Reference lines at 50%, 75%, 100%, and Average */}
                     <ReferenceLine
                         y={100}
                         stroke="red"
@@ -141,6 +157,16 @@ function AverageUtilizationChart({ data }) {
                         strokeDasharray="3 3"
                         strokeWidth={1}
                         label={{ position: "insideTopRight", fill: "#555", value: "50%" }}
+                    />
+                    <ReferenceLine
+                        y={averageUtilization}
+                        stroke={averageLineColor}
+                        strokeWidth={2}
+                        label={{
+                            position: "right",
+                            fill: 'black',
+                            value: `${averageUtilization.toFixed(2)}%`,
+                        }}
                     />
 
                     <YAxis

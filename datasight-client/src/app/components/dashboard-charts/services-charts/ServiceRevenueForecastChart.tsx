@@ -11,6 +11,12 @@ import {
 } from 'recharts';
 
 function ServiceRevenueForecastChart({ data }) {
+    // Helper to map month numbers to full month names
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
     // Format the data and ensure proper parsing
     const formattedData = data.map((item) => ({
         ...item,
@@ -18,29 +24,34 @@ function ServiceRevenueForecastChart({ data }) {
         month_year: item.month_year.trim(),
         year: parseInt(item.month_year.split('-')[0], 10),
         month: item.month_year.split('-')[1],
+        monthName: monthNames[parseInt(item.month_year.split('-')[1], 10) - 1], // Map month to full name
         total_service_revenue: parseFloat(item.total_service_revenue || 0),
         predicted_revenue: parseFloat(item.predicted_revenue || 0),
         forecast_revenue: parseFloat(item.forecast_revenue || 0),
     }));
 
-    // Get unique resource IDs, years, and months for filtering
+    // Get unique service IDs and years for filtering
     const serviceIds = [...new Set(formattedData.map((item) => item.service_id))];
     const years = [...new Set(formattedData.map((item) => item.year))].sort();
+    const months = monthNames; // Use monthNames for the dropdown options
 
     // State for selected filters
     const [selectedServiceId, setSelectedServiceId] = useState(serviceIds[0] || '');
     const [startYear, setStartYear] = useState(years[0] || '');
     const [endYear, setEndYear] = useState(years[years.length - 1] || '');
-    const [selectedMonth, setSelectedMonth] = useState('');
+    const [startMonth, setStartMonth] = useState(months[0] || ''); // Default to January
+    const [endMonth, setEndMonth] = useState(months[months.length - 1] || ''); // Default to December
 
-    // Filter data by selected resource ID, date range, and month
+    // Filter data by selected service ID, year range, and month range
     const filteredData = formattedData.filter((item) => {
-        return (
-            item.service_id === selectedServiceId &&
+        const isWithinYearRange =
             (!startYear || item.year >= startYear) &&
-            (!endYear || item.year <= endYear) &&
-            (!selectedMonth || item.month === selectedMonth)
-        );
+            (!endYear || item.year <= endYear);
+        const isWithinMonthRange =
+            (!startMonth || months.indexOf(item.monthName) >= months.indexOf(startMonth)) &&
+            (!endMonth || months.indexOf(item.monthName) <= months.indexOf(endMonth));
+
+        return item.service_id === selectedServiceId && isWithinYearRange && isWithinMonthRange;
     });
 
     // Sort data by month_year for proper rendering
@@ -50,15 +61,16 @@ function ServiceRevenueForecastChart({ data }) {
         <div style={{ margin: '2rem' }}>
             {/* Filters */}
             <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
-                {/* Resource Filter */}
-                <label htmlFor="resource-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
-                    Select Resource ID:
+                {/* Service Filter */}
+                <label htmlFor="service-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
+                    Select Service ID:
                 </label>
                 <select
-                    id="resource-filter"
+                    id="service-filter"
                     value={selectedServiceId}
                     onChange={(e) => setSelectedServiceId(e.target.value)}
                     style={{ marginRight: '1rem' }}
+                    className="border rounded p-2"
                 >
                     {serviceIds.map((id) => (
                         <option key={id} value={id}>
@@ -76,6 +88,7 @@ function ServiceRevenueForecastChart({ data }) {
                     value={startYear}
                     onChange={(e) => setStartYear(e.target.value)}
                     style={{ marginRight: '1rem' }}
+                    className="border rounded p-2"
                 >
                     {years.map((year) => (
                         <option key={year} value={year}>
@@ -93,6 +106,7 @@ function ServiceRevenueForecastChart({ data }) {
                     value={endYear}
                     onChange={(e) => setEndYear(e.target.value)}
                     style={{ marginRight: '1rem' }}
+                    className="border rounded p-2"
                 >
                     {years.map((year) => (
                         <option key={year} value={year}>
@@ -101,17 +115,35 @@ function ServiceRevenueForecastChart({ data }) {
                     ))}
                 </select>
 
-                {/* Month Filter */}
-                <label htmlFor="month-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
-                    Select Month:
+                {/* Start Month Filter */}
+                <label htmlFor="start-month-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
+                    Start Month:
                 </label>
                 <select
-                    id="month-filter"
-                    value={selectedMonth}
-                    onChange={(e) => setSelectedMonth(e.target.value)}
+                    id="start-month-filter"
+                    value={startMonth}
+                    onChange={(e) => setStartMonth(e.target.value)}
+                    style={{ marginRight: '1rem' }}
+                    className="border rounded p-2"
                 >
-                    <option value="">All Months</option>
-                    {Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0')).map((month) => (
+                    {months.map((month) => (
+                        <option key={month} value={month}>
+                            {month}
+                        </option>
+                    ))}
+                </select>
+
+                {/* End Month Filter */}
+                <label htmlFor="end-month-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
+                    End Month:
+                </label>
+                <select
+                    id="end-month-filter"
+                    value={endMonth}
+                    onChange={(e) => setEndMonth(e.target.value)}
+                    className="border rounded p-2"
+                >
+                    {months.map((month) => (
                         <option key={month} value={month}>
                             {month}
                         </option>
@@ -126,6 +158,8 @@ function ServiceRevenueForecastChart({ data }) {
                     margin={{ top: 20, right: 30, bottom: 20, left: 20 }}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
+                    
+
                     <XAxis
                         dataKey="month_year"
                         label={{ value: 'Month-Year', position: 'insideBottom', offset: -10 }}

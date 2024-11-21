@@ -11,7 +11,6 @@ import {
 
 import CostPerServiceChart from "@/app/components/dashboard-charts/services-charts/CostPerServiceChart"
 import RevenuePerServiceChart from "@/app/components/dashboard-charts/services-charts/RevenuePerServiceChart"
-import CompareRevenueCostServicesChart from "@/app/components/dashboard-charts/services-charts/CompareRevenueCostServicesChart"
 import ServicesTableList from "@/app/components/dashboard-charts/services-charts/ServicesRevenueTableList"
 import ServiceCostTableList from "@/app/components/dashboard-charts/services-charts/ServiceCostTableList"
 import ServiceUtilTrendChart from "@/app/components/dashboard-charts/services-charts/ServiceUtilTrendChart"
@@ -76,7 +75,6 @@ export default function ServiceDashboardComponent() {
   const [totalServiceRevenue, setTotalServiceRevenue] = useState<string | null>(null)
   const [costPerService, setCostPerService] = useState<ServiceCostItem[]>([]);
   const [revenuePerService, setRevenuePerService] = useState<ServiceRevenueItems[]>([]);
-  const [costRevenueService, setCostRevenueService] = useState<CostRevenueServiceItems[]>([]);
   const [serviceUtilizationTrend, setServiceUtilizationTrend] = useState<ServiceUtilizationTrendItems[]>([]);
   const [serviceCostList, setServiceCostList] = useState<ServiceCostTableListItems[]>([]);
   const [serviceResourceList, setServiceResourceList] = useState<ServiceResourceListItems[]>([]);
@@ -89,7 +87,6 @@ export default function ServiceDashboardComponent() {
       const serviceRevenue = await fetchTotalServiceRevenue();
       const costByServiceData = await fetchCostPerService();
       const revenueByServiceData = await fetchRevenuePerService();
-      const comparedCostRevenueServiceData = await compareCostAndRevenue();
       const serviceResourceListData = await fetchServiceResourceList();
       const serviceCostListData = await fetchServiceCostTableList();
       const serviceUtilizationTrendData = await fetchServiceUtilizationTrend();
@@ -107,7 +104,6 @@ export default function ServiceDashboardComponent() {
 
       setCostPerService(costByServiceData);
       setRevenuePerService(revenueByServiceData);
-      setCostRevenueService(comparedCostRevenueServiceData);
       setServiceCostList(serviceCostListData);
       setServiceResourceList(serviceResourceListData);
       setServiceUtilizationTrend(serviceUtilizationTrendData);
@@ -182,16 +178,6 @@ export default function ServiceDashboardComponent() {
 
             <CardContent>
               <ServicesTableList data={serviceResourceList} />
-            </CardContent>
-          </Card>
-        </div>
-        <div className='grid grid-cols-1'>
-          <Card className={`${loading ? 'animate-pulse' : ''}`}>
-            <CardHeader>
-              <CardTitle className='text-lg font-bold'>Revenue vs. Cost Comparison per Service</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? <div className="h-48"></div> : <CompareRevenueCostServicesChart data={costRevenueService} />}
             </CardContent>
           </Card>
         </div>
