@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Table,
     TableBody,
@@ -11,23 +11,28 @@ import {
 } from "@/vcomponents/file-upload-components/table";
 import { Button } from "@/vcomponents/file-upload-components/button";
 
-
 export default function ProductRevenueTableList({ data }) {
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectedServiceId, setSelectedServiceId] = useState("All");
+    const [selectedProductId, setSelectedProductId] = useState("All");
     const itemsPerPage = 5;
 
     // Ensure data is defined and is an array
     const tableData = Array.isArray(data) ? data : [];
 
-    // Get unique service IDs for the dropdown
-    const serviceIds = ["All", ...new Set(tableData.map((item) => item.service_id))];
 
-    // Filter data based on selected service ID
+    // Get unique product IDs for the dropdown
+    const productIds = ["All", ...new Set(tableData.map((item) => item.product_id))];
+
+    // Filter data based on selected product ID
     const filteredData =
-        selectedServiceId === "All"
+        selectedProductId === "All"
             ? tableData
-            : tableData.filter((item) => item.service_id === selectedServiceId);
+            : tableData.filter((item) => item.product_id === selectedProductId);
+
+    // Debug: Log filtered data
+    useEffect(() => {
+        console.log("Filtered Data:", filteredData);
+    }, [filteredData]);
 
     // Pagination logic
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
@@ -41,21 +46,21 @@ export default function ProductRevenueTableList({ data }) {
 
     return (
         <div>
-            {/* Filter by Service ID */}
+            {/* Filter by Product ID */}
             <div className="mb-4 flex items-center">
-                <h1> Select Service: </h1>
+                <h1 className="font-bold mr-2">Select Product:</h1>
                 <select
-                    id="serviceIdFilter"
-                    value={selectedServiceId}
+                    id="productIdFilter"
+                    value={selectedProductId}
                     onChange={(e) => {
-                        setSelectedServiceId(e.target.value);
+                        setSelectedProductId(e.target.value);
                         setCurrentPage(1); // Reset to first page when filter changes
                     }}
-                    className="ml-2 p-1 border border-gray-300 rounded px-5"
+                    className="p-1 border border-gray-300 rounded"
                 >
-                    {serviceIds.map((serviceId) => (
-                        <option key={serviceId} value={serviceId}>
-                            {serviceId}
+                    {productIds.map((productId) => (
+                        <option key={productId} value={productId}>
+                            {productId}
                         </option>
                     ))}
                 </select>
@@ -64,35 +69,35 @@ export default function ProductRevenueTableList({ data }) {
             <Table>
                 <TableHeader>
                     <TableRow>
+                        <TableHead>Product ID</TableHead>
                         <TableHead>Service ID</TableHead>
-                        <TableHead>Resource ID</TableHead>
-                        <TableHead>Resource Type</TableHead>
-                        <TableHead className="text-right">Cost Generated</TableHead>
+                        <TableHead className="text-right">Service Contribution Cost</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {paginatedData.length > 0 ? (
                         paginatedData.map((item) => (
-                            <TableRow key={item.resource_id}>
+                            <TableRow key={`${item.product_id}-${item.service_id}`}>
+                                <TableCell>{item.product_id}</TableCell>
                                 <TableCell>{item.service_id}</TableCell>
-                                <TableCell>{item.resource_id}</TableCell>
-                                <TableCell>{item.resource_type}</TableCell>
                                 <TableCell className="text-right">
-                                    ${parseFloat(item.cost_generated_based_on_resource_id).toFixed(2)}
+                                    ${parseFloat(item.service_contribution_revenue).toFixed(2)}
                                 </TableCell>
                             </TableRow>
                         ))
                     ) : (
                         <TableRow>
                             <TableCell colSpan={3} className="text-center">
-                                No records found for the selected service.
+                                No records found for the selected product.
                             </TableCell>
                         </TableRow>
                     )}
                 </TableBody>
             </Table>
+
+            {/* Pagination */}
             <div className="flex justify-between items-center mt-4">
-                <div className='font-bold'>
+                <div className="font-bold">
                     Page {currentPage} of {totalPages}
                 </div>
                 <div className="space-x-2">

@@ -6,12 +6,13 @@ import { Card, CardContent, CardHeader, CardDescription, CardTitle } from '@/vco
 
 import CostByProductChart from '@/app/components/dashboard-charts/products-charts/CostByProductChart.tsx';
 import RevenueByProductChart from '@/app/components/dashboard-charts/products-charts/RevenueByProductChart';
-import ProductUtilizationTrendChart from '@/app/components/dashboard-charts/products-charts/ProductUtilizationTrendChart';
 import ProductRevenueForecastChart from '@/app/components/dashboard-charts/products-charts/ProductRevenueForecastChart';
 import ProductCostTableList from '@/app/components/dashboard-charts/products-charts/ProductCostTableList';
+import ProductRevenueTableList from '@/app/components/dashboard-charts/products-charts/ProductRevenueTableList';
+
 
 import { fetchTotalProductCost, fetchTotalProductRevenue, fetchProductCostByCategory, 
-          fetchRevenueByProduct, fetchProductCostTableList,
+          fetchRevenueByProduct, fetchProductCostTableList, fetchProductRevenueTableList,
           fetchProductRevenueForecast, fetchProductUtilizationTrend } from '../../app/api/dashboardFunctions/products-functions'
 import { formatCustom } from '@/app/api/dashboardFunctions/global-dashboard-functions'
 
@@ -56,6 +57,11 @@ type ProductCostTableListItems = {
   service_contribution_cost: string;
 }
 
+type ProductRevenueTableListItems = {
+  product_id: string;
+  service_id: string;
+  service_contribution_revenue: string;
+}
 
 
 
@@ -65,9 +71,9 @@ export default function ProductLayerDashboard() {
   const [totalProductRevenue, setTotalProductRevenue] = useState<string | null>(null)
   const [costPerProduct, setCostPerProduct] = useState<ProductCostItem[]>([]);
   const [revenuePerProduct, setRevenuePerProduct] = useState<ProductRevenueItem[]>([]);
-  const [productUtilizationTrend, setProductUtilizationTrend] = useState <ProductUtilizationTrendItems[]>([]);
   const [productRevenueForecast, setProductRevenueForecast] = useState<ProductRevenueForecastItems[]>([]);
   const [productCostTableList, setProductCostTableList] = useState<ProductCostTableListItems[]>([]);
+  const [productRevenueTableList, setProductRevenueTableList] = useState<ProductRevenueTableListItems[]>([]);
 
 
   useEffect(() => {
@@ -78,9 +84,9 @@ export default function ProductLayerDashboard() {
       const costPerProductData = await fetchProductCostByCategory();
       const revenuePerProductData = await fetchRevenueByProduct();
 
-      const productUtilizationTrendData = await fetchProductUtilizationTrend();
       const productRevenueForecastData = await fetchProductRevenueForecast();
       const productCostTableListData = await fetchProductCostTableList();
+      const productRevenueTableListData = await fetchProductRevenueTableList();
 
       if (totalProductCostData !== null) {
         setTotalProductCost(formatCustom(totalProductCostData));
@@ -92,9 +98,9 @@ export default function ProductLayerDashboard() {
 
       setCostPerProduct(costPerProductData);
       setRevenuePerProduct(revenuePerProductData);
-      setProductUtilizationTrend(productUtilizationTrendData);
       setProductRevenueForecast(productRevenueForecastData);
-      setProductCostTableList(productCostTableListData)
+      setProductCostTableList(productCostTableListData);
+      setProductRevenueTableList(productRevenueTableListData);
 
       setLoading(false);  // Stop loading after data is fetched
     }
@@ -164,9 +170,8 @@ export default function ProductLayerDashboard() {
             <CardTitle className='text-lg font-bold'> Associated Products Per Services (Revenue) </CardTitle>
             <CardDescription> List of services associated for each product by revenue. </CardDescription>
           </CardHeader>
-
           <CardContent>
-            <ProductCostTableList data={productCostTableList} />
+            <ProductRevenueTableList data={productRevenueTableList} />
           </CardContent>
         </Card>
       </div>

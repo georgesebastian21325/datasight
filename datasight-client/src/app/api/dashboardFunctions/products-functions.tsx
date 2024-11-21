@@ -241,6 +241,34 @@ async function fetchProductCostTableList() {
     }
 }
 
+async function fetchProductRevenueTableList() {
+    type ProductRevenueTableListItems = {
+        product_id: string;
+        service_id: string;
+        service_contribution_revenue: string;
+    }
+
+    try {
+        const response = await fetch('https://ud2luybs5l.execute-api.ap-southeast-2.amazonaws.com/development/getProductRevenueTableList');
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        const formattedData = bodyData.map((item: ProductRevenueTableListItems) => ({
+            ...item,
+            service_contribution_revenue: parseFloat(item.service_contribution_revenue)
+        }));
+
+        console.log('Product Revenue with Service List', formattedData);
+
+        return formattedData;
+
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
 
 
 
@@ -254,5 +282,6 @@ export  {
     fetchProductUtilizationRate, 
     fetchProductUtilizationTrend,
     fetchProductRevenueForecast,
-    fetchProductCostTableList
+    fetchProductCostTableList,
+    fetchProductRevenueTableList
 }
