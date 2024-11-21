@@ -26,6 +26,7 @@ export default function Page() {
 		useState(false);
 
 	const handleGenerateMapping = () => {
+		setSelectedNodeId("");
 		setError(null);
 		setLoading(true);
 		setShowMapping(true);
@@ -36,6 +37,7 @@ export default function Page() {
 	};
 
 	const handleGenerateOptimizedMapping = () => {
+		setSelectedNodeId("");
 		setError(null);
 		setOptimizedLoading(true); // Set optimized loading state
 		setShowMapping(true);
