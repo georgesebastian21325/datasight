@@ -1,57 +1,128 @@
-import { PieChart, Pie, Tooltip as ChartTooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
-import { ChartContainer, ChartTooltipContent } from "@/vcomponents/dashboard-ui/resource-components/chart";
+import React from "react";
+import {
+    PieChart,
+    Pie,
+    Tooltip as ChartTooltip,
+    ResponsiveContainer,
+    Cell,
+    Legend,
+} from "recharts";
 
-const COLORS = [
-    "#4B0082", "#2E8B57", "#B8860B", "#556B2F", "#4682B4",
-    "#6A5ACD", "#2F4F4F", "#8B008B", "#8B4513", "#B22222",
-    "#2F2F2F", "#8B0000", "#A0522D", "#483D8B", "#2B2B2B"
-];
-
-// Function to calculate percentage
-function calculatePercentage(value, total) {
-    return ((value / total) * 100).toFixed(2); // Keep 2 decimal places
+// Define the data type
+interface DataItem {
+    resource_type: string;
+    total_resource_cost: number;
 }
 
-// Custom label renderer with percentage
-const renderCustomLabel = ({ name, value, total }) => {
-    const percentage = calculatePercentage(value, total);
-    return `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${percentage}%)`;
+// Define the component props
+interface CostByResourceTypeChartProps {
+    data: DataItem[];
+}
+
+// Define color mapping for resource types
+const RESOURCE_COLORS: Record<string, string> = {
+    "Backup and Recovery Systems": "#4B0082", // Indigo
+    "Cloud Infrastructure": "#2E8B57", // Sea Green
+    "Communication Infrastructure": "#B8860B", // Dark Golden Rod
+    Computer: "#556B2F", // Dark Olive Green
+    "Network Equipment": "#4682B4", // Steel Blue
+    Server: "#6A5ACD", // Slate Blue
+    "Storage Device": "#2F4F4F", // Dark Slate Gray
+    "Virtual Infrastructure": "#8B008B", // Dark Magenta
 };
 
-function CostByResourceTypeChart({ data }) {
-    // Calculate the total cost
-    const totalCost = data.reduce((acc, entry) => acc + entry.total_resource_cost, 0);
+// Sort the data based on the order of RESOURCE_COLORS keys
+const sortDataByResourceType = (data: DataItem[]): DataItem[] => {
+    return data.sort(
+        (a, b) =>
+            Object.keys(RESOURCE_COLORS).indexOf(a.resource_type) -
+            Object.keys(RESOURCE_COLORS).indexOf(b.resource_type)
+    );
+};
 
-    // Pass total cost to the custom label
+// Function to calculate percentage
+const calculatePercentage = (value: number, total: number): string => {
+    return ((value / total) * 100).toFixed(2); // Keep 2 decimal places
+};
+
+// Custom label renderer with percentage
+const renderCustomLabel = ({
+    name,
+    value,
+    total,
+}: {
+    name: string;
+    value: number;
+    total: number;
+}): string => {
+    const percentage = calculatePercentage(value, total);
+    return `$${value.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    })} (${percentage}%)`;
+};
+
+const CostByResourceTypeChart: React.FC<CostByResourceTypeChartProps> = ({
+    data,
+}) => {
+    // Sort and calculate the total cost
+    const sortedData = sortDataByResourceType(data);
+    const totalCost = sortedData.reduce(
+        (acc, entry) => acc + entry.total_resource_cost,
+        0
+    );
+
     return (
-        <ChartContainer config={{ cost: { label: "Total Resource Cost", color: "hsl(var(--chart-1))" } }} className="h-[410px]">
-            <ResponsiveContainer width="100%" height="200%">
+        <div className="h-[410px]">
+            <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                     <Pie
-                        data={data}
+                        data={sortedData}
                         dataKey="total_resource_cost"
                         nameKey="resource_type"
-                        cx="45%"
+                        cx="50%"
                         cy="50%"
                         outerRadius={150}
-                        label={(props) => renderCustomLabel({ ...props, total: totalCost })} // Add total to props
-                        labelLine={{ stroke: '#8884d8', strokeWidth: 1 }} // Make label lines more visible
-                        style={{ fontSize: '11px', fontWeight: 'bold' }}
+                        label={(props) =>
+                            renderCustomLabel({ ...props, total: totalCost })
+                        }
+                        labelLine={{ stroke: "#8884d8", strokeWidth: 1 }}
+                        style={{ fontSize: "11px", fontWeight: "bold" }}
                     >
-                        {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        {sortedData.map((entry) => (
+                            <Cell
+                                key={`cell-${entry.resource_type}`}
+                                fill={RESOURCE_COLORS[entry.resource_type] || "#000000"} // Fallback color
+                            />
                         ))}
                     </Pie>
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Legend verticalAlign="bottom" height={36} wrapperStyle={{
-                        bottom: -10, // Adjusts the distance from the bottom of the container
-                        left: '45%', // Centers horizontally
-                        transform: 'translateX(-50%)', // Centers the legend accurately
-                    }} />
+                    <ChartTooltip
+                        formatter={(value: number) =>
+                            `$${value.toLocaleString("en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            })}`
+                        }
+                    />
+                    <Legend
+                        verticalAlign="bottom"
+                        height={36}
+                        wrapperStyle={{
+                            bottom: -10,
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            fontSize: "11px",
+                        }}
+                        payload={Object.keys(RESOURCE_COLORS).map((key, index) => ({
+                            value: key,
+                            type: "square",
+                            color: RESOURCE_COLORS[key],
+                        }))}
+                    />
                 </PieChart>
             </ResponsiveContainer>
-        </ChartContainer>
+        </div>
     );
-}
+};
 
 export default CostByResourceTypeChart;

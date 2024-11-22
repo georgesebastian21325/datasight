@@ -1,3 +1,4 @@
+import React from "react";
 import {
   PieChart,
   Pie,
@@ -6,94 +7,122 @@ import {
   Cell,
   Legend,
 } from "recharts";
-import {
-  ChartContainer,
-  ChartTooltipContent,
-} from "@/vcomponents/dashboard-ui/resource-components/chart";
 
-// Define color palette for consistent styling
-const COLORS = [
-  "#4B0082", // Backup and Recovery Systems
-  "#2E8B57", // Cloud Infrastructure
-  "#B8860B", // Communication Infrastructure
-  "#556B2F", // Computer
-  "#4682B4", // Network Equipment
-  "#6A5ACD", // Server
-  "#2F4F4F", // Storage Device
-  "#8B008B", // Virtual Infrastructure
-];
+// Define the data type
+interface DataItem {
+  resource_type: string;
+  total_resource_revenue: number;
+}
 
-// Map resource types to colors
-const RESOURCE_COLORS = {
-  "Backup and Recovery Systems": COLORS[0],
-  "Cloud Infrastructure": COLORS[1],
-  "Communication Infrastructure": COLORS[2],
-  Computer: COLORS[3],
-  "Network Equipment": COLORS[4],
-  Server: COLORS[5],
-  "Storage Device": COLORS[6],
-  "Virtual Infrastructure": COLORS[7],
+// Define the component props
+interface RevenueByResourceTypeChartProps {
+  data: DataItem[];
+}
+
+// Define color mapping for resource types
+const RESOURCE_COLORS: Record<string, string> = {
+  "Backup and Recovery Systems": "#4B0082", // Indigo
+  "Cloud Infrastructure": "#2E8B57", // Sea Green
+  "Communication Infrastructure": "#B8860B", // Dark Golden Rod
+  Computer: "#556B2F", // Dark Olive Green
+  "Network Equipment": "#4682B4", // Steel Blue
+  Server: "#6A5ACD", // Slate Blue
+  "Storage Device": "#2F4F4F", // Dark Slate Gray
+  "Virtual Infrastructure": "#8B008B", // Dark Magenta
 };
 
-// Custom label for Pie chart with percentage
-function renderCustomLabel({ name, value, total }) {
-  const percentage = ((value / total) * 100).toFixed(2); // Calculate percentage
+// Sort the data based on the order of RESOURCE_COLORS keys
+const sortDataByResourceType = (data: DataItem[]): DataItem[] => {
+  return data.sort(
+    (a, b) =>
+      Object.keys(RESOURCE_COLORS).indexOf(a.resource_type) -
+      Object.keys(RESOURCE_COLORS).indexOf(b.resource_type)
+  );
+};
+
+// Function to calculate percentage
+const calculatePercentage = (value: number, total: number): string => {
+  return ((value / total) * 100).toFixed(2); // Keep 2 decimal places
+};
+
+// Custom label renderer with percentage
+const renderCustomLabel = ({
+  name,
+  value,
+  total,
+}: {
+  name: string;
+  value: number;
+  total: number;
+}): string => {
+  const percentage = calculatePercentage(value, total);
   return `$${value.toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })} (${percentage}%)`;
-}
+};
 
-function RevenueByResourceTypeChart({ data }) {
-  // Calculate the total revenue for percentage calculation
-  const totalRevenue = data.reduce(
+const RevenueByResourceTypeChart: React.FC<RevenueByResourceTypeChartProps> = ({
+  data,
+}) => {
+  // Sort and calculate the total revenue
+  const sortedData = sortDataByResourceType(data);
+  const totalRevenue = sortedData.reduce(
     (acc, entry) => acc + entry.total_resource_revenue,
     0
   );
 
   return (
-    <ChartContainer
-      config={{
-        cost: { label: "Total Resource Revenue", color: "hsl(var(--chart-1))" },
-      }}
-      className="h-[410px]"
-    >
+    <div className="h-[410px]">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
-            data={data}
+            data={sortedData}
             dataKey="total_resource_revenue"
             nameKey="resource_type"
-            cx="45%"
+            cx="50%"
             cy="50%"
             outerRadius={150}
             label={(props) =>
               renderCustomLabel({ ...props, total: totalRevenue })
             }
-            labelLine={{ stroke: "#8884d8", strokeWidth: 1 }} // Custom label lines
+            labelLine={{ stroke: "#8884d8", strokeWidth: 1 }}
             style={{ fontSize: "11px", fontWeight: "bold" }}
           >
-            {data.map((entry, index) => (
+            {sortedData.map((entry) => (
               <Cell
-                key={`cell-${index}`}
-                fill={RESOURCE_COLORS[entry.resource_type] || "#000000"}
+                key={`cell-${entry.resource_type}`}
+                fill={RESOURCE_COLORS[entry.resource_type] || "#000000"} // Fallback color
               />
             ))}
           </Pie>
-          <ChartTooltip content={<ChartTooltipContent />} />
+          <ChartTooltip
+            formatter={(value: number) =>
+              `$${value.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+            }
+          />
           <Legend
             verticalAlign="bottom"
             height={36}
             wrapperStyle={{
               bottom: -10,
-              left: "45%",
+              left: "50%",
               transform: "translateX(-50%)",
+              fontSize: "11px",
             }}
+            payload={Object.keys(RESOURCE_COLORS).map((key, index) => ({
+              value: key,
+              type: "square",
+              color: RESOURCE_COLORS[key],
+            }))}
           />
         </PieChart>
       </ResponsiveContainer>
-    </ChartContainer>
+    </div>
   );
-}
+};
 
 export default RevenueByResourceTypeChart;
