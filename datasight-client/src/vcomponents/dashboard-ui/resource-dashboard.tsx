@@ -106,9 +106,8 @@ export default function ResourceDashboardComponent() {
       {/* 1. Key Metrics Overview */}
       <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 mb-8 ">
         <Card
-          className={`${
-            loading ? "skeleton bg-blue-950" : "bg-brand-blue "
-          } text-white`}
+          className={`${loading ? "skeleton bg-blue-950" : "bg-brand-blue "
+            } text-white`}
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">

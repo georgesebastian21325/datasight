@@ -3,5 +3,9 @@
   "editor.formatOnPaste": true,
   "[typescriptreact]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
-  }
+  },
+  "prettier.tabWidth": 50, // Prettier tab width (2 spaces)
+  "prettier.useTabs": false, // Prettier setting to use spaces instead of tabs
+  "files.insertFinalNewline": true, // Ensure a newline at the end of files
+  "files.trimTrailingWhitespace": true // Remove trailing spaces on save
 }
