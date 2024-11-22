@@ -84,6 +84,19 @@ const ProductRevenueForecastChart: React.FC<ProductRevenueForecastChartProps> = 
         return item.product_id === selectedProductId && isWithinMonthRange;
     });
 
+    // Ensure state updates correctly on filter changes
+    const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedProductId(e.target.value);
+    };
+
+    const handleStartMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setStartMonth(e.target.value);
+    };
+
+    const handleEndMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setEndMonth(e.target.value);
+    };
+
     return (
         <div style={{ margin: "2rem" }}>
             {/* Filters */}
@@ -98,7 +111,7 @@ const ProductRevenueForecastChart: React.FC<ProductRevenueForecastChartProps> = 
                 <select
                     id="product-filter"
                     value={selectedProductId}
-                    onChange={(e) => setSelectedProductId(e.target.value)}
+                    onChange={handleProductChange}
                     style={{ marginRight: "1rem" }}
                     className="border rounded p-2"
                 >
@@ -119,7 +132,7 @@ const ProductRevenueForecastChart: React.FC<ProductRevenueForecastChartProps> = 
                 <select
                     id="start-month-filter"
                     value={startMonth}
-                    onChange={(e) => setStartMonth(e.target.value)}
+                    onChange={handleStartMonthChange}
                     style={{ marginRight: "1rem" }}
                     className="border rounded p-2"
                 >
@@ -140,7 +153,7 @@ const ProductRevenueForecastChart: React.FC<ProductRevenueForecastChartProps> = 
                 <select
                     id="end-month-filter"
                     value={endMonth}
-                    onChange={(e) => setEndMonth(e.target.value)}
+                    onChange={handleEndMonthChange}
                     className="border rounded p-2"
                 >
                     {monthYears.map((monthYear) => (
