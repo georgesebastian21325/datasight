@@ -48,7 +48,7 @@ const RevenuePerServiceChart: React.FC<RevenuePerServiceChartProps> = ({ data })
                 name: item.service_id,
             };
         })
-        .sort((a, b) => b.revenue - a.revenue); // Sort by revenue in descending order
+        .sort((a, b) => a.name.localeCompare(b.name)); // Sort by service_id in ascending order
 
     // Formatter function for displaying numbers in 000,000,000 format
     const formatNumber = (value: number): string =>
@@ -90,12 +90,12 @@ const RevenuePerServiceChart: React.FC<RevenuePerServiceChartProps> = ({ data })
                         separator=": "
                     />
                     <Legend
-                        formatter={(value) => {
-                            const legendItem = formattedData.find(
-                                (item) => item.name === value
-                            );
-                            return `${value}`;
-                        }}
+                        payload={formattedData.map((item) => ({
+                            id: item.name,
+                            value: item.name,
+                            type: "square",
+                            color: SERVICE_COLORS[item.name] || "#8884d8",
+                        }))}
                     />
                 </PieChart>
             </ResponsiveContainer>
