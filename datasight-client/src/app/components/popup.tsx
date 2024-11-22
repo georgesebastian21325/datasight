@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { FaCheckCircle } from 'react-icons/fa';
 
-function AuthenticationErrorPopUp({ errorMessage }) {
+interface AuthenticationErrorPopUpProps {
+    errorMessage: string; // Define the type of errorMessage
+}
 
-    const [visible, setVisible] = useState(!!errorMessage);
+const AuthenticationErrorPopUp: React.FC<AuthenticationErrorPopUpProps> = ({ errorMessage }) => {
+    const [visible, setVisible] = useState<boolean>(!!errorMessage);
 
     useEffect(() => {
         if (errorMessage) {
@@ -20,13 +23,16 @@ function AuthenticationErrorPopUp({ errorMessage }) {
     if (!visible) return null;
 
     return (
-        <div className="flex items-center justify-center p-2 mt-2 rounded-md bg-[#FFD1D1] space-x-2" aria-live="polite" aria-atomic="true">
+        <div
+            className="flex items-center justify-center p-2 mt-2 rounded-md bg-[#FFD1D1] space-x-2"
+            aria-live="polite"
+            aria-atomic="true"
+        >
             <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
             <p className="text-sm text-red-500">{errorMessage}</p>
         </div>
     );
-}
-
+};
 
 function SuccessMessage() {
     return (
