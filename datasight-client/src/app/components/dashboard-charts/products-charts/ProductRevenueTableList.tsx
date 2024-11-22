@@ -11,20 +11,35 @@ import {
 } from "@/vcomponents/file-upload-components/table";
 import { Button } from "@/vcomponents/file-upload-components/button";
 
-export default function ProductRevenueTableList({ data }) {
-    const [currentPage, setCurrentPage] = useState(1);
-    const [selectedProductId, setSelectedProductId] = useState("All");
-    const itemsPerPage = 5;
+// Define types for the data structure
+interface ProductRevenueData {
+    product_id: string;
+    service_id: string;
+    service_contribution_revenue: number;
+}
+
+interface ProductRevenueTableListProps {
+    data: ProductRevenueData[]; // Array of data with defined structure
+}
+
+const ProductRevenueTableList: React.FC<ProductRevenueTableListProps> = ({
+    data,
+}) => {
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [selectedProductId, setSelectedProductId] = useState<string>("All");
+    const itemsPerPage: number = 5;
 
     // Ensure data is defined and is an array
-    const tableData = Array.isArray(data) ? data : [];
-
+    const tableData: ProductRevenueData[] = Array.isArray(data) ? data : [];
 
     // Get unique product IDs for the dropdown
-    const productIds = ["All", ...new Set(tableData.map((item) => item.product_id))];
+    const productIds: string[] = [
+        "All",
+        ...Array.from(new Set(tableData.map((item) => item.product_id))),
+    ];
 
     // Filter data based on selected product ID
-    const filteredData =
+    const filteredData: ProductRevenueData[] =
         selectedProductId === "All"
             ? tableData
             : tableData.filter((item) => item.product_id === selectedProductId);
@@ -35,9 +50,12 @@ export default function ProductRevenueTableList({ data }) {
     }, [filteredData]);
 
     // Pagination logic
-    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+    const totalPages: number = Math.ceil(filteredData.length / itemsPerPage);
+    const startIndex: number = (currentPage - 1) * itemsPerPage;
+    const paginatedData: ProductRevenueData[] = filteredData.slice(
+        startIndex,
+        startIndex + itemsPerPage
+    );
 
     // Handle loading state
     if (!data || data.length === 0) {
@@ -71,7 +89,9 @@ export default function ProductRevenueTableList({ data }) {
                     <TableRow>
                         <TableHead>Product ID</TableHead>
                         <TableHead>Service ID</TableHead>
-                        <TableHead className="text-right">Service Contribution Cost</TableHead>
+                        <TableHead className="text-right">
+                            Service Contribution Revenue
+                        </TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -81,7 +101,11 @@ export default function ProductRevenueTableList({ data }) {
                                 <TableCell>{item.product_id}</TableCell>
                                 <TableCell>{item.service_id}</TableCell>
                                 <TableCell className="text-right">
-                                    ${parseFloat(item.service_contribution_revenue).toFixed(2)}
+                                    $
+                                    {item.service_contribution_revenue.toLocaleString("en-US", {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                    })}
                                 </TableCell>
                             </TableRow>
                         ))
@@ -108,7 +132,9 @@ export default function ProductRevenueTableList({ data }) {
                         Previous
                     </Button>
                     <Button
-                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                        onClick={() =>
+                            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                        }
                         disabled={currentPage === totalPages}
                     >
                         Next
@@ -117,4 +143,6 @@ export default function ProductRevenueTableList({ data }) {
             </div>
         </div>
     );
-}
+};
+
+export default ProductRevenueTableList;

@@ -1,32 +1,74 @@
-import { PieChart, Pie, Tooltip as ChartTooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
+import {
+    PieChart,
+    Pie,
+    Tooltip as ChartTooltip,
+    ResponsiveContainer,
+    Cell,
+    Legend,
+} from "recharts";
 import { ChartContainer } from "@/vcomponents/dashboard-ui/service-components/chart";
 
+// Define the data structure for the chart
+interface DataItem {
+    product_id: string; // Unique identifier for the product
+    total_product_revenue: number; // Total revenue associated with the product
+}
+
+// Define the component props
+interface RevenueByProductPieChartProps {
+    data: DataItem[];
+}
+
+// Define the color palette
 const COLORS = [
     "#4B0082", "#2E8B57", "#B8860B", "#556B2F", "#4682B4",
     "#6A5ACD", "#2F4F4F", "#8B008B", "#8B4513", "#B22222",
-    "#2F2F2F", "#8B0000", "#A0522D", "#483D8B", "#2B2B2B"
+    "#2F2F2F", "#8B0000", "#A0522D", "#483D8B", "#2B2B2B",
 ];
 
 // Function to calculate percentage
-function calculatePercentage(value, total) {
+const calculatePercentage = (value: number, total: number): string => {
     return ((value / total) * 100).toFixed(2); // Keep 2 decimal places
-}
-
-// Custom label renderer with percentage
-const renderCustomLabel = ({ name, value, total }) => {
-    const percentage = calculatePercentage(value, total);
-    return `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${percentage}%)`;
 };
 
-function RevenueByProductPieChart({ data }) {
+// Custom label renderer with percentage
+const renderCustomLabel = ({
+    name,
+    value,
+    total,
+}: {
+    name: string;
+    value: number;
+    total: number;
+}): string => {
+    const percentage = calculatePercentage(value, total);
+    return `$${value.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    })} (${percentage}%)`;
+};
+
+const RevenueByProductPieChart: React.FC<RevenueByProductPieChartProps> = ({
+    data,
+}) => {
     // Sort the data by product_id
-    const sortedData = [...data].sort((a, b) => a.product_id.localeCompare(b.product_id));
+    const sortedData = [...data].sort((a, b) =>
+        a.product_id.localeCompare(b.product_id)
+    );
 
     // Calculate the total revenue
-    const totalRevenue = sortedData.reduce((acc, entry) => acc + (entry.total_product_revenue || 0), 0);
+    const totalRevenue = sortedData.reduce(
+        (acc, entry) => acc + (entry.total_product_revenue || 0),
+        0
+    );
 
     return (
-        <ChartContainer config={{ cost: { label: "Total Revenue", color: "hsl(var(--chart-1))" } }} className="h-[410px] w-[600px]">
+        <ChartContainer
+            config={{
+                cost: { label: "Total Revenue", color: "hsl(var(--chart-1))" },
+            }}
+            className="h-[410px] w-[600px]"
+        >
             <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                     <Pie
@@ -36,23 +78,46 @@ function RevenueByProductPieChart({ data }) {
                         cx="50%"
                         cy="50%"
                         outerRadius={160}
-                        label={(props) => renderCustomLabel({ ...props, total: totalRevenue })} // Add total to props
-                        labelLine={{ stroke: '#8884d8', strokeWidth: 1 }}
-                        style={{ fontSize: '9px', fontWeight: 'bold' }}
+                        label={(props) =>
+                            renderCustomLabel({ ...props, total: totalRevenue })
+                        } // Add total to props
+                        labelLine={{ stroke: "#8884d8", strokeWidth: 1 }}
+                        style={{ fontSize: "9px", fontWeight: "bold" }}
                     >
                         {sortedData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            <Cell
+                                key={`cell-${index}`}
+                                fill={COLORS[index % COLORS.length]}
+                            />
                         ))}
                     </Pie>
                     <ChartTooltip
                         content={({ active, payload }) => {
                             if (active && payload && payload.length) {
                                 const { product_id, total_product_revenue } = payload[0].payload;
-                                const percentage = calculatePercentage(total_product_revenue, totalRevenue);
+                                const percentage = calculatePercentage(
+                                    total_product_revenue,
+                                    totalRevenue
+                                );
                                 return (
-                                    <div style={{ backgroundColor: "#fff", padding: "8px", border: "1px solid #ccc", borderRadius: "4px" }}>
-                                        <p><strong>{product_id}</strong></p>
-                                        <p>Revenue: ${total_product_revenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                                    <div
+                                        style={{
+                                            backgroundColor: "#fff",
+                                            padding: "8px",
+                                            border: "1px solid #ccc",
+                                            borderRadius: "4px",
+                                        }}
+                                    >
+                                        <p>
+                                            <strong>{product_id}</strong>
+                                        </p>
+                                        <p>
+                                            Revenue: $
+                                            {total_product_revenue.toLocaleString("en-US", {
+                                                minimumFractionDigits: 2,
+                                            })}
+                                        </p>
+                                        <p>Percentage: {percentage}%</p>
                                     </div>
                                 );
                             }
@@ -64,8 +129,8 @@ function RevenueByProductPieChart({ data }) {
                         height={36}
                         wrapperStyle={{
                             bottom: -20,
-                            left: '50%',
-                            transform: 'translateX(-50%)',
+                            left: "50%",
+                            transform: "translateX(-50%)",
                         }}
                         payload={sortedData.map((entry, index) => ({
                             id: entry.product_id,
@@ -78,6 +143,6 @@ function RevenueByProductPieChart({ data }) {
             </ResponsiveContainer>
         </ChartContainer>
     );
-}
+};
 
 export default RevenueByProductPieChart;

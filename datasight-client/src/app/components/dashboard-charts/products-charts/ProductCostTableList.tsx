@@ -11,13 +11,25 @@ import {
 } from "@/vcomponents/file-upload-components/table";
 import { Button } from "@/vcomponents/file-upload-components/button";
 
-export default function ProductCostTableList({ data }) {
-    const [currentPage, setCurrentPage] = useState(1);
-    const [selectedProductId, setSelectedProductId] = useState("All");
+// Define the structure of a single data item
+interface DataItem {
+    product_id: string;
+    service_id: string;
+    service_contribution_cost: number | string; // Can be a number or string (if data is not properly parsed)
+}
+
+// Define the component props
+interface ProductCostTableListProps {
+    data: DataItem[]; // Array of data items
+}
+
+const ProductCostTableList: React.FC<ProductCostTableListProps> = ({ data }) => {
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [selectedProductId, setSelectedProductId] = useState<string>("All");
     const itemsPerPage = 5;
 
     // Ensure data is defined and is an array
-    const tableData = Array.isArray(data) ? data : [];
+    const tableData: DataItem[] = Array.isArray(data) ? data : [];
 
     // Debug: Log incoming data
     useEffect(() => {
@@ -25,10 +37,13 @@ export default function ProductCostTableList({ data }) {
     }, [tableData]);
 
     // Get unique product IDs for the dropdown
-    const productIds = ["All", ...new Set(tableData.map((item) => item.product_id))];
+    const productIds: string[] = [
+        "All",
+        ...Array.from(new Set(tableData.map((item) => item.product_id))),
+    ];
 
     // Filter data based on selected product ID
-    const filteredData =
+    const filteredData: DataItem[] =
         selectedProductId === "All"
             ? tableData
             : tableData.filter((item) => item.product_id === selectedProductId);
@@ -39,9 +54,12 @@ export default function ProductCostTableList({ data }) {
     }, [filteredData]);
 
     // Pagination logic
-    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+    const totalPages: number = Math.ceil(filteredData.length / itemsPerPage);
+    const startIndex: number = (currentPage - 1) * itemsPerPage;
+    const paginatedData: DataItem[] = filteredData.slice(
+        startIndex,
+        startIndex + itemsPerPage
+    );
 
     // Handle loading state
     if (!data || data.length === 0) {
@@ -70,6 +88,7 @@ export default function ProductCostTableList({ data }) {
                 </select>
             </div>
 
+            {/* Table */}
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -85,7 +104,7 @@ export default function ProductCostTableList({ data }) {
                                 <TableCell>{item.product_id}</TableCell>
                                 <TableCell>{item.service_id}</TableCell>
                                 <TableCell className="text-right">
-                                    ${parseFloat(item.service_contribution_cost).toFixed(2)}
+                                    ${parseFloat(item.service_contribution_cost as string).toFixed(2)}
                                 </TableCell>
                             </TableRow>
                         ))
@@ -121,4 +140,6 @@ export default function ProductCostTableList({ data }) {
             </div>
         </div>
     );
-}
+};
+
+export default ProductCostTableList;

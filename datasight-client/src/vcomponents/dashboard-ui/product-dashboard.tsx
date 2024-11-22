@@ -11,7 +11,7 @@ import ProductCostTableList from '@/app/components/dashboard-charts/products-cha
 import ProductRevenueTableList from '@/app/components/dashboard-charts/products-charts/ProductRevenueTableList';
 
 
-import { fetchTotalProductCost, fetchTotalProductRevenue, fetchProductCostByCategory, 
+import { fetchTotalProductCost, fetchTotalProductRevenue, fetchProductCostByCategory,
           fetchRevenueByProduct, fetchProductCostTableList, fetchProductRevenueTableList,
           fetchProductRevenueForecast } from '../../app/api/dashboardFunctions/products-functions'
 import { formatCustom } from '@/app/api/dashboardFunctions/global-dashboard-functions'
@@ -35,12 +35,6 @@ type ProductRevenueContributionItems = {
 type ProductUtilizationRateItems = {
   product_id: string;
   product_utilization_rate: string;
-};
-
-type ProductUtilizationTrendItems = {
-  month: string;
-  product: string;
-  monthly_avg_usage_percentage: string;
 };
 
 type ProductRevenueForecastItems = {
@@ -136,7 +130,7 @@ export default function ProductLayerDashboard() {
 
       <section className="mb-8">
         <div className="grid gap-4 md:grid-cols-2">
- 
+
             <Card className={`${loading ? 'skeleton animate-pulse' : ''}`}>
               <CardHeader>
                 <CardTitle className='text-lg font-bold'> Product Cost By ID</CardTitle>
