@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { ChartContainer } from "@/vcomponents/dashboard-ui/resource-components/chart";
+import React, { useState } from "react";
 import {
     LineChart,
     Line,
@@ -9,14 +8,39 @@ import {
     Tooltip,
     ResponsiveContainer,
     Legend,
-    ReferenceLine
-} from 'recharts';
+    ReferenceLine,
+} from "recharts";
 
-function AverageUtilizationChart({ data }) {
+// Define the data type
+type DataItem = {
+    resource_id: string;
+    resource_type: string;
+    month: string;
+    avg_monthly_resource_utilization: number;
+};
+
+// Define props for the chart
+interface AverageUtilizationChartProps {
+    data: DataItem[];
+}
+
+const AverageUtilizationChart: React.FC<AverageUtilizationChartProps> = ({
+    data,
+}) => {
     // Helper to map month numbers to names
     const monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
     ];
 
     // Format the data and ensure utilization percentage is valid
@@ -33,22 +57,28 @@ function AverageUtilizationChart({ data }) {
             monthName: `${monthNames[monthIndex]} ${year}`, // Format as "January 2021"
             year,
             avg_monthly_resource_utilization: Math.min(
-                Math.max(
-                    parseFloat(item.avg_monthly_resource_utilization || 0),
-                    0
-                ),
+                Math.max(item.avg_monthly_resource_utilization || 0, 0),
                 100
             ),
         };
     });
 
     // Get unique resource IDs and months for filtering
-    const resourceIds = [...new Set(formattedData.map((item) => item.resource_id))];
-    const months = [...new Set(formattedData.map((item) => item.monthName))].sort((a, b) => new Date(a) - new Date(b));
+    const resourceIds = Array.from(
+        new Set(formattedData.map((item) => item.resource_id))
+    );
+    const months = Array.from(
+        new Set(formattedData.map((item) => item.monthName))
+    ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
-    const [selectedResourceId, setSelectedResourceId] = useState(resourceIds[0] || '');
-    const [startMonth, setStartMonth] = useState(months[0] || '');
-    const [endMonth, setEndMonth] = useState(months[months.length - 1] || '');
+    // State for filters
+    const [selectedResourceId, setSelectedResourceId] = useState<string>(
+        resourceIds[0] || ""
+    );
+    const [startMonth, setStartMonth] = useState<string>(months[0] || "");
+    const [endMonth, setEndMonth] = useState<string>(
+        months[months.length - 1] || ""
+    );
 
     // Filter data based on the selected resource ID and month range
     const filteredData = formattedData.filter((item) => {
@@ -60,8 +90,10 @@ function AverageUtilizationChart({ data }) {
 
     // Calculate the average utilization
     const averageUtilization =
-        filteredData.reduce((sum, item) => sum + item.avg_monthly_resource_utilization, 0) /
-        (filteredData.length || 1); // Avoid division by zero
+        filteredData.reduce(
+            (sum, item) => sum + item.avg_monthly_resource_utilization,
+            0
+        ) / (filteredData.length || 1); // Avoid division by zero
 
     // Determine the color of the average line
     const averageLineColor =
@@ -72,21 +104,21 @@ function AverageUtilizationChart({ data }) {
                 : "red";
 
     return (
-        <ChartContainer
-            config={{ cost: { label: "Average Monthly Utilization by Resource ID", color: "hsl(var(--chart-1))" } }}
-            className="h-[500px] w-[1300px] py-[3rem]"
-        >
+        <div className="h-[500px] w-[1300px] py-[3rem]">
             {/* Filters */}
-            <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
+            <div style={{ marginBottom: "1rem", textAlign: "center" }}>
                 {/* Resource ID Filter */}
-                <label htmlFor="resource-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
+                <label
+                    htmlFor="resource-filter"
+                    style={{ marginRight: "0.5rem", fontWeight: "bold" }}
+                >
                     Select Resource ID:
                 </label>
                 <select
                     id="resource-filter"
                     value={selectedResourceId}
                     onChange={(e) => setSelectedResourceId(e.target.value)}
-                    style={{ marginRight: '1rem' }}
+                    style={{ marginRight: "1rem" }}
                     className="border rounded p-2"
                 >
                     {resourceIds.map((id) => (
@@ -97,14 +129,17 @@ function AverageUtilizationChart({ data }) {
                 </select>
 
                 {/* Start Month Filter */}
-                <label htmlFor="start-month-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
+                <label
+                    htmlFor="start-month-filter"
+                    style={{ marginRight: "0.5rem", fontWeight: "bold" }}
+                >
                     Start Month:
                 </label>
                 <select
                     id="start-month-filter"
                     value={startMonth}
                     onChange={(e) => setStartMonth(e.target.value)}
-                    style={{ marginRight: '1rem' }}
+                    style={{ marginRight: "1rem" }}
                     className="border rounded p-2"
                 >
                     {months.map((month) => (
@@ -115,7 +150,10 @@ function AverageUtilizationChart({ data }) {
                 </select>
 
                 {/* End Month Filter */}
-                <label htmlFor="end-month-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
+                <label
+                    htmlFor="end-month-filter"
+                    style={{ marginRight: "0.5rem", fontWeight: "bold" }}
+                >
                     End Month:
                 </label>
                 <select
@@ -164,7 +202,7 @@ function AverageUtilizationChart({ data }) {
                         strokeWidth={2}
                         label={{
                             position: "right",
-                            fill: 'black',
+                            fill: "black",
                             value: `${averageUtilization.toFixed(2)}%`,
                         }}
                     />
@@ -173,11 +211,19 @@ function AverageUtilizationChart({ data }) {
                         domain={[0, 100]}
                         tickFormatter={(value) => `${value}%`}
                         tick={{ fontSize: 12, fill: "#333" }}
-                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }}
+                        style={{
+                            fontSize: "9px",
+                            fontWeight: "bold",
+                            fill: "black",
+                        }}
                     />
                     <XAxis
                         dataKey="monthName"
-                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }}
+                        style={{
+                            fontSize: "9px",
+                            fontWeight: "bold",
+                            fill: "black",
+                        }}
                         angle={-20}
                         textAnchor="end"
                         dy={10}
@@ -193,8 +239,8 @@ function AverageUtilizationChart({ data }) {
                         height={36}
                         wrapperStyle={{
                             bottom: -20,
-                            left: '45%',
-                            transform: 'translateX(-41%)'
+                            left: "45%",
+                            transform: "translateX(-41%)",
                         }}
                     />
 
@@ -209,8 +255,8 @@ function AverageUtilizationChart({ data }) {
                     />
                 </LineChart>
             </ResponsiveContainer>
-        </ChartContainer>
+        </div>
     );
-}
+};
 
 export default AverageUtilizationChart;
