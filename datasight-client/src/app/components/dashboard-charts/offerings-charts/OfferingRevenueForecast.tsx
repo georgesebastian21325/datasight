@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
     LineChart,
     Line,
@@ -8,9 +8,23 @@ import {
     Tooltip,
     ResponsiveContainer,
     Legend,
-} from 'recharts';
+} from "recharts";
 
-function OfferingRevenueForecastChart({ data }) {
+// Define the structure of a single data item
+interface OfferingRevenueData {
+    offering_id: string;
+    month_year: string;
+    offering_revenue: number | string;
+    predicted_revenue: number | string;
+    forecast_revenue: number | string;
+}
+
+// Define the component props
+interface OfferingRevenueForecastChartProps {
+    data: OfferingRevenueData[];
+}
+
+const OfferingRevenueForecastChart: React.FC<OfferingRevenueForecastChartProps> = ({ data }) => {
     // Helper to map month numbers to names
     const monthNames = [
         "January", "February", "March", "April", "May", "June",
@@ -18,29 +32,33 @@ function OfferingRevenueForecastChart({ data }) {
     ];
 
     // Format the data and ensure proper parsing
-    const formattedData = data.map((item) => {
-        const [year, month] = item.month_year ? item.month_year.split('-') : [null, null];
-        const monthName = month ? monthNames[parseInt(month, 10) - 1] : '';
-        return {
-            ...item,
-            offering_id: item.offering_id ? item.offering_id.trim() : '',
-            month_year: item.month_year ? `${monthName} ${year}` : '',
-            year: year ? parseInt(year, 10) : null,
-            monthName,
-            offering_revenue: parseFloat(item.offering_revenue || 0),
-            predicted_revenue: parseFloat(item.predicted_revenue || 0),
-            forecast_revenue: parseFloat(item.forecast_revenue || 0),
-        };
-    }).filter(item => item.offering_id && item.month_year); // Filter out invalid entries
+    const formattedData = data
+        .map((item) => {
+            const [year, month] = item.month_year ? item.month_year.split("-") : [null, null];
+            const monthName = month ? monthNames[parseInt(month, 10) - 1] : "";
+            return {
+                ...item,
+                offering_id: item.offering_id?.trim() || "",
+                month_year: item.month_year ? `${monthName} ${year}` : "",
+                year: year ? parseInt(year, 10) : null,
+                monthName,
+                offering_revenue: parseFloat(item.offering_revenue as string) || 0,
+                predicted_revenue: parseFloat(item.predicted_revenue as string) || 0,
+                forecast_revenue: parseFloat(item.forecast_revenue as string) || 0,
+            };
+        })
+        .filter((item) => item.offering_id && item.month_year); // Filter out invalid entries
 
     // Get unique offering IDs and month-year options for filtering
-    const offeringIds = [...new Set(formattedData.map((item) => item.offering_id))];
-    const monthYearOptions = [...new Set(formattedData.map((item) => item.month_year))].sort((a, b) => new Date(a) - new Date(b));
+    const offeringIds: string[] = Array.from(new Set(formattedData.map((item) => item.offering_id)));
+    const monthYearOptions: string[] = Array.from(
+        new Set(formattedData.map((item) => item.month_year))
+    ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
     // State for selected filters
-    const [selectedOfferingId, setSelectedOfferingId] = useState(offeringIds[0] || '');
-    const [startDate, setStartDate] = useState(monthYearOptions[0] || '');
-    const [endDate, setEndDate] = useState(monthYearOptions[monthYearOptions.length - 1] || '');
+    const [selectedOfferingId, setSelectedOfferingId] = useState<string>(offeringIds[0] || "");
+    const [startDate, setStartDate] = useState<string>(monthYearOptions[0] || "");
+    const [endDate, setEndDate] = useState<string>(monthYearOptions[monthYearOptions.length - 1] || "");
 
     // Filter data by selected offering ID and date range
     const filteredData = formattedData.filter((item) => {
@@ -55,21 +73,21 @@ function OfferingRevenueForecastChart({ data }) {
     });
 
     // Sort data by month_year for proper rendering
-    filteredData.sort((a, b) => new Date(a.month_year) - new Date(b.month_year));
+    filteredData.sort((a, b) => new Date(a.month_year).getTime() - new Date(b.month_year).getTime());
 
     return (
-        <div style={{ margin: '2rem' }}>
+        <div style={{ margin: "2rem" }}>
             {/* Filters */}
-            <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
+            <div style={{ marginBottom: "1rem", textAlign: "center" }}>
                 {/* Offering Filter */}
-                <label htmlFor="offering-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
+                <label htmlFor="offering-filter" style={{ marginRight: "0.5rem", fontWeight: "bold" }}>
                     Select Offering ID:
                 </label>
                 <select
                     id="offering-filter"
                     value={selectedOfferingId}
                     onChange={(e) => setSelectedOfferingId(e.target.value)}
-                    style={{ marginRight: '1rem' }}
+                    style={{ marginRight: "1rem" }}
                     className="border rounded p-2"
                 >
                     {offeringIds.map((id) => (
@@ -80,14 +98,14 @@ function OfferingRevenueForecastChart({ data }) {
                 </select>
 
                 {/* Start Date Filter */}
-                <label htmlFor="start-date-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
+                <label htmlFor="start-date-filter" style={{ marginRight: "0.5rem", fontWeight: "bold" }}>
                     Start Date:
                 </label>
                 <select
                     id="start-date-filter"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    style={{ marginRight: '1rem' }}
+                    style={{ marginRight: "1rem" }}
                     className="border rounded p-2"
                 >
                     {monthYearOptions.map((date) => (
@@ -98,7 +116,7 @@ function OfferingRevenueForecastChart({ data }) {
                 </select>
 
                 {/* End Date Filter */}
-                <label htmlFor="end-date-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
+                <label htmlFor="end-date-filter" style={{ marginRight: "0.5rem", fontWeight: "bold" }}>
                     End Date:
                 </label>
                 <select
@@ -124,17 +142,17 @@ function OfferingRevenueForecastChart({ data }) {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
                         dataKey="month_year"
-                        label={{ value: 'Month-Year', position: 'insideBottom', offset: -10 }}
-                        style={{ fontSize: 12, fontWeight: 'bold' }}
+                        label={{ value: "Month-Year", position: "insideBottom", offset: -10 }}
+                        style={{ fontSize: 12, fontWeight: "bold" }}
                     />
                     <YAxis
                         label={{
-                            value: 'Revenue',
+                            value: "Revenue",
                             angle: -90,
-                            position: 'insideLeft',
+                            position: "insideLeft",
                             offset: -10,
                         }}
-                        style={{ fontSize: 12, fontWeight: 'bold' }}
+                        style={{ fontSize: 12, fontWeight: "bold" }}
                     />
                     <Tooltip />
                     <Legend verticalAlign="top" height={36} />
@@ -168,6 +186,6 @@ function OfferingRevenueForecastChart({ data }) {
             </ResponsiveContainer>
         </div>
     );
-}
+};
 
 export default OfferingRevenueForecastChart;

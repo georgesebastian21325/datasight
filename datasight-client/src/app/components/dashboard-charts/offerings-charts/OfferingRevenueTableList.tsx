@@ -11,20 +11,31 @@ import {
 } from "@/vcomponents/file-upload-components/table";
 import { Button } from "@/vcomponents/file-upload-components/button";
 
-export default function OfferingRevenueTableList({ data }) {
-    const [currentPage, setCurrentPage] = useState(1);
-    const [selectedOfferingId, setSelectedOfferingId] = useState("All");
+// Define the structure of a single data item
+interface DataItem {
+    offering_id: string;
+    product_id: string;
+    product_contribution_revenue: number;
+}
+
+// Define the component props
+interface OfferingRevenueTableListProps {
+    data: DataItem[];
+}
+
+const OfferingRevenueTableList: React.FC<OfferingRevenueTableListProps> = ({ data }) => {
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [selectedOfferingId, setSelectedOfferingId] = useState<string>("All");
     const itemsPerPage = 5;
 
     // Ensure data is defined and is an array
-    const tableData = Array.isArray(data) ? data : [];
-
+    const tableData: DataItem[] = Array.isArray(data) ? data : [];
 
     // Get unique offering IDs for the dropdown
-    const offeringIds = ["All", ...new Set(tableData.map((item) => item.offering_id))];
+    const offeringIds: string[] = ["All", ...Array.from(new Set<string>(tableData.map((item) => item.offering_id)))];
 
     // Filter data based on selected offering ID
-    const filteredData =
+    const filteredData: DataItem[] =
         selectedOfferingId === "All"
             ? tableData
             : tableData.filter((item) => item.offering_id === selectedOfferingId);
@@ -35,9 +46,9 @@ export default function OfferingRevenueTableList({ data }) {
     }, [filteredData]);
 
     // Pagination logic
-    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+    const totalPages: number = Math.ceil(filteredData.length / itemsPerPage);
+    const startIndex: number = (currentPage - 1) * itemsPerPage;
+    const paginatedData: DataItem[] = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
     // Handle loading state
     if (!data || data.length === 0) {
@@ -81,7 +92,7 @@ export default function OfferingRevenueTableList({ data }) {
                                 <TableCell>{item.offering_id}</TableCell>
                                 <TableCell>{item.product_id}</TableCell>
                                 <TableCell className="text-right">
-                                    ${parseFloat(item.product_contribution_revenue).toFixed(2)}
+                                    ${item.product_contribution_revenue.toFixed(2)}
                                 </TableCell>
                             </TableRow>
                         ))
@@ -117,4 +128,6 @@ export default function OfferingRevenueTableList({ data }) {
             </div>
         </div>
     );
-}
+};
+
+export default OfferingRevenueTableList;

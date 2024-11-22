@@ -1,5 +1,24 @@
-import { PieChart, Pie, Tooltip as ChartTooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
+import React from "react";
+import {
+    PieChart,
+    Pie,
+    Tooltip as ChartTooltip,
+    ResponsiveContainer,
+    Cell,
+    Legend,
+} from "recharts";
 import { ChartContainer } from "@/vcomponents/dashboard-ui/service-components/chart";
+
+// Define the data type
+interface DataItem {
+    offering_id: string;
+    total_offering_cost: number;
+}
+
+// Define the component props
+interface CostByOfferingChartProps {
+    data: DataItem[];
+}
 
 const COLORS = [
     "#4B0082", "#2E8B57", "#B8860B", "#556B2F", "#4682B4",
@@ -8,51 +27,97 @@ const COLORS = [
 ];
 
 // Function to calculate percentage
-function calculatePercentage(value, total) {
+const calculatePercentage = (value: number, total: number): string => {
     return ((value / total) * 100).toFixed(2); // Keep 2 decimal places
-}
-
-// Custom label renderer with percentage
-const renderCustomLabel = ({ name, value, total }) => {
-    const percentage = calculatePercentage(value, total);
-    return ` $${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${percentage}%)`;
 };
 
-function CostByOfferingChart({ data }) {
+// Custom label renderer with percentage
+const renderCustomLabel = ({
+    name,
+    value,
+    total,
+}: {
+    name: string;
+    value: number;
+    total: number;
+}): string => {
+    const percentage = calculatePercentage(value, total);
+    return ` $${value.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    })} (${percentage}%)`;
+};
+
+const CostByOfferingChart: React.FC<CostByOfferingChartProps> = ({ data }) => {
     // Sort the data by offering_id
     const sortedData = [...data].sort((a, b) => a.offering_id.localeCompare(b.offering_id));
 
     // Calculate the total cost
-    const totalCost = sortedData.reduce((acc, entry) => acc + (entry.total_offering_cost || 0), 0);
+    const totalCost = sortedData.reduce(
+        (acc, entry) => acc + (entry.total_offering_cost || 0),
+        0
+    );
 
     return (
-        <ChartContainer config={{ cost: { label: "Total Offering Cost", color: "hsl(var(--chart-1))" } }} className="h-[410px]">
+        <ChartContainer
+            config={{
+                cost: {
+                    label: "Total Offering Cost",
+                    color: "hsl(var(--chart-1))",
+                },
+            }}
+            className="h-[410px]"
+        >
             <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                     <Pie
                         data={sortedData}
                         dataKey="total_offering_cost"
                         nameKey="offering_id"
-                        cx="40%"
+                        cx="45%"
                         cy="50%"
                         outerRadius={160}
-                        label={(props) => renderCustomLabel({ ...props, total: totalCost })} // Add total to props
-                        labelLine={{ stroke: '#8884d8', strokeWidth: 1 }}
-                        style={{ fontSize: '9px', fontWeight: 'bold' }}
+                        label={(props) =>
+                            renderCustomLabel({ ...props, total: totalCost })
+                        }
+                        labelLine={{ stroke: "#8884d8", strokeWidth: 1 }}
+                        style={{ fontSize: "9px", fontWeight: "bold" }}
                     >
                         {sortedData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            <Cell
+                                key={`cell-${index}`}
+                                fill={COLORS[index % COLORS.length]}
+                            />
                         ))}
                     </Pie>
                     <ChartTooltip
                         content={({ active, payload }) => {
                             if (active && payload && payload.length) {
-                                const { offering_id, total_offering_cost } = payload[0].payload;
-                                const percentage = calculatePercentage(total_offering_cost, totalCost);
+                                const { offering_id, total_offering_cost } =
+                                    payload[0].payload;
+                                const percentage = calculatePercentage(
+                                    total_offering_cost,
+                                    totalCost
+                                );
                                 return (
-                                    <div style={{ backgroundColor: "#fff", padding: "8px", border: "1px solid #ccc", borderRadius: "4px" }}>
-                                        <p><strong>{offering_id}</strong></p>
-                                        <p>Cost: ${total_offering_cost.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                                    <div
+                                        style={{
+                                            backgroundColor: "#fff",
+                                            padding: "8px",
+                                            border: "1px solid #ccc",
+                                            borderRadius: "4px",
+                                        }}
+                                    >
+                                        <p>
+                                            <strong>{offering_id}</strong>
+                                        </p>
+                                        <p>
+                                            Cost: $
+                                            {total_offering_cost.toLocaleString(
+                                                "en-US",
+                                                { minimumFractionDigits: 2 }
+                                            )}
+                                        </p>
                                         <p>Percentage: {percentage}%</p>
                                     </div>
                                 );
@@ -60,14 +125,13 @@ function CostByOfferingChart({ data }) {
                             return null;
                         }}
                     />
-
                     <Legend
                         verticalAlign="bottom"
                         height={36}
                         wrapperStyle={{
                             bottom: -10, // Adjusts the distance from the bottom of the container
-                            left: '40%',
-                            transform: 'translateX(-50%)',
+                            left: "45%",
+                            transform: "translateX(-50%)",
                         }}
                         payload={sortedData.map((entry, index) => ({
                             id: entry.offering_id,
@@ -80,6 +144,6 @@ function CostByOfferingChart({ data }) {
             </ResponsiveContainer>
         </ChartContainer>
     );
-}
+};
 
 export default CostByOfferingChart;
