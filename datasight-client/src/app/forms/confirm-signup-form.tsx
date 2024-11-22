@@ -18,7 +18,7 @@ import Image from "next/image";
 
 export default function ConfirmSignUpForm() {
     const [errorMessage, dispatch] = useFormState(handleConfirmSignUp, undefined);
-    
+
     const [error, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -129,7 +129,11 @@ function ConfirmButton() {
     );
 }
 
-function SendVerificationCode({ setSuccessMessage }) {
+interface SendVerificationCodeProps {
+    setSuccessMessage: (message: string) => void; // Define the type for setSuccessMessage
+}
+
+const SendVerificationCode: React.FC<SendVerificationCodeProps> = ({ setSuccessMessage }) => {
     const [response, dispatch] = useFormState(handleSendEmailVerificationCode, {
         message: "",
         errorMessage: "",
@@ -150,10 +154,11 @@ function SendVerificationCode({ setSuccessMessage }) {
             aria-disabled={pending}
             formAction={dispatch}
         >
-            <span className='flex gap-x-2 font-semibold'>
+            <span className="flex gap-x-2 font-semibold">
                 Resend Verification Code{" "}
                 <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
             </span>
         </Button>
     );
-}
+};
+
