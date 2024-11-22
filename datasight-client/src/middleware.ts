@@ -5,7 +5,7 @@ export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
   const user = await authenticatedUser({ request, response });
 
-  const isOnHomePage = request.nextUrl.pathname.startsWith("/home-page");
+  const isOnHomePage = request.nextUrl.pathname.startsWith("/");
   const isOnEnterpriseView = request.nextUrl.pathname.startsWith("/enterprise-architecture");
   const isOnSettings = request.nextUrl.pathname.startsWith("/settings");
   const isOnAdminArea = request.nextUrl.pathname.startsWith("/dashboard/admins");
@@ -19,7 +19,7 @@ export async function middleware(request: NextRequest) {
   }
   {
 
-  {/* 
+  {/*
 if (isOnEnterpriseView || isOnSettings) {
     if (!user) {
       return NextResponse.redirect(new URL("/", request.nextUrl));
@@ -31,8 +31,8 @@ if (isOnEnterpriseView || isOnSettings) {
 
   // If authenticated, redirect to the home page if trying to access the login page or other restricted areas
   if (user && (request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/login")) {
-    return NextResponse.redirect(new URL("/home-page", request.nextUrl));
-  }    
+    return NextResponse.redirect(new URL("/", request.nextUrl));
+  }
 
   }
   // Protecting /enterprise-architecture and /settings routes

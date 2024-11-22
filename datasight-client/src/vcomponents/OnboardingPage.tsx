@@ -10,6 +10,16 @@ import { CheckCircle, ArrowLeft, ArrowRight } from 'lucide-react'
 
 import FileUploadModal from './FileUploadModal'
 
+// Define the FileInfo type
+interface FileInfo {
+  id: string
+  name: string
+  size: number
+  status: "ready" | "uploaded" | "failed" | "uploading"
+  file: File
+}
+
+
 export function Onboarding() {
   const [currentStep, setCurrentStep] = useState(1)
   const [uploadedFiles, setUploadedFiles] = useState<FileInfo[]>([])
