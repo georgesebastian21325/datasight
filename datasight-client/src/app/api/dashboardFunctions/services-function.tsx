@@ -143,7 +143,7 @@ async function fetchServiceResourceList() {
 
     try {
         const response = await fetch('https://ugdwdejp73.execute-api.ap-southeast-2.amazonaws.com/development/getServiceResourceList');
-        
+
         const data = await response.json();
         const bodyData = JSON.parse(data.body);
 
@@ -211,7 +211,7 @@ async function fetchServiceUtilizationTrend() {
                 date: new Date(item.date).toISOString().split("T")[0], // Format date as "YYYY-MM-DD"
                 avg_daily_service_utilization: parseFloat(item.avg_daily_service_utilization)
             }))
-            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()); // Sort by date in ascending order
+            .sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime()); // Sort by date in ascending order
 
         console.log('Service Utilization Trend', formattedData);
 

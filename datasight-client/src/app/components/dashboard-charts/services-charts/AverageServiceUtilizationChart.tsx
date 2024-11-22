@@ -2,7 +2,7 @@ import React from 'react';
 import { ChartContainer } from "@/vcomponents/dashboard-ui/resource-components/chart";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend, ReferenceLine } from 'recharts';
 
-const SERVICE_COLORS = {
+const SERVICE_COLORS: Record<string, string> = {
     "SVC0001": "#3D2B1F", // Dark brown
     "SVC0002": "#2F4858", // Dark slate blue
     "SVC0003": "#4A235A", // Dark purple
@@ -10,10 +10,21 @@ const SERVICE_COLORS = {
     "SVC0005": "#2C3E50"  // Dark teal
 };
 
-function AverageServiceUtilizationChart({ data }) {
+// Define the entry type
+interface EntryType {
+    service_id: keyof typeof SERVICE_COLORS; // Keys must match SERVICE_COLORS
+    [key: string]: any; // Allow other properties
+}
+
+type DataType = {
+    service_id: string; // Replace this with the actual properties of the data objects
+    avg_service_utilization: number;      // Example property, modify as needed
+};
+
+function AverageServiceUtilizationChart({ data }: { data: DataType[] }) {
     // Ensure data values are within the 0-100 range
 
-    const formattedData = data.map((item) => ({
+    const formattedData = data.map((item: any) => ({
         ...item,
         avg_service_utilization: Math.min(Math.max(isNaN(item.average_usage_percentage) ? 0 : item.average_usage_percentage, 0), 100)
     }));
@@ -36,13 +47,13 @@ function AverageServiceUtilizationChart({ data }) {
                         domain={[0, 100]}
                         tickFormatter={(value) => `${value}%`}
                         tick={{ fontSize: 12, fill: "#333" }}
-                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }} 
+                        style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }}
                     />
                     <XAxis dataKey="service_id" type="category" hide={false} style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }} /> {/* Hide X-axis labels */}
                     <Tooltip formatter={(value) => `${value}%`} contentStyle={{ fontSize: 12, color: "#333" }} />
 
                     <Bar dataKey="avg_service_utilization" barSize={40}>
-                        {data.map((entry, index) => (
+                        {data.map((entry: EntryType, index: number) => (
                             <Cell key={`cell-${index}`} fill={SERVICE_COLORS[entry.service_id] || "#8884d8"} />
                         ))}
                     </Bar>
