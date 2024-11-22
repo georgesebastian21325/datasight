@@ -13,51 +13,63 @@ import {
 } from 'recharts';
 
 function AverageUtilizationChart({ data }) {
-    // Format the data and ensure utilization percentage is valid
-    const formattedData = data.map((item) => ({
-        ...item,
-        resource_id: item.resource_id.trim().toUpperCase(),
-        resource_type: item.resource_type.trim(),
-        month: item.month.trim().toUpperCase(),
-        year: parseInt(item.year.replace("Y", ""), 10), // Convert year from "Y202X" to numeric
-        avg_monthly_resource_utilization: Math.min(
-            Math.max(
-                parseFloat(item.avg_monthly_resource_utilization || 0),
-                0
-            ),
-            100
-        ),
-    }));
+    // Helper to map month numbers to names
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
 
-    // Get unique resource IDs and years for filtering
+    // Format the data and ensure utilization percentage is valid
+    const formattedData = data.map((item) => {
+        const month = item.month.trim().toUpperCase(); // e.g., "M0121"
+        const monthIndex = parseInt(month.slice(1, 3), 10) - 1; // Convert "01" to 0-based index
+        const yearSuffix = month.slice(3, 5); // Extract "21" as the year suffix
+        const year = 2000 + parseInt(yearSuffix, 10); // Convert "21" to 2021
+
+        return {
+            ...item,
+            resource_id: item.resource_id.trim().toUpperCase(),
+            resource_type: item.resource_type.trim(),
+            monthName: `${monthNames[monthIndex]} ${year}`, // Format as "January 2021"
+            year,
+            avg_monthly_resource_utilization: Math.min(
+                Math.max(
+                    parseFloat(item.avg_monthly_resource_utilization || 0),
+                    0
+                ),
+                100
+            ),
+        };
+    });
+
+    // Get unique resource IDs and months for filtering
     const resourceIds = [...new Set(formattedData.map((item) => item.resource_id))];
-    const years = [...new Set(formattedData.map((item) => item.year))].sort((a, b) => a - b);
+    const months = [...new Set(formattedData.map((item) => item.monthName))].sort((a, b) => new Date(a) - new Date(b));
 
     const [selectedResourceId, setSelectedResourceId] = useState(resourceIds[0] || '');
-    const [startYear, setStartYear] = useState(years[0] || 0);
-    const [endYear, setEndYear] = useState(years[years.length - 1] || 0);
+    const [startMonth, setStartMonth] = useState(months[0] || '');
+    const [endMonth, setEndMonth] = useState(months[months.length - 1] || '');
 
-    // Filter data based on the selected resource ID and year range
-    const filteredData = formattedData.filter(
-        (item) =>
-            item.resource_id === selectedResourceId &&
-            item.year >= startYear &&
-            item.year <= endYear
-    );
-
-    // Prepare data for the chart
-    const dataByMonth = filteredData.map((item) => ({
-        month: item.month,
-        year: item.year,
-        avg_monthly_resource_utilization: item.avg_monthly_resource_utilization,
-    }));
-
-    // Sort the data by year and month
-    dataByMonth.sort((a, b) => {
-        const parseDate = (item) =>
-            new Date(item.year, parseInt(item.month.slice(1, 3), 10) - 1).getTime();
-        return parseDate(a) - parseDate(b);
+    // Filter data based on the selected resource ID and month range
+    const filteredData = formattedData.filter((item) => {
+        const isWithinMonthRange =
+            months.indexOf(item.monthName) >= months.indexOf(startMonth) &&
+            months.indexOf(item.monthName) <= months.indexOf(endMonth);
+        return item.resource_id === selectedResourceId && isWithinMonthRange;
     });
+
+    // Calculate the average utilization
+    const averageUtilization =
+        filteredData.reduce((sum, item) => sum + item.avg_monthly_resource_utilization, 0) /
+        (filteredData.length || 1); // Avoid division by zero
+
+    // Determine the color of the average line
+    const averageLineColor =
+        averageUtilization <= 50
+            ? "green"
+            : averageUtilization <= 75
+                ? "yellow"
+                : "red";
 
     return (
         <ChartContainer
@@ -75,6 +87,7 @@ function AverageUtilizationChart({ data }) {
                     value={selectedResourceId}
                     onChange={(e) => setSelectedResourceId(e.target.value)}
                     style={{ marginRight: '1rem' }}
+                    className="border rounded p-2"
                 >
                     {resourceIds.map((id) => (
                         <option key={id} value={id}>
@@ -83,45 +96,47 @@ function AverageUtilizationChart({ data }) {
                     ))}
                 </select>
 
-                {/* Start Year Filter */}
-                <label htmlFor="start-year-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
-                    Start Year:
+                {/* Start Month Filter */}
+                <label htmlFor="start-month-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
+                    Start Month:
                 </label>
                 <select
-                    id="start-year-filter"
-                    value={startYear}
-                    onChange={(e) => setStartYear(Number(e.target.value))}
+                    id="start-month-filter"
+                    value={startMonth}
+                    onChange={(e) => setStartMonth(e.target.value)}
                     style={{ marginRight: '1rem' }}
+                    className="border rounded p-2"
                 >
-                    {years.map((year) => (
-                        <option key={year} value={year}>
-                            {year}
+                    {months.map((month) => (
+                        <option key={month} value={month}>
+                            {month}
                         </option>
                     ))}
                 </select>
 
-                {/* End Year Filter */}
-                <label htmlFor="end-year-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
-                    End Year:
+                {/* End Month Filter */}
+                <label htmlFor="end-month-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
+                    End Month:
                 </label>
                 <select
-                    id="end-year-filter"
-                    value={endYear}
-                    onChange={(e) => setEndYear(Number(e.target.value))}
+                    id="end-month-filter"
+                    value={endMonth}
+                    onChange={(e) => setEndMonth(e.target.value)}
+                    className="border rounded p-2"
                 >
-                    {years.map((year) => (
-                        <option key={year} value={year}>
-                            {year}
+                    {months.map((month) => (
+                        <option key={month} value={month}>
+                            {month}
                         </option>
                     ))}
                 </select>
             </div>
 
             <ResponsiveContainer width="100%" height="80%">
-                <LineChart data={dataByMonth} margin={{ top: 5, right: 20, bottom: 20, left: 0 }}>
+                <LineChart data={filteredData} margin={{ top: 5, right: 70, bottom: 20, left: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" />
 
-                    {/* Reference lines at 50%, 75%, and 100% */}
+                    {/* Reference lines at 50%, 75%, 100%, and Average */}
                     <ReferenceLine
                         y={100}
                         stroke="red"
@@ -143,6 +158,16 @@ function AverageUtilizationChart({ data }) {
                         strokeWidth={1}
                         label={{ position: "insideTopRight", fill: "#555", value: "50%" }}
                     />
+                    <ReferenceLine
+                        y={averageUtilization}
+                        stroke={averageLineColor}
+                        strokeWidth={2}
+                        label={{
+                            position: "right",
+                            fill: 'black',
+                            value: `${averageUtilization.toFixed(2)}%`,
+                        }}
+                    />
 
                     <YAxis
                         domain={[0, 100]}
@@ -151,8 +176,7 @@ function AverageUtilizationChart({ data }) {
                         style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }}
                     />
                     <XAxis
-                        dataKey="month"
-                        tickFormatter={(month, index) => `${month} ${dataByMonth[index]?.year}`}
+                        dataKey="monthName"
                         style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }}
                         angle={-20}
                         textAnchor="end"
@@ -161,15 +185,8 @@ function AverageUtilizationChart({ data }) {
                     <Tooltip
                         formatter={(value) => `${value}%`}
                         contentStyle={{ fontSize: 12, color: "#333" }}
-                        labelFormatter={(label) => {
-                            // Find the corresponding entry in dataByMonth
-                            const matchedEntry = dataByMonth.find((item) => item.month === label);
-                            return matchedEntry
-                                ? `Month: ${matchedEntry.month} ${matchedEntry.year}`
-                                : `Month: ${label}`;
-                        }}
+                        labelFormatter={(label) => `Month: ${label}`}
                     />
-
 
                     <Legend
                         verticalAlign="bottom"

@@ -2,15 +2,17 @@
 
 import { useState, useEffect } from 'react'
 import { DollarSign } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/vcomponents/dashboard-ui/product-components/card'
+import { Card, CardContent, CardHeader, CardDescription, CardTitle } from '@/vcomponents/dashboard-ui/product-components/card'
 
 import CostByProductChart from '@/app/components/dashboard-charts/products-charts/CostByProductChart.tsx';
 import RevenueByProductChart from '@/app/components/dashboard-charts/products-charts/RevenueByProductChart';
-import ProductUtilizationTrendChart from '@/app/components/dashboard-charts/products-charts/ProductUtilizationTrendChart';
 import ProductRevenueForecastChart from '@/app/components/dashboard-charts/products-charts/ProductRevenueForecastChart';
+import ProductCostTableList from '@/app/components/dashboard-charts/products-charts/ProductCostTableList';
+import ProductRevenueTableList from '@/app/components/dashboard-charts/products-charts/ProductRevenueTableList';
+
 
 import { fetchTotalProductCost, fetchTotalProductRevenue, fetchProductCostByCategory, 
-          fetchRevenueByProduct, fetchProductRevenueContribution, fetchProductUtilizationRate, 
+          fetchRevenueByProduct, fetchProductCostTableList, fetchProductRevenueTableList,
           fetchProductRevenueForecast, fetchProductUtilizationTrend } from '../../app/api/dashboardFunctions/products-functions'
 import { formatCustom } from '@/app/api/dashboardFunctions/global-dashboard-functions'
 
@@ -49,6 +51,19 @@ type ProductRevenueForecastItems = {
   forecast_revenue: string;
 }
 
+type ProductCostTableListItems = {
+  product_id: string;
+  service_id: string;
+  service_contribution_cost: string;
+}
+
+type ProductRevenueTableListItems = {
+  product_id: string;
+  service_id: string;
+  service_contribution_revenue: string;
+}
+
+
 
 export default function ProductLayerDashboard() {
   const [loading, setLoading] = useState(true);  // Loading state
@@ -56,8 +71,9 @@ export default function ProductLayerDashboard() {
   const [totalProductRevenue, setTotalProductRevenue] = useState<string | null>(null)
   const [costPerProduct, setCostPerProduct] = useState<ProductCostItem[]>([]);
   const [revenuePerProduct, setRevenuePerProduct] = useState<ProductRevenueItem[]>([]);
-  const [productUtilizationTrend, setProductUtilizationTrend] = useState <ProductUtilizationTrendItems[]>([]);
   const [productRevenueForecast, setProductRevenueForecast] = useState<ProductRevenueForecastItems[]>([]);
+  const [productCostTableList, setProductCostTableList] = useState<ProductCostTableListItems[]>([]);
+  const [productRevenueTableList, setProductRevenueTableList] = useState<ProductRevenueTableListItems[]>([]);
 
 
   useEffect(() => {
@@ -68,8 +84,9 @@ export default function ProductLayerDashboard() {
       const costPerProductData = await fetchProductCostByCategory();
       const revenuePerProductData = await fetchRevenueByProduct();
 
-      const productUtilizationTrendData = await fetchProductUtilizationTrend();
       const productRevenueForecastData = await fetchProductRevenueForecast();
+      const productCostTableListData = await fetchProductCostTableList();
+      const productRevenueTableListData = await fetchProductRevenueTableList();
 
       if (totalProductCostData !== null) {
         setTotalProductCost(formatCustom(totalProductCostData));
@@ -81,8 +98,9 @@ export default function ProductLayerDashboard() {
 
       setCostPerProduct(costPerProductData);
       setRevenuePerProduct(revenuePerProductData);
-      setProductUtilizationTrend(productUtilizationTrendData);
       setProductRevenueForecast(productRevenueForecastData);
+      setProductCostTableList(productCostTableListData);
+      setProductRevenueTableList(productRevenueTableListData);
 
       setLoading(false);  // Stop loading after data is fetched
     }
@@ -93,7 +111,6 @@ export default function ProductLayerDashboard() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="mb-4 text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820]">Product Layer Dashboard</h1>
-
       <section className="mb-8">
         <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
           <Card className={`${loading ? 'skeleton bg-black' : ''} bg-black text-white`}>
@@ -138,6 +155,26 @@ export default function ProductLayerDashboard() {
             </Card>
           </div>
       </section>
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className='text-lg font-bold'> Associated Products Per Services (Cost) </CardTitle>
+            <CardDescription> List of services associated for each product by cost. </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ProductCostTableList data={productCostTableList} />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className='text-lg font-bold'> Associated Products Per Services (Revenue) </CardTitle>
+            <CardDescription> List of services associated for each product by revenue. </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ProductRevenueTableList data={productRevenueTableList} />
+          </CardContent>
+        </Card>
+      </div>
       <div className="grid grid-cols-1 mb-8">
         <Card>
           <CardHeader>
@@ -148,18 +185,6 @@ export default function ProductLayerDashboard() {
           </CardContent>
         </Card>
       </div>
-      <section>
-        <div className="grid gap-4 md:grid-cols-1">
-          <Card className={`${loading ? 'animate-pulse' : ''}`}>
-            <CardHeader>
-              <CardTitle className='text-lg font-bold'>Monthly Utilization Trends by Product</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? <div className="skeleton animate-pulse"></div> : <ProductUtilizationTrendChart data={productUtilizationTrend} />}
-            </CardContent>
-          </Card>
-        </div>
-      </section>
     </div>
   );
 }

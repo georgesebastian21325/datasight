@@ -139,7 +139,7 @@ export default function ResourceDashboardComponent() {
       <div className="grid grid-cols-1 gap-4 mb-8">
         <Card className={`${loading ? 'animate-pulse' : ''}`}>
           <CardHeader>
-            <CardTitle className='text-lg font-bold'> Utilization Per Resource </CardTitle>
+            <CardTitle className='text-lg font-bold'> Resource Utilization Trend </CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? <div className="h-48"></div> : <AverageUtilizationChart data={averageUtilization} />}

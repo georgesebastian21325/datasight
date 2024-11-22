@@ -11,40 +11,46 @@ import {
 } from 'recharts';
 
 function ProductRevenueForecastChart({ data }) {
-    // Format the data and ensure proper parsing
-    const formattedData = data.map((item) => ({
-        ...item,
-        product_id: item.product_id.trim(),
-        month_year: item.month_year.trim(),
-        year: parseInt(item.month_year.split('-')[0], 10),
-        month: item.month_year.split('-')[1],
-        total_product_revenue: parseFloat(item.total_product_revenue || 0),
-        predicted_revenue: parseFloat(item.predicted_revenue || 0),
-        forecast_revenue: parseFloat(item.forecast_revenue || 0),
-    }));
+    // Helper to map month numbers to names
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
 
-    // Get unique product IDs, years, and months for filtering
+    // Format the data and ensure proper parsing
+    const formattedData = data.map((item) => {
+        const [year, month] = item.month_year.split('-');
+        const monthName = monthNames[parseInt(month, 10) - 1]; // Map month to full name
+
+        return {
+            ...item,
+            product_id: item.product_id.trim(),
+            month_year: `${monthName} ${year}`, // Format as "Month Year"
+            total_product_revenue: parseFloat(item.total_product_revenue || 0),
+            predicted_revenue: parseFloat(item.predicted_revenue || 0),
+            forecast_revenue: parseFloat(item.forecast_revenue || 0),
+        };
+    });
+
+    // Get unique product IDs and month-year combinations for filtering
     const productIds = [...new Set(formattedData.map((item) => item.product_id))];
-    const years = [...new Set(formattedData.map((item) => item.year))].sort();
+    const monthYears = [...new Set(formattedData.map((item) => item.month_year))].sort(
+        (a, b) => new Date(a) - new Date(b) // Ensure months are sorted
+    );
 
     // State for selected filters
     const [selectedProductId, setSelectedProductId] = useState(productIds[0] || '');
-    const [startYear, setStartYear] = useState(years[0] || '');
-    const [endYear, setEndYear] = useState(years[years.length - 1] || '');
-    const [selectedMonth, setSelectedMonth] = useState('');
+    const [startMonth, setStartMonth] = useState(monthYears[0] || '');
+    const [endMonth, setEndMonth] = useState(monthYears[monthYears.length - 1] || '');
 
-    // Filter data by selected product ID, date range, and month
+    // Filter data by selected product ID and month-year range
     const filteredData = formattedData.filter((item) => {
-        return (
-            item.product_id === selectedProductId &&
-            (!startYear || item.year >= startYear) &&
-            (!endYear || item.year <= endYear) &&
-            (!selectedMonth || item.month === selectedMonth)
-        );
-    });
+        const isWithinMonthRange =
+            monthYears.indexOf(item.month_year) >= monthYears.indexOf(startMonth) &&
+            monthYears.indexOf(item.month_year) <= monthYears.indexOf(endMonth);
 
-    // Sort data by month_year for proper rendering
-    filteredData.sort((a, b) => new Date(a.month_year) - new Date(b.month_year));
+        return item.product_id === selectedProductId && isWithinMonthRange;
+    });
 
     return (
         <div style={{ margin: '2rem' }}>
@@ -59,6 +65,7 @@ function ProductRevenueForecastChart({ data }) {
                     value={selectedProductId}
                     onChange={(e) => setSelectedProductId(e.target.value)}
                     style={{ marginRight: '1rem' }}
+                    className="border rounded p-2"
                 >
                     {productIds.map((id) => (
                         <option key={id} value={id}>
@@ -67,53 +74,37 @@ function ProductRevenueForecastChart({ data }) {
                     ))}
                 </select>
 
-                {/* Start Year Filter */}
-                <label htmlFor="start-year-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
-                    Start Year:
+                {/* Start Month Filter */}
+                <label htmlFor="start-month-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
+                    Start Month:
                 </label>
                 <select
-                    id="start-year-filter"
-                    value={startYear}
-                    onChange={(e) => setStartYear(e.target.value)}
+                    id="start-month-filter"
+                    value={startMonth}
+                    onChange={(e) => setStartMonth(e.target.value)}
                     style={{ marginRight: '1rem' }}
+                    className="border rounded p-2"
                 >
-                    {years.map((year) => (
-                        <option key={year} value={year}>
-                            {year}
+                    {monthYears.map((monthYear) => (
+                        <option key={monthYear} value={monthYear}>
+                            {monthYear}
                         </option>
                     ))}
                 </select>
 
-                {/* End Year Filter */}
-                <label htmlFor="end-year-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
-                    End Year:
+                {/* End Month Filter */}
+                <label htmlFor="end-month-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
+                    End Month:
                 </label>
                 <select
-                    id="end-year-filter"
-                    value={endYear}
-                    onChange={(e) => setEndYear(e.target.value)}
-                    style={{ marginRight: '1rem' }}
+                    id="end-month-filter"
+                    value={endMonth}
+                    onChange={(e) => setEndMonth(e.target.value)}
+                    className="border rounded p-2"
                 >
-                    {years.map((year) => (
-                        <option key={year} value={year}>
-                            {year}
-                        </option>
-                    ))}
-                </select>
-
-                {/* Month Filter */}
-                <label htmlFor="month-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
-                    Select Month:
-                </label>
-                <select
-                    id="month-filter"
-                    value={selectedMonth}
-                    onChange={(e) => setSelectedMonth(e.target.value)}
-                >
-                    <option value="">All Months</option>
-                    {Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0')).map((month) => (
-                        <option key={month} value={month}>
-                            {month}
+                    {monthYears.map((monthYear) => (
+                        <option key={monthYear} value={monthYear}>
+                            {monthYear}
                         </option>
                     ))}
                 </select>

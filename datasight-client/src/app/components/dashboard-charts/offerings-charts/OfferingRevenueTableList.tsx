@@ -11,27 +11,23 @@ import {
 } from "@/vcomponents/file-upload-components/table";
 import { Button } from "@/vcomponents/file-upload-components/button";
 
-export default function ProductCostTableList({ data }) {
+export default function OfferingRevenueTableList({ data }) {
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectedProductId, setSelectedProductId] = useState("All");
+    const [selectedOfferingId, setSelectedOfferingId] = useState("All");
     const itemsPerPage = 5;
 
     // Ensure data is defined and is an array
     const tableData = Array.isArray(data) ? data : [];
 
-    // Debug: Log incoming data
-    useEffect(() => {
-        console.log("Received Data:", tableData);
-    }, [tableData]);
 
-    // Get unique product IDs for the dropdown
-    const productIds = ["All", ...new Set(tableData.map((item) => item.product_id))];
+    // Get unique offering IDs for the dropdown
+    const offeringIds = ["All", ...new Set(tableData.map((item) => item.offering_id))];
 
-    // Filter data based on selected product ID
+    // Filter data based on selected offering ID
     const filteredData =
-        selectedProductId === "All"
+        selectedOfferingId === "All"
             ? tableData
-            : tableData.filter((item) => item.product_id === selectedProductId);
+            : tableData.filter((item) => item.offering_id === selectedOfferingId);
 
     // Debug: Log filtered data
     useEffect(() => {
@@ -50,21 +46,21 @@ export default function ProductCostTableList({ data }) {
 
     return (
         <div>
-            {/* Filter by Product ID */}
+            {/* Filter by Offering ID */}
             <div className="mb-4 flex items-center">
-                <h1 className="font-bold mr-2">Select Product:</h1>
+                <h1 className="font-bold mr-2">Select Offering:</h1>
                 <select
-                    id="productIdFilter"
-                    value={selectedProductId}
+                    id="offeringIdFilter"
+                    value={selectedOfferingId}
                     onChange={(e) => {
-                        setSelectedProductId(e.target.value);
+                        setSelectedOfferingId(e.target.value);
                         setCurrentPage(1); // Reset to first page when filter changes
                     }}
                     className="p-1 border border-gray-300 rounded"
                 >
-                    {productIds.map((productId) => (
-                        <option key={productId} value={productId}>
-                            {productId}
+                    {offeringIds.map((offeringId) => (
+                        <option key={offeringId} value={offeringId}>
+                            {offeringId}
                         </option>
                     ))}
                 </select>
@@ -73,26 +69,26 @@ export default function ProductCostTableList({ data }) {
             <Table>
                 <TableHeader>
                     <TableRow>
+                        <TableHead>Offering ID</TableHead>
                         <TableHead>Product ID</TableHead>
-                        <TableHead>Service ID</TableHead>
-                        <TableHead className="text-right">Service Contribution Cost</TableHead>
+                        <TableHead className="text-right">Product Contribution Revenue</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {paginatedData.length > 0 ? (
                         paginatedData.map((item) => (
-                            <TableRow key={`${item.product_id}-${item.service_id}`}>
+                            <TableRow key={`${item.offering_id}-${item.product_id}`}>
+                                <TableCell>{item.offering_id}</TableCell>
                                 <TableCell>{item.product_id}</TableCell>
-                                <TableCell>{item.service_id}</TableCell>
                                 <TableCell className="text-right">
-                                    ${parseFloat(item.service_contribution_cost).toFixed(2)}
+                                    ${parseFloat(item.product_contribution_revenue).toFixed(2)}
                                 </TableCell>
                             </TableRow>
                         ))
                     ) : (
                         <TableRow>
                             <TableCell colSpan={3} className="text-center">
-                                No records found for the selected product.
+                                No records found for the selected offering.
                             </TableCell>
                         </TableRow>
                     )}
