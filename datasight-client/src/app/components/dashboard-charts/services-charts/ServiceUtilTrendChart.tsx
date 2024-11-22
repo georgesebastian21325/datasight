@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { ChartContainer } from "@/vcomponents/dashboard-ui/resource-components/chart";
 import {
   LineChart,
   Line,
@@ -12,19 +11,11 @@ import {
   ReferenceLine,
 } from "recharts";
 
-const SERVICE_COLORS = {
-  SVC0001: "#3D2B1F", // Dark brown
-  SVC0002: "#2F4858", // Dark slate blue
-  SVC0003: "#4A235A", // Dark purple
-  SVC0004: "#1B4F72", // Dark steel blue
-  SVC0005: "#2C3E50", // Dark teal
-};
-
 // Helper function to generate an array of month-year strings
-const generateMonthYearOptions = (startDate, endDate) => {
+const generateMonthYearOptions = (startDate: Date, endDate: Date): string[] => {
   const start = new Date(startDate);
   const end = new Date(endDate);
-  const options = [];
+  const options: string[] = [];
   const monthNames = [
     "January",
     "February",
@@ -47,22 +38,56 @@ const generateMonthYearOptions = (startDate, endDate) => {
   return options;
 };
 
-function ServiceUtilTrendLineChart({ data }) {
-  // Extract unique service IDs for dropdown options and sort them in ascending order
-  const serviceIds = [...new Set(data.map((item) => item.service_id))].sort();
+// Type definitions
+type ServiceData = {
+  service_id: string;
+  date: string;
+  avg_daily_service_utilization: number;
+};
+
+type ChartContainerProps = {
+  config: {
+    cost: {
+      label: string;
+      color: string;
+    };
+  };
+  className?: string;
+  children: React.ReactNode;
+};
+
+// ChartContainer Component
+const ChartContainer: React.FC<ChartContainerProps> = ({
+  config,
+  className,
+  children,
+}) => {
+  return (
+    <div className={className}>
+      {children}
+    </div>
+  );
+};
+
+// Main Chart Component
+const ServiceUtilTrendLineChart: React.FC<{ data: ServiceData[] }> = ({
+  data,
+}) => {
+  // Extract unique service IDs for dropdown options and sort them
+  const serviceIds = Array.from(new Set(data.map((item) => item.service_id))).sort();
 
   // Extract unique date range for filtering
   const rawDates = data.map((item) => new Date(item.date));
-  const minDate = new Date(Math.min(...rawDates));
-  const maxDate = new Date(Math.max(...rawDates));
+  const minDate = new Date(Math.min(...rawDates.map((date) => date.getTime())));
+  const maxDate = new Date(Math.max(...rawDates.map((date) => date.getTime())));
 
   // Generate month-year options
   const monthYearOptions = generateMonthYearOptions(minDate, maxDate);
 
-  // Initialize state with default values
-  const [selectedService, setSelectedService] = useState("SVC0001"); // Default to "SVC0001"
-  const [startMonth, setStartMonth] = useState(monthYearOptions[0]); // Default to the earliest month-year
-  const [endMonth, setEndMonth] = useState(
+  // State management for filters
+  const [selectedService, setSelectedService] = useState<string>(serviceIds[0]); // Default to the first service
+  const [startMonth, setStartMonth] = useState<string>(monthYearOptions[0]); // Default to the earliest month-year
+  const [endMonth, setEndMonth] = useState<string>(
     monthYearOptions[monthYearOptions.length - 1]
   ); // Default to the latest month-year
 
@@ -75,9 +100,9 @@ function ServiceUtilTrendLineChart({ data }) {
       })} ${new Date(item.date).getFullYear()}`;
       return (
         monthYearOptions.indexOf(itemMonthYear) >=
-          monthYearOptions.indexOf(startMonth) &&
+        monthYearOptions.indexOf(startMonth) &&
         monthYearOptions.indexOf(itemMonthYear) <=
-          monthYearOptions.indexOf(endMonth)
+        monthYearOptions.indexOf(endMonth)
       );
     })
     .map((item) => ({
@@ -93,7 +118,7 @@ function ServiceUtilTrendLineChart({ data }) {
         100
       ),
     }))
-    .sort((a, b) => new Date(a.date) - new Date(b.date)); // Ensure dates are sorted in ascending order
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()); // Ensure dates are sorted in ascending order
 
   // Calculate the average utilization
   const averageUtilization =
@@ -107,8 +132,8 @@ function ServiceUtilTrendLineChart({ data }) {
     averageUtilization <= 50
       ? "green"
       : averageUtilization <= 70
-      ? "yellow"
-      : "red";
+        ? "yellow"
+        : "red";
 
   return (
     <ChartContainer
@@ -185,8 +210,9 @@ function ServiceUtilTrendLineChart({ data }) {
         </select>
       </div>
 
-      <ResponsiveContainer width="100%" height="80%">
-        <LineChart data={filteredData} margin={{ right: 70 }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={filteredData} margin={{ top: 20, right: 30, bottom: 20, left: 20 }}
+>
           <CartesianGrid strokeDasharray="3 3" />
 
           {/* Reference lines at 50%, 75%, and 100% */}
@@ -231,16 +257,6 @@ function ServiceUtilTrendLineChart({ data }) {
             labelFormatter={(label) => `Month: ${label}`}
           />
 
-          <Legend
-            verticalAlign="bottom"
-            height={36}
-            wrapperStyle={{
-              bottom: -20,
-              left: "45%",
-              transform: "translateX(-41%)",
-            }}
-          />
-
           <Line
             type="monotone"
             dataKey="avg_daily_service_utilization"
@@ -264,6 +280,6 @@ function ServiceUtilTrendLineChart({ data }) {
       </ResponsiveContainer>
     </ChartContainer>
   );
-}
+};
 
 export default ServiceUtilTrendLineChart;
