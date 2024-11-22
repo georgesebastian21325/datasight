@@ -102,7 +102,7 @@ function ServiceUtilTrendLineChart({ data }) {
 
                 {/* Start Month Filter */}
                 <label htmlFor="start-month-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
-                    Start Month:
+                    Start Date:
                 </label>
                 <select
                     id="start-month-filter"
@@ -120,7 +120,7 @@ function ServiceUtilTrendLineChart({ data }) {
 
                 {/* End Month Filter */}
                 <label htmlFor="end-month-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
-                    End Month:
+                    End Date:
                 </label>
                 <select
                     id="end-month-filter"

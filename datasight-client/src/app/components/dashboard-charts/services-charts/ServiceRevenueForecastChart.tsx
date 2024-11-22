@@ -58,8 +58,6 @@ function ServiceRevenueForecastChart({ data }) {
     filteredData.sort((a, b) => new Date(a.month_year) - new Date(b.month_year));
 
     return (
-        <div style={{ margin: '2rem' }}>
-            {/* Filters */}
             <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
                 {/* Service Filter */}
                 <label htmlFor="service-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
@@ -113,7 +111,7 @@ function ServiceRevenueForecastChart({ data }) {
                         </option>
                     ))}
                 </select>
-            </div>
+
 
             {/* Line Chart */}
             <ResponsiveContainer width="100%" height={500}>
