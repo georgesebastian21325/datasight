@@ -58,7 +58,7 @@ export default function OfferingDashboardComponent() {
   const [costByOffering, setCostByOffering] = useState<OfferingCostItems[]>([]);
   const [revenueByOffering, setRevenueByOffering] = useState<OfferingRevenueItems[]>([]);
   const [offeringCostTableList, setOfferingCostTableList] = useState<OfferingCostTableListItems[]>([]);
-  const [offeringRevenueTableList, setOfferingRevenueTableList] = useState<OfferingCostTableListItems[]>([]);
+  const [offeringRevenueTableList, setOfferingRevenueTableList] = useState<OfferingRevenueTableListItems[]>([]);
   const [offeringRevenueStability, setOfferingRevenueStability] = useState<OfferingRevenueStabilityItems[]>([]);
   const [offeringRevenueForecast, setOfferingRevenueForecast] = useState<OfferingRevenueForecastItems[]>([]);
 
