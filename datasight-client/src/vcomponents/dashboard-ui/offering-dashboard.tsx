@@ -16,12 +16,12 @@ import OfferingRevenueForecastChart from '@/app/components/dashboard-charts/offe
 
 type OfferingCostItems = {
   offering_id: string;
-  total_offering_cost: string;
+  total_offering_cost: number;
 };
 
 type OfferingRevenueItems = {
   offering_id: string;
-  total_offering_revenue: string;
+  total_offering_revenue: number;
 }
 
 type OfferingRevenueForecastItems = {
@@ -47,7 +47,7 @@ type OfferingCostTableListItems = {
 type OfferingRevenueTableListItems = {
   offering_id: string;
   product_id: string;
-  product_contribution_revenue: string;
+  product_contribution_revenue: number;
 }
 
 export default function OfferingDashboardComponent() {
@@ -121,7 +121,7 @@ export default function OfferingDashboardComponent() {
           </CardContent>
         </Card>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4"> 
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xl font-bold">Offering Cost By ID </CardTitle>
@@ -159,8 +159,8 @@ export default function OfferingDashboardComponent() {
           </CardContent>
         </Card>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4"> 
-        <Card> 
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
+        <Card>
           <CardHeader>
             <CardTitle className="text-xl font-bold"> Offering Revenue Forecast</CardTitle>
           </CardHeader>
@@ -169,7 +169,7 @@ export default function OfferingDashboardComponent() {
           </CardContent>
         </Card>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4"> 
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xl font-bold">Daily Revenue Trend for Offering</CardTitle>

@@ -51,13 +51,13 @@ type ServiceCostTableListItems = {
   service_id: string;
   resource_id: string;
   resource_type: string;
-  cost_generated_based_on_resource_id: string;
+  cost_generated_based_on_resource_id: number;
 }
 
 type ServiceUtilizationTrendItems = {
   service_id: string;
   date: string;
-  avg_daily_service_utilization: string;
+  avg_daily_service_utilization: number;
 }
 
 type ServiceRevenueForecastItems = {

@@ -211,7 +211,7 @@ const ServiceUtilTrendLineChart: React.FC<{ data: ServiceData[] }> = ({
       </div>
 
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={filteredData} margin={{ top: 20, right: 30, bottom: 20, left: 20 }}
+        <LineChart data={filteredData} margin={{ top: 20, bottom: 20, right: 70 }}
 >
           <CartesianGrid strokeDasharray="3 3" />
 
