@@ -14,7 +14,6 @@ import { handleSignUp } from "@/lib/cognitoActions";
 import Link from "next/link";
 import CompanyLogo from '../../assets/company-logo.jpg'
 import Image from "next/image";
-import SendVerificationCode from "./send-verification-form-code";
 
 import BackgroundImage from '../../assets/background-image.jpg'
 
@@ -98,7 +97,7 @@ export default function SignUpForm() {
                         </div>
                         <SignUpButton />
                         <div className="flex items-center justify-center gap-x-1 mt-5">
-                            Already have an account? 
+                            Already have an account?
                             <Link
                                 href="/"
                                 className="cursor-pointer text-blue-500"
