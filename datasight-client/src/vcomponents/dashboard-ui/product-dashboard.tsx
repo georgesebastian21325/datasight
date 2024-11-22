@@ -18,18 +18,18 @@ import { formatCustom } from '@/app/api/dashboardFunctions/global-dashboard-func
 
 type ProductCostItem = {
   product_id: string;
-  total_product_cost: string;
+  total_product_cost: number;
 };
 
 type ProductRevenueItem = {
   product_id: string;
-  total_product_revenue: string;
+  total_product_revenue: number;
 };
 
 type ProductRevenueContributionItems = {
   product_id: string;
   total_revenue: string;
-  revenue_percentage: string;
+  revenue_percentage: number;
 };
 
 type ProductUtilizationRateItems = {
@@ -48,13 +48,13 @@ type ProductRevenueForecastItems = {
 type ProductCostTableListItems = {
   product_id: string;
   service_id: string;
-  service_contribution_cost: string;
+  service_contribution_cost: number;
 }
 
 type ProductRevenueTableListItems = {
   product_id: string;
   service_id: string;
-  service_contribution_revenue: string;
+  service_contribution_revenue: number;
 }
 
 
