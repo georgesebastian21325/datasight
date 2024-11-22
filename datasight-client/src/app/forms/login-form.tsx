@@ -100,9 +100,15 @@ export default function LoginForm() {
 				</div>
 				<div className='flex flex-col mt-5 items-center'>
 					<LoginButton />
-					<p className='mt-2 text-sm'> Don't have an account yet? <span className='text-brand-blue font-semibold'>
-						<Link href='/auth/signup' className='text-sm text-blue-600 hover:underline font-medium'>  Sign Up </Link>
-					</span></p>
+					<p className="mt-2 text-sm">
+						Don&apos;t have an account yet?
+						<span className="text-brand-blue font-semibold">
+							<Link href="/auth/signup" className="text-sm text-blue-600 hover:underline font-medium">
+								Sign Up
+							</Link>
+						</span>
+					</p>
+
 				</div>
 			</div>
 		</form>
