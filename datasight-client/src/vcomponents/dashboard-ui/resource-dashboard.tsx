@@ -24,12 +24,12 @@ import ResourceRevenueForecastChart from "@/app/components/dashboard-charts/reso
 
 type ResourceCostItem = {
   resource_type: string;
-  total_resource_cost: string;
+  total_resource_cost: number;
 };
 
 type ResourceRevenueItem = {
   resource_type: string;
-  total_resource_revenue: string;
+  total_resource_revenue: number;
 };
 
 type AverageUtilizationItems = {
@@ -37,7 +37,7 @@ type AverageUtilizationItems = {
   resource_type: string;
   month: string;
   year: string;
-  average_monthly_utilization_percentage: number;
+  avg_monthly_resource_utilization: number;
 };
 
 type ResourceRevenueForecastItems = {
@@ -50,24 +50,12 @@ type ResourceRevenueForecastItems = {
 
 export default function ResourceDashboardComponent() {
   const [loading, setLoading] = useState(true); // Loading state
-  const [totalResourceCost, setTotalResourceCost] = useState<string | null>(
-    null
-  );
-  const [totalResourceRevenue, setTotalResourceRevenue] = useState<
-    string | null
-  >(null);
-  const [costByResourceType, setCostByResourceType] = useState<
-    ResourceCostItem[]
-  >([]);
-  const [revenueByResourceType, setRevenueResource] = useState<
-    ResourceRevenueItem[]
-  >([]);
-  const [resourceRevenueForecast, setResourceRevenueForecast] = useState<
-    ResourceRevenueForecastItems[]
-  >([]);
-  const [averageUtilization, setAverageUtilization] = useState<
-    AverageUtilizationItems[]
-  >([]);
+  const [totalResourceCost, setTotalResourceCost] = useState<string | null>(null);
+  const [totalResourceRevenue, setTotalResourceRevenue] = useState<string | null>(null);
+  const [costByResourceType, setCostByResourceType] = useState<ResourceCostItem[]>([]);
+  const [revenueByResourceType, setRevenueResource] = useState<ResourceRevenueItem[]>([]);
+  const [resourceRevenueForecast, setResourceRevenueForecast] = useState<ResourceRevenueForecastItems[]>([]);
+  const [averageUtilization, setAverageUtilization] = useState<AverageUtilizationItems[]>([]);
 
   useEffect(() => {
     async function fetchData() {
