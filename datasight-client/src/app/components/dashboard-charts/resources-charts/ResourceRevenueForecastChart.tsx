@@ -10,7 +10,23 @@ import {
   Legend,
 } from "recharts";
 
-function ResourceRevenueForecastChart({ data }) {
+// Define the data type for chart entries
+interface DataItem {
+  resource_id: string;
+  month_year: string; // Format: "YYYY-MM"
+  total_resource_revenue: number | string;
+  predicted_revenue: number | string;
+  forecast_revenue: number | string;
+}
+
+// Define the component props
+interface ResourceRevenueForecastChartProps {
+  data: DataItem[];
+}
+
+const ResourceRevenueForecastChart: React.FC<ResourceRevenueForecastChartProps> = ({
+  data,
+}) => {
   const monthNames = [
     "January",
     "February",
@@ -34,19 +50,21 @@ function ResourceRevenueForecastChart({ data }) {
       ...item,
       resource_id: item.resource_id.trim(),
       month_year: `${monthName} ${year}`, // Format as "Month Year"
-      total_resource_revenue: parseFloat(item.total_resource_revenue || 0),
-      predicted_revenue: parseFloat(item.predicted_revenue || 0),
-      forecast_revenue: parseFloat(item.forecast_revenue || 0),
+      total_resource_revenue: parseFloat(String(item.total_resource_revenue)) || 0,
+      predicted_revenue: parseFloat(String(item.predicted_revenue)) || 0,
+      forecast_revenue: parseFloat(String(item.forecast_revenue)) || 0,
     };
   });
 
   // Extract unique resource IDs and sorted month-year options
-  const resourceIds = [
-    ...new Set(formattedData.map((item) => item.resource_id)),
-  ];
-  const monthYearOptions = [
-    ...new Set(formattedData.map((item) => item.month_year)),
-  ].sort((a, b) => new Date(a) - new Date(b));
+  const resourceIds: string[] = Array.from(
+    new Set(formattedData.map((item) => item.resource_id))
+  );
+
+  const monthYearOptions: string[] = Array.from(
+    new Set(formattedData.map((item) => item.month_year))
+  ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+
 
   // Ensure valid default values
   const initialResourceId = resourceIds[0] || "";
@@ -55,9 +73,9 @@ function ResourceRevenueForecastChart({ data }) {
 
   // State for selected filters
   const [selectedResourceId, setSelectedResourceId] =
-    useState(initialResourceId);
-  const [startDate, setStartDate] = useState(initialStartDate);
-  const [endDate, setEndDate] = useState(initialEndDate);
+    useState<string>(initialResourceId);
+  const [startDate, setStartDate] = useState<string>(initialStartDate);
+  const [endDate, setEndDate] = useState<string>(initialEndDate);
 
   // Filter data by selected resource ID and date range
   const filteredData = formattedData.filter((item) => {
@@ -72,7 +90,9 @@ function ResourceRevenueForecastChart({ data }) {
   });
 
   // Sort data by month_year for proper rendering
-  filteredData.sort((a, b) => new Date(a.month_year) - new Date(b.month_year));
+  filteredData.sort(
+    (a, b) => new Date(a.month_year).getTime() - new Date(b.month_year).getTime()
+  );
 
   return (
     <div style={{ margin: "2rem" }}>
@@ -198,6 +218,6 @@ function ResourceRevenueForecastChart({ data }) {
       </ResponsiveContainer>
     </div>
   );
-}
+};
 
 export default ResourceRevenueForecastChart;
