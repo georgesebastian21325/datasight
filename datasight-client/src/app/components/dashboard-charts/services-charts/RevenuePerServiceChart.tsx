@@ -94,7 +94,7 @@ const RevenuePerServiceChart: React.FC<RevenuePerServiceChartProps> = ({ data })
                             const legendItem = formattedData.find(
                                 (item) => item.name === value
                             );
-                            return `${value} (${legendItem?.percentage}%)`;
+                            return `${value}`;
                         }}
                     />
                 </PieChart>
