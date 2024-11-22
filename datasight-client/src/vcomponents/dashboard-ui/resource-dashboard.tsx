@@ -141,7 +141,7 @@ export default function ResourceDashboardComponent() {
         <Card className={`${loading ? "animate-pulse" : ""}`}>
           <CardHeader>
             <CardTitle className="text-lg font-bold">
-              Cost by Resource Type
+              Cost Per Resource Type
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -156,7 +156,7 @@ export default function ResourceDashboardComponent() {
           <Card className={`${loading ? "animate-pulse" : ""}`}>
             <CardHeader>
               <CardTitle className="text-lg font-bold">
-                Revenue By Resource Type
+                Revenue Per Resource Type
               </CardTitle>
             </CardHeader>
             <CardContent>

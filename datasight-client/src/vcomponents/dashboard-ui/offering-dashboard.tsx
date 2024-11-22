@@ -124,7 +124,7 @@ export default function OfferingDashboardComponent() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4"> 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xl font-bold">Cost By Offering </CardTitle>
+            <CardTitle className="text-xl font-bold">Offering Cost By ID </CardTitle>
           </CardHeader>
           <CardContent>
             <CostByOfferingChart data={costByOffering} />
@@ -132,7 +132,7 @@ export default function OfferingDashboardComponent() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xl font-bold">Revenue By Offering</CardTitle>
+            <CardTitle className="text-xl font-bold">Offering Revenue By ID</CardTitle>
           </CardHeader>
           <CardContent>
             <RevenueByOfferingChart data={revenueByOffering} />

@@ -13,7 +13,7 @@ import ProductRevenueTableList from '@/app/components/dashboard-charts/products-
 
 import { fetchTotalProductCost, fetchTotalProductRevenue, fetchProductCostByCategory, 
           fetchRevenueByProduct, fetchProductCostTableList, fetchProductRevenueTableList,
-          fetchProductRevenueForecast, fetchProductUtilizationTrend } from '../../app/api/dashboardFunctions/products-functions'
+          fetchProductRevenueForecast } from '../../app/api/dashboardFunctions/products-functions'
 import { formatCustom } from '@/app/api/dashboardFunctions/global-dashboard-functions'
 
 type ProductCostItem = {
@@ -139,7 +139,7 @@ export default function ProductLayerDashboard() {
  
             <Card className={`${loading ? 'skeleton animate-pulse' : ''}`}>
               <CardHeader>
-                <CardTitle className='text-lg font-bold'>Cost Per Product</CardTitle>
+                <CardTitle className='text-lg font-bold'> Product Cost By ID</CardTitle>
               </CardHeader>
               <CardContent>
                 {loading ? <div className="skeleton animate-pulse"></div> : <CostByProductChart data={costPerProduct} />}
@@ -147,7 +147,7 @@ export default function ProductLayerDashboard() {
             </Card>
             <Card className={`${loading ? 'skeleton animate-pulse' : ''}`}>
               <CardHeader>
-                <CardTitle className='text-lg font-bold'>Revenue Per Product</CardTitle>
+                <CardTitle className='text-lg font-bold'>Product Revenue By ID</CardTitle>
               </CardHeader>
               <CardContent>
                 {loading ? <div className="skeleton animate-pulse"></div> : <RevenueByProductChart data={revenuePerProduct} />}

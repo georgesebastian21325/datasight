@@ -145,7 +145,7 @@ export default function ServiceDashboardComponent() {
         <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-8">
           <Card className={`${loading ? 'animate-pulse' : ''}`}>
             <CardHeader>
-              <CardTitle className='text-lg font-bold'>Service Cost by Category</CardTitle>
+              <CardTitle className='text-lg font-bold'>Service Cost By ID</CardTitle>
             </CardHeader>
             <CardContent>
               {loading ? <div className="h-48"></div> : <CostPerServiceChart data={costPerService} />}
@@ -153,7 +153,7 @@ export default function ServiceDashboardComponent() {
           </Card>
           <Card className={`${loading ? 'animate-pulse' : ''}`}>
             <CardHeader>
-              <CardTitle className='text-lg font-bold'>Service Revenue by Category</CardTitle>
+              <CardTitle className='text-lg font-bold'>Service Revenue By ID</CardTitle>
             </CardHeader>
             <CardContent>
               {loading ? <div className="h-48"></div> : <RevenuePerServiceChart data={revenuePerService} />}
