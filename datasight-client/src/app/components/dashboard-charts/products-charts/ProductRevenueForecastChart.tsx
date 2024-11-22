@@ -39,9 +39,9 @@ function ProductRevenueForecastChart({ data }) {
     );
 
     // State for selected filters
-    const [selectedProductId, setSelectedProductId] = useState(productIds[0] || '');
-    const [startMonth, setStartMonth] = useState(monthYears[0] || '');
-    const [endMonth, setEndMonth] = useState(monthYears[monthYears.length - 1] || '');
+    const [selectedProductId, setSelectedProductId] = useState(productIds[0]);
+    const [startMonth, setStartMonth] = useState(monthYears[0]);
+    const [endMonth, setEndMonth] = useState(monthYears[monthYears.length - 1]);
 
     // Filter data by selected product ID and month-year range
     const filteredData = formattedData.filter((item) => {
