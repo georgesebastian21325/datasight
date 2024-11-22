@@ -1,5 +1,17 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
+    { "source": "/auth/:path*", "destination": "/auth/:path*" },
+    { "source": "/dashboard/:path*", "destination": "/dashboard/:path*" },
+    { "source": "/enterprise-architecture", "destination": "/enterprise-architecture" },
+    { "source": "/onboarding", "destination": "/onboarding" },
+    { "source": "/recommendations-page", "destination": "/recommendations-page" },
+    { "source": "/test", "destination": "/test" }
+  ],
+  "redirects": [
+    {
+      "source": "/404",
+      "destination": "/",
+      "permanent": false
+    }
   ]
 }
