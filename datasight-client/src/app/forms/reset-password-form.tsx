@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react';
-import { completeNewPassword } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 
 export default function ResetPasswordForm() {
@@ -27,8 +26,8 @@ export default function ResetPasswordForm() {
       const user = JSON.parse(userChallenge);
 
       // Complete the password reset process
-      await completeNewPassword(user, newPassword);
-      console.log('Password updated and user confirmed');
+{ /*     await completeNewPassword(user, newPassword);
+    console.log('Password updated and user confirmed'); */}
 
       // Clear the session storage
       sessionStorage.removeItem('userChallenge');
