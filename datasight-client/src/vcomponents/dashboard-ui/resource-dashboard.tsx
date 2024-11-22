@@ -1,27 +1,36 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from "@/vcomponents/dashboard-ui/resource-components/card"
+import { useState, useEffect } from "react";
 import {
-  fetchTotalResourceCost, fetchTotalResourceRevenue, fetchCostByResourceType,
-  fetchTopRevenueGeneratingResources, formatCustom, fetchAverageUtilizationResource,fetchResourceRevenueForecast
-} from '../../app/api/dashboardFunctions/resources-functions'
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/vcomponents/dashboard-ui/resource-components/card";
+import {
+  fetchTotalResourceCost,
+  fetchTotalResourceRevenue,
+  fetchCostByResourceType,
+  fetchTopRevenueGeneratingResources,
+  formatCustom,
+  fetchAverageUtilizationResource,
+  fetchResourceRevenueForecast,
+} from "../../app/api/dashboardFunctions/resources-functions";
 
-import CostByResourceTypeChart from '../../app/components/dashboard-charts/resources-charts/CostByResourceTypeChart'
-import RevenueByResourceTypeChart from '../../app/components/dashboard-charts/resources-charts/RevenueByResourceType'
-import AverageUtilizationChart from '../../app/components/dashboard-charts/resources-charts/AverageUtilizationChart';
-import ResourceRevenueForecastChart from '@/app/components/dashboard-charts/resources-charts/ResourceRevenueForecastChart'
+import CostByResourceTypeChart from "../../app/components/dashboard-charts/resources-charts/CostByResourceTypeChart";
+import RevenueByResourceTypeChart from "../../app/components/dashboard-charts/resources-charts/RevenueByResourceType";
+import AverageUtilizationChart from "../../app/components/dashboard-charts/resources-charts/AverageUtilizationChart";
+import ResourceRevenueForecastChart from "@/app/components/dashboard-charts/resources-charts/ResourceRevenueForecastChart";
 
 type ResourceCostItem = {
-  resource_id: string;
   resource_type: string;
   total_resource_cost: string;
 };
 
 type ResourceRevenueItem = {
-  resource_id: string;
+  resource_type: string;
   total_resource_revenue: string;
-}
+};
 
 type AverageUtilizationItems = {
   resource_id: string;
@@ -40,17 +49,29 @@ type ResourceRevenueForecastItems = {
 };
 
 export default function ResourceDashboardComponent() {
-  const [loading, setLoading] = useState(true);  // Loading state
-  const [totalResourceCost, setTotalResourceCost] = useState<string | null>(null)
-  const [totalResourceRevenue, setTotalResourceRevenue] = useState<string | null>(null)
-  const [costByResourceType, setCostByResourceType] = useState<ResourceCostItem[]>([]);
-  const [revenueByResourceType, setRevenueResource] = useState<ResourceRevenueItem[]>([]);
-  const [resourceRevenueForecast, setResourceRevenueForecast] = useState < ResourceRevenueForecastItems[]>([])
-  const [averageUtilization, setAverageUtilization] = useState<AverageUtilizationItems[]>([]);
+  const [loading, setLoading] = useState(true); // Loading state
+  const [totalResourceCost, setTotalResourceCost] = useState<string | null>(
+    null
+  );
+  const [totalResourceRevenue, setTotalResourceRevenue] = useState<
+    string | null
+  >(null);
+  const [costByResourceType, setCostByResourceType] = useState<
+    ResourceCostItem[]
+  >([]);
+  const [revenueByResourceType, setRevenueResource] = useState<
+    ResourceRevenueItem[]
+  >([]);
+  const [resourceRevenueForecast, setResourceRevenueForecast] = useState<
+    ResourceRevenueForecastItems[]
+  >([]);
+  const [averageUtilization, setAverageUtilization] = useState<
+    AverageUtilizationItems[]
+  >([]);
 
   useEffect(() => {
     async function fetchData() {
-      setLoading(true);  // Start loading
+      setLoading(true); // Start loading
       const resourceCost = await fetchTotalResourceCost();
       const resourceRevenue = await fetchTotalResourceRevenue();
       const costByResourceType = await fetchCostByResourceType();
@@ -70,82 +91,119 @@ export default function ResourceDashboardComponent() {
       setRevenueResource(revenueByResourceTypeData);
       setAverageUtilization(aveUtilizationResource);
       setResourceRevenueForecast(resourceRevenueForecastData);
-      setLoading(false);  // Stop loading after data is fetched
+      setLoading(false); // Stop loading after data is fetched
     }
 
     fetchData();
   }, []);
 
-
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820]">Resource Layer Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820]">
+        Resource Layer Dashboard
+      </h1>
 
       {/* 1. Key Metrics Overview */}
       <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 mb-8 ">
-        <Card className={`${loading ? 'skeleton bg-blue-950' : 'bg-brand-blue '} text-white`}>
+        <Card
+          className={`${
+            loading ? "skeleton bg-blue-950" : "bg-brand-blue "
+          } text-white`}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Resource Cost</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Resource Cost
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? '...' : `$ ${totalResourceCost}`}</div>
+            <div className="text-2xl font-bold">
+              {loading ? "..." : `$ ${totalResourceCost}`}
+            </div>
           </CardContent>
         </Card>
 
-        <Card className={`${loading ? 'skeleton' : ''} bg-black text-white` }>
+        <Card className={`${loading ? "skeleton" : ""} bg-black text-white`}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue from Resources</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Revenue from Resources
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? '...' : `$ ${totalResourceRevenue}`}</div>
+            <div className="text-2xl font-bold">
+              {loading ? "..." : `$ ${totalResourceRevenue}`}
+            </div>
           </CardContent>
         </Card>
       </div>
 
       {/* 2. Performance and Financial Insights */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <Card className={`${loading ? 'animate-pulse' : ''}`}>
+        <Card className={`${loading ? "animate-pulse" : ""}`}>
           <CardHeader>
-            <CardTitle className='text-lg font-bold'>Cost by Resource Type</CardTitle>
+            <CardTitle className="text-lg font-bold">
+              Cost by Resource Type
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            {loading ? <div className="h-48"></div> : <CostByResourceTypeChart data={costByResourceType} />}
+            {loading ? (
+              <div className="h-48"></div>
+            ) : (
+              <CostByResourceTypeChart data={costByResourceType} />
+            )}
           </CardContent>
         </Card>
         <div className="grid grid-cols-1 gap-4">
-          <Card className={`${loading ? 'animate-pulse' : ''}`}>
+          <Card className={`${loading ? "animate-pulse" : ""}`}>
             <CardHeader>
-              <CardTitle className='text-lg font-bold'>Revenue By Resource Type</CardTitle>
+              <CardTitle className="text-lg font-bold">
+                Revenue By Resource Type
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              {loading ? <div className="h-48"></div> : <RevenueByResourceTypeChart data={revenueByResourceType} />}
+              {loading ? (
+                <div className="h-48"></div>
+              ) : (
+                <RevenueByResourceTypeChart data={revenueByResourceType} />
+              )}
             </CardContent>
           </Card>
         </div>
       </div>
       <div className="grid grid-cols-1 mb-8">
-        <Card className={`${loading ? 'animate-pulse' : ''}`}>
+        <Card className={`${loading ? "animate-pulse" : ""}`}>
           <CardHeader>
-            <CardTitle className='text-lg font-bold'>Resource Revenue Trend</CardTitle>
+            <CardTitle className="text-lg font-bold">
+              Resource Revenue Trend
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            {loading ? <div className="h-48"></div> : <ResourceRevenueForecastChart data={resourceRevenueForecast}/>}
+            {loading ? (
+              <div className="h-48"></div>
+            ) : (
+              <ResourceRevenueForecastChart data={resourceRevenueForecast} />
+            )}
           </CardContent>
-        </Card>        
-
+        </Card>
       </div>
 
       {/* 3. Capacity and Utilization Insights */}
       <div className="grid grid-cols-1 gap-4 mb-8">
-        <Card className={`${loading ? 'animate-pulse' : ''}`}>
+        <Card className={`${loading ? "animate-pulse" : ""}`}>
           <CardHeader>
-            <CardTitle className='text-lg font-bold'> Resource Utilization Trend </CardTitle>
+            <CardTitle className="text-lg font-bold">
+              {" "}
+              Resource Utilization Trend{" "}
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            {loading ? <div className="h-48"></div> : <AverageUtilizationChart data={averageUtilization} />}
+            {loading ? (
+              <div className="h-48"></div>
+            ) : (
+              <AverageUtilizationChart data={averageUtilization} />
+            )}
           </CardContent>
         </Card>
       </div>
     </div>
-  )
+  );
 }

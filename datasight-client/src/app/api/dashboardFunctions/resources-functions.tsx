@@ -43,7 +43,6 @@ async function fetchTotalResourceRevenue() {
 
 async function fetchCostByResourceType() {
     type ResourceCostItem = {
-        resource_id: string;
         resource_type: string;
         total_resource_cost: string;
     };
@@ -103,7 +102,7 @@ async function fetchTopCostliestResources() {
 
 async function fetchTopRevenueGeneratingResources() {
     type ResourceRevenueItem = {
-        resource_id: string;
+        resource_type: string;
         total_resource_revenue: string;
     };
 
