@@ -147,54 +147,107 @@ export default function OPSRMapping() {
 		const connectedNodes = new Set<string>();
 		const connectedEdges = new Set<string>();
 
-		// Recursive function to traverse and highlight nodes and edges
-		const traverseConnections = (currentNodeId: string, layer: string) => {
+		const traverseConnections = (currentNodeId: string, layer: string, direction: "up" | "down") => {
 			switch (layer) {
 				case "offering":
-					offeringMappingData.forEach((mapping) => {
-						if (currentNodeId === mapping.offering_id) {
-							connectedNodes.add(mapping.product_id);
-							connectedEdges.add(`edge-${mapping.offering_id}-${mapping.product_id}`);
-							traverseConnections(mapping.product_id, "product");
-						}
-					});
+					if (direction === "down") {
+						offeringMappingData.forEach((mapping) => {
+							if (currentNodeId === mapping.offering_id) {
+								connectedNodes.add(mapping.product_id);
+								connectedEdges.add(`edge-${mapping.offering_id}-${mapping.product_id}`);
+								traverseConnections(mapping.product_id, "product", "down");
+							}
+						});
+					}
 					break;
+
 				case "product":
-					productMappingData.forEach((mapping) => {
-						if (currentNodeId === mapping.product_id) {
-							connectedNodes.add(mapping.service_id);
-							connectedEdges.add(`edge-${mapping.product_id}-${mapping.service_id}`);
-							traverseConnections(mapping.service_id, "service");
-						}
-					});
+					if (direction === "down") {
+						productMappingData.forEach((mapping) => {
+							if (currentNodeId === mapping.product_id) {
+								connectedNodes.add(mapping.service_id);
+								connectedEdges.add(`edge-${mapping.product_id}-${mapping.service_id}`);
+								traverseConnections(mapping.service_id, "service", "down");
+							}
+						});
+					} else if (direction === "up") {
+						offeringMappingData.forEach((mapping) => {
+							if (currentNodeId === mapping.product_id) {
+								connectedNodes.add(mapping.offering_id);
+								connectedEdges.add(`edge-${mapping.offering_id}-${mapping.product_id}`);
+								traverseConnections(mapping.offering_id, "offering", "up");
+							}
+						});
+					} else if (direction === "up") {
+						productMappingData.forEach((mapping) => {
+							if (currentNodeId === mapping.service_id) {
+								connectedNodes.add(mapping.product_id);
+								connectedEdges.add(`edge-${mapping.product_id}-${mapping.service_id}`);
+								traverseConnections(mapping.product_id, "product", "up");
+							}
+						});
+					}
 					break;
+					break;
+
 				case "service":
-					resourceMappingData.forEach((mapping) => {
-						if (currentNodeId === mapping.service_id) {
-							connectedNodes.add(mapping.resource_id);
-							connectedEdges.add(`edge-${mapping.resource_id}-${mapping.service_id}`);
-						}
-					});
+					if (direction === "down") {
+						resourceMappingData.forEach((mapping) => {
+							if (currentNodeId === mapping.service_id) {
+								connectedNodes.add(mapping.resource_id);
+								connectedEdges.add(`edge-${mapping.resource_id}-${mapping.service_id}`);
+							}
+						});
+					} else if (direction === "up") {
+						resourceMappingData.forEach((mapping) => {
+							if (currentNodeId === mapping.resource_id) {
+								connectedNodes.add(mapping.service_id);
+								connectedEdges.add(`edge-${mapping.resource_id}-${mapping.service_id}`);
+								traverseConnections(mapping.service_id, "service", "up");
+							}
+						});
+					}
 					break;
+
+				case "resource":
+					if (direction === "up") {
+						resourceMappingData.forEach((mapping) => {
+							if (currentNodeId === mapping.resource_id) {
+								connectedNodes.add(mapping.service_id);
+								connectedEdges.add(`edge-${mapping.resource_id}-${mapping.service_id}`);
+								traverseConnections(mapping.service_id, "service", "up");
+							}
+						});
+					}
+					break;
+
 				default:
 					break;
 			}
 		};
 
-		// Determine the layer of the clicked node and start traversal
+
+		// Determine the layer of the clicked node and start both upward and downward traversal
 		if (offeringMappingData.some((m) => m.offering_id === node.id)) {
-			traverseConnections(node.id, "offering");
+			traverseConnections(node.id, "offering", "down");
 		} else if (productMappingData.some((m) => m.product_id === node.id)) {
-			traverseConnections(node.id, "product");
+			traverseConnections(node.id, "product", "down");
+			traverseConnections(node.id, "product", "up");
 		} else if (resourceMappingData.some((m) => m.service_id === node.id)) {
-			traverseConnections(node.id, "service");
+			traverseConnections(node.id, "service", "down");
+			traverseConnections(node.id, "service", "up");
+		} else if (resourceMappingData.some((m) => m.resource_id === node.id)) {
+			traverseConnections(node.id, "service", "up");
 		}
+
+
 
 		// Highlight the clicked node itself
 		connectedNodes.add(node.id);
 
 		setHighlightedNodes(connectedNodes);
 	};
+
 
 
 	const generateNodesAndEdges = useCallback(() => {
