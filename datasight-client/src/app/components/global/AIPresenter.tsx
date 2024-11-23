@@ -1,5 +1,6 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { CircleX, Loader } from "lucide-react";
 
 interface OptimizedOPSRMappingProps {
 	optimizationType: string;
@@ -8,14 +9,27 @@ interface OptimizedOPSRMappingProps {
 export default function AIPresenter({
 	optimizationType,
 }: OptimizedOPSRMappingProps) {
-	const [text, setText] = useState(""); // State to store the fetched text
-	const [loading, setLoading] = useState(false); // State to handle loading status
+	const [text, setText] = useState<string | JSX.Element[]>(
+		"",
+	); // State to store the fetched text
+	const [loading, setLoading] = useState<Boolean>(false); // State to handle loading status
 	const [error, setError] = useState<string | null>(null); // State to handle errors
 	const [videoUrl, setVideoUrl] = useState<string | null>(
 		null,
 	); // State to store the generated video URL
+	const [showVideo, setShowVideo] = useState(false);
 	const API_KEY =
 		"anVkZ2UubW9uZ2NhbC5jaWNzQHVzdC5lZHUucGg:o7TU4ENjRnOh689pHzlx2";
+
+	useEffect(() => {
+		if (error) {
+			const timer = setTimeout(() => {
+				setError(null);
+			}, 2000);
+
+			return () => clearTimeout(timer);
+		}
+	}, [error]);
 
 	// Function to generate a video with D-ID API
 	const generateVideo = async (text: string) => {
@@ -92,6 +106,7 @@ export default function AIPresenter({
 
 				if (result.status === "done") {
 					setVideoUrl(result.result_url);
+					setShowVideo(true);
 					break;
 				} else if (result.status === "failed") {
 					throw new Error(
@@ -132,14 +147,26 @@ export default function AIPresenter({
 			const data = await response.json();
 			console.log(data);
 
-			// Concatenate valid responses while ignoring errors
-			const parts = Object.keys(data)
+			const parts_text = Object.keys(data)
 				.filter((key) => data[key]?.response) // Filter out keys without a valid response
 				.map((key) => data[key].response) // Map to valid response strings
 				.join("\n\n"); // Concatenate with double newlines for better readability
 
+			// Concatenate valid responses while ignoring errors
+			const parts = Object.keys(data)
+				.filter((key) => data[key]?.response) // Filter out keys without a valid response
+				.map((key, index) => (
+					<div
+						key={index}
+						style={{ marginBottom: "1rem" }}
+					>
+						<strong>{`Part ${index + 1}:`}</strong>
+						<p>{data[key].response}</p>
+					</div>
+				)); // Format responses as HTML
+
 			setText(parts);
-			await generateVideo(parts);
+			await generateVideo(parts_text);
 		} catch (err: any) {
 			setError(err.message);
 		} finally {
@@ -148,12 +175,23 @@ export default function AIPresenter({
 	};
 
 	return (
-		<div>
-			{loading && <p>Loading...</p>}
-			{error && <p>Error: {error}</p>}
+		<div style={{ position: "relative" }}>
+			{/* {loading && <p>Loading...</p>} */}
+
 			<p>{text}</p>
-			{!loading && !error && videoUrl && (
-				<video controls>
+			{!loading && !error && videoUrl && showVideo && (
+				<video
+					controls
+					style={{
+						position: "fixed",
+						bottom: "10px",
+						right: "10px",
+						width: "300px",
+						height: "auto",
+						boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+						borderRadius: "8px",
+					}}
+				>
 					<source
 						src={videoUrl}
 						type="video/mp4"
@@ -161,16 +199,42 @@ export default function AIPresenter({
 					Your browser does not support the video tag.
 				</video>
 			)}
-			<button
-				className={`py-3 px-4 rounded-md bg-black text-white font-bold transition-all duration-300  hover:bg-brand-orange hover:scale-105${
-					optimizationType
-						? ""
-						: "cursor-not-allowed opacity-50"
-				}`}
-				onClick={() => fetchText()}
-			>
-				Present with AI
-			</button>
+			{!showVideo && (
+				<button
+					className={`py-3 px-4 rounded-md bg-black text-white font-bold transition-all duration-300  hover:bg-brand-orange hover:scale-105${
+						optimizationType
+							? ""
+							: "cursor-not-allowed opacity-50"
+					}`}
+					onClick={() => fetchText()}
+				>
+					Present with AI
+				</button>
+			)}
+			{loading && (
+				<p className="mt-4 px-5 py-2 bg-blue-100 rounded-md w-fit flex flex-row gap-2 font-semibold">
+					<Loader /> Loading...
+				</p>
+			)}
+			{error && (
+				<p className="mt-4 px-5 py-2 bg-red-300 rounded-md w-fit flex flex-row gap-2">
+					<CircleX />
+					<span className="font-semibold">Error:</span>{" "}
+					{error}
+				</p>
+			)}
+			{showVideo && (
+				<button
+					className={`py-3 px-4 rounded-md bg-red-500 text-white font-bold transition-all duration-300  hover:bg-red-900 hover:scale-105${
+						optimizationType
+							? ""
+							: "cursor-not-allowed opacity-50"
+					}`}
+					onClick={() => setShowVideo(!showVideo)}
+				>
+					Hide Video
+				</button>
+			)}
 		</div>
 	);
 }
