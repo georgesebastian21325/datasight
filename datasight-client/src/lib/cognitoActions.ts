@@ -96,7 +96,6 @@ export async function handleSignOut() {
   } catch (error) {
     console.log(getErrorMessage(error));
   }
-
 }
 
 export async function handleResetPassword(
