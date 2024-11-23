@@ -111,7 +111,7 @@ export default function OptimizedOPSRMapping({
 				const [resourceRes, productRes, offeringRes] =
 					await Promise.all([
 						fetch(
-							"https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getOptimizedResourceServiceMapping",
+							`https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getOptimizedResourceServiceMapping?mapping_type=${optimizationType}`,
 						),
 						fetch(
 							"https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getServiceProductMapping",

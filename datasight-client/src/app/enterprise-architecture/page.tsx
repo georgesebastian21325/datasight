@@ -62,7 +62,7 @@ export default function Page() {
 			<div className="mx-auto p-4 pt-16 h-screen w-[90%]">
 				<h2 className="text-2xl font-bold mb-1 gradient-text">
 					{isOptimizedMapping
-						? "Optimized Enterprise Architecture"
+						? `${optimizationType} Optimized Enterprise Architecture`
 						: "Enterprise Architecture"}
 				</h2>
 				<p className="mb-3 text-gray-500">
@@ -88,7 +88,7 @@ export default function Page() {
 							onChange={(e) =>
 								setOptimizationType(e.target.value)
 							}
-							className="block w-fit px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+							className="block w-fit px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 						>
 							<option value="default">
 								Choose an option
