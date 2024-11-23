@@ -178,16 +178,7 @@ export default function OPSRMapping() {
 								traverseConnections(mapping.offering_id, "offering", "up");
 							}
 						});
-					} else if (direction === "up") {
-						productMappingData.forEach((mapping) => {
-							if (currentNodeId === mapping.service_id) {
-								connectedNodes.add(mapping.product_id);
-								connectedEdges.add(`edge-${mapping.product_id}-${mapping.service_id}`);
-								traverseConnections(mapping.product_id, "product", "up");
-							}
-						});
 					}
-					break;
 					break;
 
 				case "service":
