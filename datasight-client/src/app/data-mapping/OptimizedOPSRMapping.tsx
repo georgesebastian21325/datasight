@@ -142,140 +142,6 @@ export default function OptimizedOPSRMapping({
 				const parsedResourceData: ResourceServiceMappingData[] =
 					resourceData;
 
-				// Log to confirm parsing is successful
-				console.log(
-					"Parsed Resource Data:",
-					parsedResourceData,
-				);
-
-				// Step 1: Compute Service Health Status
-				const statusToScore: Record<string, number> = {
-					green: 1,
-					yellow: 3,
-					red: 7,
-				};
-
-				////////// RESOURCE HEALTH
-
-				// Derive resource health data from parsedResourceData
-				const derivedResourceHealthData =
-					parsedResourceData.map((resource) => {
-						const { resource_id, status } = resource;
-						const resource_risk_status =
-							status?.toLowerCase() || "unknown"; // Default to "unknown" if status is not defined
-						return {
-							resource_id,
-							resource_risk_status,
-						};
-					});
-
-				// Define score ranges to determine color
-				const scoreToStatus = (averageScore: number) => {
-					if (averageScore <= 3) return "green";
-					if (averageScore <= 7) return "yellow";
-					return "red";
-				};
-
-				// Aggregate by resource_id and calculate average score
-				const aggregatedResourceHealthData = Array.from(
-					derivedResourceHealthData.reduce(
-						(acc, resource) => {
-							const { resource_id, resource_risk_status } =
-								resource;
-							const score =
-								statusToScore[
-									resource_risk_status.toLowerCase()
-								] || 1;
-
-							if (!acc.has(resource_id)) {
-								acc.set(resource_id, {
-									totalScore: 0,
-									count: 0,
-								});
-							}
-
-							const resourceData = acc.get(resource_id);
-							resourceData!.totalScore += score;
-							resourceData!.count += 1;
-
-							return acc;
-						},
-						new Map<
-							string,
-							{ totalScore: number; count: number }
-						>(),
-					),
-				).map(([resource_id, { totalScore, count }]) => {
-					const averageScore = totalScore / count;
-					const resource_risk_status =
-						scoreToStatus(averageScore);
-
-					return { resource_id, resource_risk_status };
-				});
-
-				// Log the aggregated results
-				console.log(
-					"Aggregated Resource Health Data:",
-					aggregatedResourceHealthData,
-				);
-
-				const serviceScores = parsedResourceData.reduce(
-					(
-						acc: Record<
-							string,
-							{ totalScore: number; resourceCount: number }
-						>,
-						resource,
-					) => {
-						const { service_id, status } = resource;
-						const score =
-							statusToScore[status!.toLowerCase()] || 1;
-
-						if (!acc[service_id]) {
-							acc[service_id] = {
-								totalScore: 0,
-								resourceCount: 0,
-							};
-						}
-
-						acc[service_id].totalScore += score;
-						acc[service_id].resourceCount += 1;
-
-						return acc;
-					},
-					{},
-				);
-
-				////////// SERVICE HEALTH
-				const derivedServiceHealthData = Object.entries(
-					serviceScores,
-				).map(
-					([service_id, { totalScore, resourceCount }]) => {
-						const averageScore = totalScore / resourceCount;
-						let service_risk_status = "";
-						console.log(
-							service_id,
-							totalScore,
-							averageScore,
-						);
-						if (averageScore < 1.5) {
-							service_risk_status = "green";
-						} else if (
-							averageScore >= 1.5 &&
-							averageScore <= 2.5
-						) {
-							service_risk_status = "yellow";
-						} else {
-							service_risk_status = "red";
-						}
-
-						return {
-							service_id,
-							service_risk_status,
-						};
-					},
-				);
-
 				////////// PRODUCT HEALTH
 
 				// Step 2: Compute Product Health Status Based on Services
@@ -283,71 +149,6 @@ export default function OptimizedOPSRMapping({
 					Array.isArray(productData)
 						? productData
 						: Object.values(productData);
-
-				const productScores = parsedProductData.reduce(
-					(
-						acc: Record<
-							string,
-							{ totalScore: number; serviceCount: number }
-						>,
-						product,
-					) => {
-						const { product_id, service_id } = product;
-						const serviceHealth =
-							derivedServiceHealthData.find(
-								(h) => h.service_id === service_id,
-							);
-
-						if (!acc[product_id]) {
-							acc[product_id] = {
-								totalScore: 0,
-								serviceCount: 0,
-							};
-						}
-
-						if (serviceHealth) {
-							const score =
-								statusToScore[
-									serviceHealth.service_risk_status
-								];
-							acc[product_id].totalScore += score;
-							acc[product_id].serviceCount += 1;
-						}
-
-						return acc;
-					},
-					{},
-				);
-
-				const derivedProductHealthData = Object.entries(
-					productScores,
-				).map(
-					([product_id, { totalScore, serviceCount }]) => {
-						const averageScore = totalScore / serviceCount;
-						let product_risk_status = "";
-						console.log("PRODUCT");
-						console.log(
-							product_id,
-							totalScore,
-							averageScore,
-						);
-						if (averageScore < 1.5) {
-							product_risk_status = "green";
-						} else if (
-							averageScore >= 1.5 &&
-							averageScore <= 2.5
-						) {
-							product_risk_status = "yellow";
-						} else {
-							product_risk_status = "red";
-						}
-
-						return {
-							product_id,
-							product_risk_status,
-						};
-					},
-				);
 
 				////////// OFFERING HEALTH
 
@@ -357,82 +158,16 @@ export default function OptimizedOPSRMapping({
 						? offeringData
 						: Object.values(offeringData);
 
-				const offeringScores = parsedOfferingData.reduce(
-					(
-						acc: Record<
-							string,
-							{ totalScore: number; productCount: number }
-						>,
-						offering,
-					) => {
-						const { offering_id, product_id } = offering;
-						const productHealth =
-							derivedProductHealthData.find(
-								(h) => h.product_id === product_id,
-							);
-
-						if (!acc[offering_id]) {
-							acc[offering_id] = {
-								totalScore: 0,
-								productCount: 0,
-							};
-						}
-
-						if (productHealth) {
-							const score =
-								statusToScore[
-									productHealth.product_risk_status
-								];
-							acc[offering_id].totalScore += score;
-							acc[offering_id].productCount += 1;
-						}
-
-						return acc;
-					},
-					{},
-				);
-
-				const derivedOfferingHealthData = Object.entries(
-					offeringScores,
-				).map(
-					([offering_id, { totalScore, productCount }]) => {
-						const averageScore = totalScore / productCount;
-						let offering_risk_status = "";
-						console.log("OFFERING");
-						console.log(
-							offering_id,
-							totalScore,
-							averageScore,
-						);
-
-						if (averageScore < 1.5) {
-							offering_risk_status = "green";
-						} else if (
-							averageScore >= 1.5 &&
-							averageScore <= 2.5
-						) {
-							offering_risk_status = "yellow";
-						} else {
-							offering_risk_status = "red";
-						}
-
-						return {
-							offering_id,
-							offering_risk_status,
-						};
-					},
-				);
-
 				// console.log(parsedResourceData);
 
 				// Update State
 				setResourceMappingData(parsedResourceData);
 				setProductMappingData(parsedProductData);
 				setOfferingMappingData(parsedOfferingData);
-				setResourceHealthData(aggregatedResourceHealthData);
-				setServiceHealthData(derivedServiceHealthData);
-				setProductHealthData(derivedProductHealthData);
-				setOfferingHealthData(derivedOfferingHealthData);
+				// setResourceHealthData(aggregatedResourceHealthData);
+				// setServiceHealthData(derivedServiceHealthData);
+				// setProductHealthData(derivedProductHealthData);
+				// setOfferingHealthData(derivedOfferingHealthData);
 
 				setError(null);
 			} catch (err) {
