@@ -99,7 +99,7 @@ export default function OPSRMapping() {
 					fetchProductHealthStatus(),
 					fetchOfferingHealthStatus()
 				]);
-				
+
 
 				// Ensure responses are OK before parsing JSON
 				if (!resourceRes.ok || !productRes.ok || !offeringRes.ok) {
@@ -147,54 +147,55 @@ export default function OPSRMapping() {
 		const connectedNodes = new Set<string>();
 		const connectedEdges = new Set<string>();
 
-		// Highlight direct connections for product-offering layer
-		offeringMappingData.forEach((mapping) => {
-			if (node.id === mapping.product_id) {
-				connectedNodes.add(mapping.offering_id);
-				connectedEdges.add(
-					`edge-${mapping.offering_id}-${mapping.product_id}`,
-				);
-			} else if (node.id === mapping.offering_id) {
-				connectedNodes.add(mapping.product_id);
-				connectedEdges.add(
-					`edge-${mapping.offering_id}-${mapping.product_id}`,
-				);
+		// Recursive function to traverse and highlight nodes and edges
+		const traverseConnections = (currentNodeId: string, layer: string) => {
+			switch (layer) {
+				case "offering":
+					offeringMappingData.forEach((mapping) => {
+						if (currentNodeId === mapping.offering_id) {
+							connectedNodes.add(mapping.product_id);
+							connectedEdges.add(`edge-${mapping.offering_id}-${mapping.product_id}`);
+							traverseConnections(mapping.product_id, "product");
+						}
+					});
+					break;
+				case "product":
+					productMappingData.forEach((mapping) => {
+						if (currentNodeId === mapping.product_id) {
+							connectedNodes.add(mapping.service_id);
+							connectedEdges.add(`edge-${mapping.product_id}-${mapping.service_id}`);
+							traverseConnections(mapping.service_id, "service");
+						}
+					});
+					break;
+				case "service":
+					resourceMappingData.forEach((mapping) => {
+						if (currentNodeId === mapping.service_id) {
+							connectedNodes.add(mapping.resource_id);
+							connectedEdges.add(`edge-${mapping.resource_id}-${mapping.service_id}`);
+						}
+					});
+					break;
+				default:
+					break;
 			}
-		});
+		};
 
-		// Highlight direct connections for product-service layer
-		productMappingData.forEach((mapping) => {
-			if (node.id === mapping.service_id) {
-				connectedNodes.add(mapping.product_id);
-				connectedEdges.add(
-					`edge-${mapping.product_id}-${mapping.service_id}`,
-				);
-			} else if (node.id === mapping.product_id) {
-				connectedNodes.add(mapping.service_id);
-				connectedEdges.add(
-					`edge-${mapping.product_id}-${mapping.service_id}`,
-				);
-			}
-		});
+		// Determine the layer of the clicked node and start traversal
+		if (offeringMappingData.some((m) => m.offering_id === node.id)) {
+			traverseConnections(node.id, "offering");
+		} else if (productMappingData.some((m) => m.product_id === node.id)) {
+			traverseConnections(node.id, "product");
+		} else if (resourceMappingData.some((m) => m.service_id === node.id)) {
+			traverseConnections(node.id, "service");
+		}
 
-		// Highlight direct connections for resource-service layer
-		resourceMappingData.forEach((mapping) => {
-			if (node.id === mapping.service_id) {
-				connectedNodes.add(mapping.resource_id);
-				connectedEdges.add(
-					`edge-${mapping.resource_id}-${mapping.service_id}`,
-				);
-			} else if (node.id === mapping.resource_id) {
-				connectedNodes.add(mapping.service_id);
-				connectedEdges.add(
-					`edge-${mapping.resource_id}-${mapping.service_id}`,
-				);
-			}
-		});
+		// Highlight the clicked node itself
+		connectedNodes.add(node.id);
 
-		connectedNodes.add(node.id); // Add the clicked node itself
 		setHighlightedNodes(connectedNodes);
 	};
+
 
 	const generateNodesAndEdges = useCallback(() => {
 		const nodes: Node[] = [];
