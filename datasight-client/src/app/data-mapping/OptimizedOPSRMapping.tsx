@@ -57,10 +57,17 @@ interface OfferingHealthStatus {
 	offering_risk_status: string;
 }
 
+interface OptimizedOPSRMappingProps {
+	optimizationType: string;
+}
+
 const nodeTypes = {};
 const edgeTypes = {};
 
-export default function OptimizedOPSRMapping() {
+export default function OptimizedOPSRMapping({
+	optimizationType,
+}: OptimizedOPSRMappingProps) {
+	console.log(optimizationType);
 	const [resourceMappingData, setResourceMappingData] =
 		useState<ResourceServiceMappingData[]>([]);
 	const [productMappingData, setProductMappingData] =
@@ -130,9 +137,11 @@ export default function OptimizedOPSRMapping() {
 						productRes.json(),
 						offeringRes.json(),
 					]);
-
+				console.log(resourceData.body);
 				const parsedResourceData: ResourceServiceMappingData[] =
 					JSON.parse(resourceData.body);
+
+				console.log(parsedResourceData);
 
 				// Step 1: Compute Service Health Status
 				const statusToScore: Record<string, number> = {
@@ -409,7 +418,7 @@ export default function OptimizedOPSRMapping() {
 					},
 				);
 
-				console.log(parsedResourceData);
+				// console.log(parsedResourceData);
 
 				// Update State
 				setResourceMappingData(parsedResourceData);

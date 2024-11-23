@@ -24,6 +24,8 @@ export default function Page() {
 		useGlobalState();
 	const [isOptimizedMapping, setIsOptimizedMapping] =
 		useState(false);
+	const [optimizationType, setOptimizationType] =
+		useState("");
 
 	const handleGenerateMapping = () => {
 		setSelectedNodeId("");
@@ -69,15 +71,41 @@ export default function Page() {
 				</p>
 
 				{/* Generate Mapping Buttons */}
-				<div className="flex space-x-4 mb-4">
+				<div className="flex flex-col gap-2 mb-4 w-fit">
 					<GenerateMappingBtn
 						onGenerateMapping={handleGenerateMapping}
 					/>
-					<GenerateOptimizedMappingBtn
-						onGenerateOptimizedMapping={
-							handleGenerateOptimizedMapping
-						}
-					/>
+					<p className="mt-3 font-bold">
+						Optimized Mapping
+					</p>
+					<p className=" text-gray-500">
+						Select Optimization type for the mapping.
+					</p>
+					<div className="flex flex-row gap-2">
+						<select
+							id="fruit-select"
+							value={optimizationType}
+							onChange={(e) =>
+								setOptimizationType(e.target.value)
+							}
+							className="block w-fit px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+						>
+							<option value="default">
+								Choose an option
+							</option>
+							<option value="capacity">Capacity</option>
+							<option value="finance">Finance</option>
+							<option value="risk">Risk</option>
+							<option value="obsolescence">
+								Obsolescence
+							</option>
+						</select>
+						<GenerateOptimizedMappingBtn
+							onGenerateOptimizedMapping={
+								handleGenerateOptimizedMapping
+							}
+						/>
+					</div>
 				</div>
 
 				{/* Always show the dashed container */}
@@ -107,7 +135,9 @@ export default function Page() {
 							) : optimizedLoading ? (
 								<OptimizedDataMappingLoadingState />
 							) : showMapping ? (
-								<OptimizedOPSRMapping />
+								<OptimizedOPSRMapping
+									optimizationType={optimizationType}
+								/>
 							) : (
 								<p className="text-center text-gray-500">
 									Click &quot;Generate Mapping&quot; to view
