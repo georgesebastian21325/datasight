@@ -57,10 +57,17 @@ interface OfferingHealthStatus {
 	offering_risk_status: string;
 }
 
+interface OptimizedOPSRMappingProps {
+	optimizationType: string;
+}
+
 const nodeTypes = {};
 const edgeTypes = {};
 
-export default function OptimizedOPSRMapping() {
+export default function OptimizedOPSRMapping({
+	optimizationType,
+}: OptimizedOPSRMappingProps) {
+	console.log(optimizationType);
 	const [resourceMappingData, setResourceMappingData] =
 		useState<ResourceServiceMappingData[]>([]);
 	const [productMappingData, setProductMappingData] =
@@ -104,7 +111,7 @@ export default function OptimizedOPSRMapping() {
 				const [resourceRes, productRes, offeringRes] =
 					await Promise.all([
 						fetch(
-							"https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getOptimizedResourceServiceMapping",
+							`https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getOptimizedResourceServiceMapping?mapping_type=${optimizationType}`,
 						),
 						fetch(
 							"https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getServiceProductMapping",
@@ -131,8 +138,15 @@ export default function OptimizedOPSRMapping() {
 						offeringRes.json(),
 					]);
 
+				// No need to parse again if the API returns a JSON array
 				const parsedResourceData: ResourceServiceMappingData[] =
-					JSON.parse(resourceData.body);
+					resourceData;
+
+				// Log to confirm parsing is successful
+				console.log(
+					"Parsed Resource Data:",
+					parsedResourceData,
+				);
 
 				// Step 1: Compute Service Health Status
 				const statusToScore: Record<string, number> = {
@@ -409,7 +423,7 @@ export default function OptimizedOPSRMapping() {
 					},
 				);
 
-				console.log(parsedResourceData);
+				// console.log(parsedResourceData);
 
 				// Update State
 				setResourceMappingData(parsedResourceData);
