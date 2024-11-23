@@ -105,6 +105,15 @@ export default function Page() {
 								handleGenerateOptimizedMapping
 							}
 						/>
+						<button
+							className={`py-3 px-4 rounded-md bg-black text-white font-bold transition-all duration-300  hover:bg-brand-orange hover:scale-105${
+								optimizationType
+									? ""
+									: "cursor-not-allowed opacity-50"
+							}`}
+						>
+							Present with AI
+						</button>
 					</div>
 				</div>
 

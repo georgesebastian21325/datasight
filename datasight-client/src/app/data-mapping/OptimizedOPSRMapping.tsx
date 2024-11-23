@@ -137,11 +137,16 @@ export default function OptimizedOPSRMapping({
 						productRes.json(),
 						offeringRes.json(),
 					]);
-				console.log(resourceData.body);
-				const parsedResourceData: ResourceServiceMappingData[] =
-					JSON.parse(resourceData.body);
 
-				console.log(parsedResourceData);
+				// No need to parse again if the API returns a JSON array
+				const parsedResourceData: ResourceServiceMappingData[] =
+					resourceData;
+
+				// Log to confirm parsing is successful
+				console.log(
+					"Parsed Resource Data:",
+					parsedResourceData,
+				);
 
 				// Step 1: Compute Service Health Status
 				const statusToScore: Record<string, number> = {
