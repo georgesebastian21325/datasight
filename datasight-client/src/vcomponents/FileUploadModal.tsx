@@ -50,6 +50,8 @@ interface FileUploadModalProps {
 export default function FileUploadModal({
   onUploadComplete,
 }: FileUploadModalProps = { onUploadComplete: () => { } }) {
+  const [dragging, setDragging] = useState(false);
+
   const [selectedFiles, setSelectedFiles] = useState<FileInfo[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -290,25 +292,57 @@ export default function FileUploadModal({
           ) : (
             <div className="flex gap-4">
               <div className="flex-1">
-                <div className="mb-4">
-                  <input
-                    type="file"
-                    multiple
-                    onChange={handleFileChange}
-                    className="hidden"
-                    id="file-input"
-                    ref={fileInputRef}
-                    aria-label="Select files to upload"
-                  />
-                  <Button
-                    variant="outline"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-full py-8 border-dashed border-2 hover:border-primary"
+                  <div
+                    className={`mb-4 w-full py-8 border-dashed border-2 flex flex-col items-center justify-center ${dragging ? "border-primary bg-slate-100" : "border-gray-300"
+                      }`}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setDragging(true);
+                    }}
+                    onDragLeave={() => setDragging(false)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setDragging(false);
+
+                      const files = Array.from(e.dataTransfer.files);
+                      const validFiles = files.filter((file) => allowedFileNames.includes(file.name));
+                      const invalidFiles = files.filter((file) => !allowedFileNames.includes(file.name));
+
+                      if (invalidFiles.length > 0) {
+                        setError(
+                          `Some files were not allowed: ${invalidFiles.map((f) => f.name).join(", ")}`
+                        );
+                      }
+
+                      const fileInfos = validFiles.map((file) => ({
+                        id: Math.random().toString(36).substr(2, 9),
+                        name: file.name,
+                        size: file.size,
+                        status: "ready" as const,
+                        file,
+                      }));
+
+                      setSelectedFiles((prev) => [...prev, ...fileInfos]);
+                    }}
                   >
-                    <FileUp className="mr-2 h-4 w-4" />
-                    Choose Files
-                  </Button>
-                </div>
+                    <input
+                      type="file"
+                      multiple
+                      onChange={handleFileChange}
+                      className="hidden"
+                      id="file-input"
+                      ref={fileInputRef}
+                      aria-label="Select files to upload"
+                    />
+                    <Button
+                      variant="outline"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="flex items-center"
+                    >
+                      <FileUp className="mr-2 h-4 w-4" />
+                      Drag and Drop Files or Click to Select
+                    </Button>
+                  </div>
                 {error && (
                   <Alert variant="destructive" className="mb-4">
                     <AlertCircle className="h-4 w-4" />
