@@ -1,10 +1,13 @@
 'use client'
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/vcomponents/onboarding-components/button"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/vcomponents/onboarding-components/card"
 import { Check, Upload, UserCheck, UserPlus } from 'lucide-react'
 import FileUploadModal from '../../vcomponents/FileUploadModal'
+import CompanyLogo from '../../assets/company-logo.jpg'
+
+import Image from 'next/image'
 
 interface FileInfo {
   id: string
@@ -34,7 +37,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4">
       <Card className="w-full max-w-4xl shadow-md">
         <CardHeader className="text-center">
           <motion.h1
@@ -46,6 +49,9 @@ export default function OnboardingPage() {
             Welcome to Data Sight!
           </motion.h1>
         </CardHeader>
+        <CardDescription className='text-center'>
+          You're almost there! Upload your datasets to unlock powerful insights and take the first step toward optimizing your enterprise architecture.
+        </CardDescription>
         <CardContent className="pt-6">
           <div className="relative">
             {/* Progress Line */}
