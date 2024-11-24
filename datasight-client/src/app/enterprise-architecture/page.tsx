@@ -63,7 +63,10 @@ export default function Page() {
 			<div className="mx-auto p-4 pt-16 h-screen w-[90%]">
 				<h2 className="text-2xl font-bold mb-1 gradient-text">
 					{isOptimizedMapping
-						? `${optimizationType} Optimized Enterprise Architecture`
+						? `${
+								optimizationType.charAt(0).toUpperCase() +
+								optimizationType.slice(1)
+						  } Optimized Enterprise Architecture`
 						: "Enterprise Architecture"}
 				</h2>
 				<p className="mb-3 text-gray-500">

@@ -23,6 +23,7 @@ interface ResourceServiceMappingData {
 	resource_id: string;
 	resource_type: string;
 	status?: string;
+	optimized_status?: string;
 }
 
 interface ProductServiceMappingData {
@@ -38,8 +39,8 @@ interface ProductOfferingMappingData {
 }
 
 interface ResourceHealthStatus {
-	resource_id: string;
-	resource_risk_status: string;
+	resource_id: string | undefined;
+	resource_risk_status: string | undefined;
 }
 
 interface ServiceHealthStatus {
@@ -105,6 +106,12 @@ export default function OptimizedOPSRMapping({
 		}
 	};
 
+	const HEALTH_MAPPING: Record<string, number> = {
+		green: 1,
+		yellow: 7,
+		red: 15,
+	};
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -142,139 +149,68 @@ export default function OptimizedOPSRMapping({
 				const parsedResourceData: ResourceServiceMappingData[] =
 					resourceData;
 
-				// Log to confirm parsing is successful
-				console.log(
-					"Parsed Resource Data:",
-					parsedResourceData,
-				);
-
-				// Step 1: Compute Service Health Status
-				const statusToScore: Record<string, number> = {
-					green: 1,
-					yellow: 3,
-					red: 7,
-				};
-
-				////////// RESOURCE HEALTH
-
-				// Derive resource health data from parsedResourceData
-				const derivedResourceHealthData =
-					parsedResourceData.map((resource) => {
-						const { resource_id, status } = resource;
-						const resource_risk_status =
-							status?.toLowerCase() || "unknown"; // Default to "unknown" if status is not defined
-						return {
-							resource_id,
-							resource_risk_status,
-						};
-					});
-
-				// Define score ranges to determine color
-				const scoreToStatus = (averageScore: number) => {
-					if (averageScore <= 3) return "green";
-					if (averageScore <= 7) return "yellow";
-					return "red";
-				};
-
-				// Aggregate by resource_id and calculate average score
-				const aggregatedResourceHealthData = Array.from(
-					derivedResourceHealthData.reduce(
-						(acc, resource) => {
-							const { resource_id, resource_risk_status } =
-								resource;
-							const score =
-								statusToScore[
-									resource_risk_status.toLowerCase()
-								] || 1;
-
-							if (!acc.has(resource_id)) {
-								acc.set(resource_id, {
-									totalScore: 0,
-									count: 0,
-								});
-							}
-
-							const resourceData = acc.get(resource_id);
-							resourceData!.totalScore += score;
-							resourceData!.count += 1;
-
-							return acc;
-						},
-						new Map<
-							string,
-							{ totalScore: number; count: number }
-						>(),
-					),
-				).map(([resource_id, { totalScore, count }]) => {
-					const averageScore = totalScore / count;
-					const resource_risk_status =
-						scoreToStatus(averageScore);
-
-					return { resource_id, resource_risk_status };
-				});
-
-				// Log the aggregated results
-				console.log(
-					"Aggregated Resource Health Data:",
-					aggregatedResourceHealthData,
-				);
-
-				const serviceScores = parsedResourceData.reduce(
-					(
-						acc: Record<
-							string,
-							{ totalScore: number; resourceCount: number }
-						>,
-						resource,
-					) => {
-						const { service_id, status } = resource;
-						const score =
-							statusToScore[status!.toLowerCase()] || 1;
-
-						if (!acc[service_id]) {
-							acc[service_id] = {
-								totalScore: 0,
-								resourceCount: 0,
-							};
-						}
-
-						acc[service_id].totalScore += score;
-						acc[service_id].resourceCount += 1;
-
-						return acc;
-					},
-					{},
-				);
+				const aggregatedResourceHealthData: ResourceHealthStatus[] =
+					parsedResourceData.map((resource) => ({
+						resource_id: resource.resource_id,
+						resource_risk_status: resource.optimized_status,
+					}));
 
 				////////// SERVICE HEALTH
-				const derivedServiceHealthData = Object.entries(
-					serviceScores,
-				).map(
-					([service_id, { totalScore, resourceCount }]) => {
-						const averageScore = totalScore / resourceCount;
-						let service_risk_status = "";
-						console.log(
-							service_id,
-							totalScore,
-							averageScore,
+
+				const serviceHealthMap: Record<string, number[]> =
+					{};
+
+				// GROUP resource health scores by service
+				parsedResourceData.forEach((mapping) => {
+					const resourceHealth =
+						aggregatedResourceHealthData.find(
+							(health) =>
+								health.resource_id === mapping.resource_id,
 						);
-						if (averageScore < 1.5) {
-							service_risk_status = "green";
-						} else if (
-							averageScore >= 1.5 &&
-							averageScore <= 2.5
-						) {
-							service_risk_status = "yellow";
+					console.log(resourceHealth);
+					if (
+						resourceHealth &&
+						resourceHealth?.resource_risk_status
+					) {
+						const healthScore =
+							HEALTH_MAPPING[
+								resourceHealth.resource_risk_status
+							] || 0;
+						console.log(healthScore);
+						if (!serviceHealthMap[mapping.service_id]) {
+							serviceHealthMap[mapping.service_id] = [];
+						}
+
+						serviceHealthMap[mapping.service_id].push(
+							healthScore,
+						);
+					}
+				});
+
+				// Calculate average health status per service
+				const derivedServiceHealthData: ServiceHealthStatus[] =
+					Object.keys(serviceHealthMap).map((serviceId) => {
+						const scores = serviceHealthMap[serviceId];
+						const avgScore =
+							scores.reduce(
+								(sum, score) => sum + score,
+								0,
+							) / scores.length;
+
+						let serviceRiskStatus: string;
+						if (avgScore <= 3) {
+							serviceRiskStatus = "Green";
+						} else if (avgScore > 3 && avgScore <= 7) {
+							serviceRiskStatus = "Yellow";
 						} else {
-							service_risk_status = "red";
+							serviceRiskStatus = "Red";
 						}
 
 						return {
-							service_id,
-							service_risk_status,
+							service_id: serviceId,
+							service_risk_status: serviceRiskStatus,
 						};
-					},
-				);
+					});
 
 				////////// PRODUCT HEALTH
 
@@ -284,70 +220,62 @@ export default function OptimizedOPSRMapping({
 						? productData
 						: Object.values(productData);
 
-				const productScores = parsedProductData.reduce(
-					(
-						acc: Record<
-							string,
-							{ totalScore: number; serviceCount: number }
-						>,
-						product,
-					) => {
-						const { product_id, service_id } = product;
-						const serviceHealth =
-							derivedServiceHealthData.find(
-								(h) => h.service_id === service_id,
-							);
+				const productHealthMap: Record<string, number[]> =
+					{};
 
-						if (!acc[product_id]) {
-							acc[product_id] = {
-								totalScore: 0,
-								serviceCount: 0,
-							};
-						}
-
-						if (serviceHealth) {
-							const score =
-								statusToScore[
-									serviceHealth.service_risk_status
-								];
-							acc[product_id].totalScore += score;
-							acc[product_id].serviceCount += 1;
-						}
-
-						return acc;
-					},
-					{},
-				);
-
-				const derivedProductHealthData = Object.entries(
-					productScores,
-				).map(
-					([product_id, { totalScore, serviceCount }]) => {
-						const averageScore = totalScore / serviceCount;
-						let product_risk_status = "";
-						console.log("PRODUCT");
-						console.log(
-							product_id,
-							totalScore,
-							averageScore,
+				// Group service heatlh scores by product
+				parsedProductData.forEach((mapping) => {
+					const serviceHealth =
+						derivedServiceHealthData.find(
+							(service) =>
+								service.service_id === mapping.service_id,
 						);
-						if (averageScore < 1.5) {
-							product_risk_status = "green";
-						} else if (
-							averageScore >= 1.5 &&
-							averageScore <= 2.5
-						) {
-							product_risk_status = "yellow";
+
+					if (
+						serviceHealth &&
+						serviceHealth.service_risk_status
+					) {
+						const healthScore =
+							HEALTH_MAPPING[
+								serviceHealth.service_risk_status.toLowerCase()
+							] || 0;
+						console.log(healthScore);
+
+						if (!productHealthMap[mapping.product_id]) {
+							productHealthMap[mapping.product_id] = [];
+						}
+
+						productHealthMap[mapping.product_id].push(
+							healthScore,
+						);
+					}
+				});
+
+				// Calculate average health status per product
+				const derivedProductHealthData: ProductHealthStatus[] =
+					Object.keys(productHealthMap).map((productId) => {
+						const scores = productHealthMap[productId];
+						const avgScore =
+							scores.reduce(
+								(sum, score) => sum + score,
+								0,
+							) / scores.length;
+						console.log(`${productId} ${avgScore}`);
+
+						let productRiskStatus: string;
+						if (avgScore <= 3) {
+							productRiskStatus = "Green";
+						} else if (avgScore > 3 && avgScore <= 7) {
+							productRiskStatus = "Yellow";
 						} else {
-							product_risk_status = "red";
+							productRiskStatus = "Red";
 						}
 
 						return {
-							product_id,
-							product_risk_status,
+							product_id: productId,
+							product_risk_status: productRiskStatus,
 						};
-					},
-				);
+					});
 
 				////////// OFFERING HEALTH
 
@@ -357,73 +285,64 @@ export default function OptimizedOPSRMapping({
 						? offeringData
 						: Object.values(offeringData);
 
-				const offeringScores = parsedOfferingData.reduce(
-					(
-						acc: Record<
-							string,
-							{ totalScore: number; productCount: number }
-						>,
-						offering,
-					) => {
-						const { offering_id, product_id } = offering;
-						const productHealth =
-							derivedProductHealthData.find(
-								(h) => h.product_id === product_id,
-							);
+				const offeringHealthMap: Record<string, number[]> =
+					{};
 
-						if (!acc[offering_id]) {
-							acc[offering_id] = {
-								totalScore: 0,
-								productCount: 0,
-							};
-						}
-
-						if (productHealth) {
-							const score =
-								statusToScore[
-									productHealth.product_risk_status
-								];
-							acc[offering_id].totalScore += score;
-							acc[offering_id].productCount += 1;
-						}
-
-						return acc;
-					},
-					{},
-				);
-
-				const derivedOfferingHealthData = Object.entries(
-					offeringScores,
-				).map(
-					([offering_id, { totalScore, productCount }]) => {
-						const averageScore = totalScore / productCount;
-						let offering_risk_status = "";
-						console.log("OFFERING");
-						console.log(
-							offering_id,
-							totalScore,
-							averageScore,
+				// Group service heatlh scores by product
+				parsedOfferingData.forEach((mapping) => {
+					const productHealth =
+						derivedProductHealthData.find(
+							(product) =>
+								product.product_id === product.product_id,
 						);
 
-						if (averageScore < 1.5) {
-							offering_risk_status = "green";
-						} else if (
-							averageScore >= 1.5 &&
-							averageScore <= 2.5
-						) {
-							offering_risk_status = "yellow";
-						} else {
-							offering_risk_status = "red";
+					if (
+						productHealth &&
+						productHealth.product_risk_status
+					) {
+						const healthScore =
+							HEALTH_MAPPING[
+								productHealth.product_risk_status.toLowerCase()
+							] || 0;
+						console.log(healthScore);
+
+						if (!offeringHealthMap[mapping.offering_id]) {
+							offeringHealthMap[mapping.offering_id] = [];
 						}
 
-						return {
-							offering_id,
-							offering_risk_status,
-						};
-					},
-				);
+						offeringHealthMap[mapping.offering_id].push(
+							healthScore,
+						);
+					}
+				});
 
-				// console.log(parsedResourceData);
+				// Calculate average health status per offering
+				const derivedOfferingHealthData: OfferingHealthStatus[] =
+					Object.keys(offeringHealthMap).map(
+						(offeringId) => {
+							const scores = offeringHealthMap[offeringId];
+							const avgScore =
+								scores.reduce(
+									(sum, score) => sum + score,
+									0,
+								) / scores.length;
+							console.log(`${offeringId} ${avgScore}`);
+
+							let offeringRiskStatus: string;
+							if (avgScore <= 3) {
+								offeringRiskStatus = "Green";
+							} else if (avgScore > 3 && avgScore <= 7) {
+								offeringRiskStatus = "Yellow";
+							} else {
+								offeringRiskStatus = "Red";
+							}
+
+							return {
+								offering_id: offeringId,
+								offering_risk_status: offeringRiskStatus,
+							};
+						},
+					);
 
 				// Update State
 				setResourceMappingData(parsedResourceData);
