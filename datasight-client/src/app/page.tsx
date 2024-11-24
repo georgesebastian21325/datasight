@@ -6,7 +6,7 @@ import LoginForm from "./forms/login-form";
 import CompanyLogo from '../assets/company-logo.jpg';
 
 import LoginAsset from '../assets/login-asset-2.png';
-import { Card } from '@/vcomponents/onboarding-components/card';
+import { Card } from "@/vcomponents/onboarding-components/card";
 import LoadingPage from './components/global/LoadingPage' // Import your loading page component
 
 import { useLoadingMessage } from "./context/LoadingMessageContext";

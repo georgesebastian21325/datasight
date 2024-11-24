@@ -50,7 +50,7 @@ export default function OnboardingPage() {
           </motion.h1>
         </CardHeader>
         <CardDescription className='text-center'>
-          You're almost there! Upload your datasets to unlock powerful insights and take the first step toward optimizing your enterprise architecture.
+          You&apos;re almost there! Upload your datasets to unlock powerful insights and take the first step toward optimizing your enterprise architecture.
         </CardDescription>
         <CardContent className="pt-6">
           <div className="relative">
