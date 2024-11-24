@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Redirect authenticated users away from the login page
-  if (user && (pathname === "/" || pathname === "/login")) {
+  if (user && (pathname === "/")) {
     return NextResponse.redirect(new URL("/dashboard/resources", request.nextUrl));
   }
 
