@@ -108,8 +108,8 @@ export default function OptimizedOPSRMapping({
 
 	const HEALTH_MAPPING: Record<string, number> = {
 		green: 1,
-		yellow: 5,
-		red: 10,
+		yellow: 7,
+		red: 15,
 	};
 
 	useEffect(() => {
@@ -285,7 +285,64 @@ export default function OptimizedOPSRMapping({
 						? offeringData
 						: Object.values(offeringData);
 
-				// console.log(parsedResourceData);
+				const offeringHealthMap: Record<string, number[]> =
+					{};
+
+				// Group service heatlh scores by product
+				parsedOfferingData.forEach((mapping) => {
+					const productHealth =
+						derivedProductHealthData.find(
+							(product) =>
+								product.product_id === product.product_id,
+						);
+
+					if (
+						productHealth &&
+						productHealth.product_risk_status
+					) {
+						const healthScore =
+							HEALTH_MAPPING[
+								productHealth.product_risk_status.toLowerCase()
+							] || 0;
+						console.log(healthScore);
+
+						if (!offeringHealthMap[mapping.offering_id]) {
+							offeringHealthMap[mapping.offering_id] = [];
+						}
+
+						offeringHealthMap[mapping.offering_id].push(
+							healthScore,
+						);
+					}
+				});
+
+				// Calculate average health status per offering
+				const derivedOfferingHealthData: OfferingHealthStatus[] =
+					Object.keys(offeringHealthMap).map(
+						(offeringId) => {
+							const scores = offeringHealthMap[offeringId];
+							const avgScore =
+								scores.reduce(
+									(sum, score) => sum + score,
+									0,
+								) / scores.length;
+							console.log(`${offeringId} ${avgScore}`);
+
+							let offeringRiskStatus: string;
+							if (avgScore <= 3) {
+								offeringRiskStatus = "Green";
+							} else if (avgScore > 3 && avgScore <= 7) {
+								offeringRiskStatus = "Yellow";
+							} else {
+								offeringRiskStatus = "Red";
+							}
+
+							return {
+								offering_id: offeringId,
+								offering_risk_status: offeringRiskStatus,
+							};
+						},
+					);
 
 				// Update State
 				setResourceMappingData(parsedResourceData);
@@ -294,7 +351,7 @@ export default function OptimizedOPSRMapping({
 				setResourceHealthData(aggregatedResourceHealthData);
 				setServiceHealthData(derivedServiceHealthData);
 				setProductHealthData(derivedProductHealthData);
-				// setOfferingHealthData(derivedOfferingHealthData);
+				setOfferingHealthData(derivedOfferingHealthData);
 
 				setError(null);
 			} catch (err) {
