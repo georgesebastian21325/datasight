@@ -47,7 +47,7 @@ interface FileUploadModalProps {
   onUploadComplete: (files: FileInfo[]) => void;
 }
 
-export default function Component({
+export default function FileUploadModal({
   onUploadComplete,
 }: FileUploadModalProps = { onUploadComplete: () => { } }) {
   const [selectedFiles, setSelectedFiles] = useState<FileInfo[]>([]);
@@ -79,6 +79,8 @@ export default function Component({
     "product_service_performance.csv",
     "product.csv",
     "resource_maintenance.csv",
+    "resource_metric_values.csv",
+    "resource_metrics.csv",
     "revenue.csv",
     "server.csv",
     "service_level_agreement.csv",
