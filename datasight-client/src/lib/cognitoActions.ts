@@ -77,18 +77,57 @@ export async function handleSignIn(
   prevState: string | undefined,
   formData: FormData
 ) {
-  let redirectLink = '/dashboard/resources'
+  const redirectToOnboarding = '/onboarding';
+  const redirectToDashboard = '/dashboard/resources';
+  let isSignedIn = false;
+  let isBucketEmpty = false;
+
   try {
-    const { isSignedIn, nextStep } = await signIn({
+    // Perform the sign-in process
+    const { isSignedIn: signedIn, nextStep } = await signIn({
       username: String(formData.get("email")),
       password: String(formData.get("password")),
     });
+    isSignedIn = signedIn;
+
+    // If signed in successfully, check if the bucket is empty
+    if (isSignedIn) {
+      const checkBucketResponse = await fetch('/api/checkBucket');
+
+      if (!checkBucketResponse.ok) {
+        // Log the response in case of issues
+        const errorDetails = await checkBucketResponse.json();
+        console.error('Failed to check S3 bucket:', errorDetails);
+        throw new Error(`Error checking S3 bucket: ${errorDetails.error}`);
+      }
+
+      // Properly await and handle the JSON response
+      const responseData = await checkBucketResponse.json();
+      console.log('Bucket check response:', responseData);
+
+      // Extract the `isEmpty` field
+      isBucketEmpty = responseData.isEmpty;
+    }
   } catch (error) {
+    console.error('Error during sign-in or bucket check:', error);
     return getErrorMessage(error);
   }
-  redirect(redirectLink);
 
+  // Redirect based on the bucket status
+  if (isSignedIn) {
+    if (isBucketEmpty) {
+      console.log('Route to onboarding');
+      redirect(redirectToOnboarding);
+    } else {
+      console.log('Route to resource dashboard');
+      redirect(redirectToDashboard);
+    }
+  }
 }
+
+
+
+
 
 export async function handleSignOut() {
   try {

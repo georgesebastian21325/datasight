@@ -145,6 +145,7 @@ export default function Component({
     const formData = new FormData();
     selectedFiles.forEach((fileInfo) => {
       formData.append("files", fileInfo.file);
+      console.log(fileInfo)
     });
 
     try {

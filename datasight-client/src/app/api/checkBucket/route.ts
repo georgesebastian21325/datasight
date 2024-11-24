@@ -11,26 +11,31 @@ const s3Client = new S3Client({
     },
 });
 
-export const GET = async (req: Request) => {
-    const { searchParams } = new URL(req.url);
-    const bucketName = searchParams.get("bucketName");
-
-    if (!bucketName) {
-        return NextResponse.json({ error: 'Bucket name is required' }, { status: 400 });
-    }
-
+export const GET = async () => {
     try {
+        const bucketName = 'datasight-landing';
+
         const command = new ListObjectsV2Command({
             Bucket: bucketName,
-            MaxKeys: 1,
+            MaxKeys: 1, // We only need to check if there's at least one object
         });
-        
-        const result = await s3Client.send(command);
-        const isEmpty = !result.Contents || result.Contents.length === 0;
+
+        const response = await s3Client.send(command);
+
+        const isEmpty = !response.Contents || response.Contents.length === 0;
+
+        console.log('Bucket check successful:', { bucketName, isEmpty });
 
         return NextResponse.json({ isEmpty });
     } catch (error: any) {
-        console.error(`Error checking bucket "${bucketName}":`, error);
-        return NextResponse.json({ error: error.message || 'Error checking bucket' }, { status: 500 });
+        console.error('Error checking bucket contents:', {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+        });
+        return NextResponse.json(
+            { error: error.message || 'Error checking bucket contents' },
+            { status: 500 }
+        );
     }
 };
