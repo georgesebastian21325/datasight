@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from 'next/navigation';
 import { Button } from "@/vcomponents/file-upload-components/button";
 import {
   Dialog,
@@ -25,6 +26,7 @@ import {
   X,
   FileUp,
   Check,
+  CircleCheck,
 } from "lucide-react";
 import {
   Alert,
@@ -51,10 +53,12 @@ export default function Component({
   const [selectedFiles, setSelectedFiles] = useState<FileInfo[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadComplete, setUploadComplete] = useState(false); // New state variable
+  const [uploadComplete, setUploadComplete] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const itemsPerPage = 4;
+
+  const router = useRouter();
 
   const allowedFileNames = [
     "backup_and_recovery_systems.csv",
@@ -75,8 +79,6 @@ export default function Component({
     "product_service_performance.csv",
     "product.csv",
     "resource_maintenance.csv",
-    "resource_metric_values.csv",
-    "resource_metrics.csv",
     "revenue.csv",
     "server.csv",
     "service_level_agreement.csv",
@@ -144,8 +146,15 @@ export default function Component({
 
     for (const fileInfo of selectedFiles) {
       if (fileInfo.status !== "uploaded") {
+
+        setSelectedFiles((prev) =>
+          prev.map((file) =>
+            file.id === fileInfo.id ? { ...file, status: "uploading" } : file
+          )
+        );
+
         const formData = new FormData();
-        formData.append("files", fileInfo.file); // Use "files" to match the server
+        formData.append("files", fileInfo.file);
 
         try {
           const response = await fetch("/api/upload", {
@@ -156,46 +165,40 @@ export default function Component({
           if (response.ok) {
             setSelectedFiles((prev) =>
               prev.map((file) =>
-                file.id === fileInfo.id
-                  ? { ...file, status: "uploaded" }
-                  : file
+                file.id === fileInfo.id ? { ...file, status: "uploaded" } : file
               )
             );
           } else {
-            setSelectedFiles((prev) =>
-              prev.map((file) =>
-                file.id === fileInfo.id
-                  ? { ...file, status: "failed" }
-                  : file
-              )
-            );
             const errorData = await response.json();
             setError(errorData.error || "Failed to upload the file.");
+            setSelectedFiles((prev) =>
+              prev.map((file) =>
+                file.id === fileInfo.id ? { ...file, status: "failed" } : file
+              )
+            );
           }
         } catch (err) {
           console.error("Upload error:", err);
+          setError("Failed to upload the file.");
           setSelectedFiles((prev) =>
             prev.map((file) =>
-              file.id === fileInfo.id
-                ? { ...file, status: "failed" }
-                : file
+              file.id === fileInfo.id ? { ...file, status: "failed" } : file
             )
           );
-          setError("Failed to upload the file.");
         }
       }
     }
 
     setIsUploading(false);
 
-    if (selectedFiles.every((file) => file.status === "uploaded")) {
-      setUploadComplete(true);
-      onUploadComplete(
-        selectedFiles.filter((file) => file.status === "uploaded")
-      );
-    }
-  };
+    const allFilesUploaded = allowedFileNames.every((name) =>
+      selectedFiles.some(
+        (file) => file.name === name && file.status === "uploaded"
+      )
+    );
 
+    setUploadComplete(true);
+  };
 
 
   const handleRemoveFile = (id: string) => {
@@ -239,13 +242,16 @@ export default function Component({
     );
   };
 
-  // Check if all required files are selected and ready
   const allFilesReady = requiredFiles.every((file) =>
     selectedFiles.some(
       (selectedFile) =>
         selectedFile.name === file.name && selectedFile.status === "ready"
     )
   );
+
+  const handleViewDashboard = () => {
+    router.push('/dashboard/resources');
+  };
 
   return (
     <div className="flex flex-col items-center justify-center p-4">
@@ -255,151 +261,156 @@ export default function Component({
             Upload Enterprise Architecture Datasets
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[1000px]">
+        <DialogContent
+          className={`sm:max-w-${uploadComplete ? "[500px]" : "[1000px]"
+            }`}
+        >
           <DialogHeader>
-            <DialogTitle className="text-center mt-8 text-2xl font-bold mb-5 ">
-              Upload Enterprise Architecture Datasets
-            </DialogTitle>
+            {!uploadComplete && (
+              <DialogTitle className="text-center mt-8 text-2xl font-bold mb-5">
+                Upload Enterprise Architecture Datasets
+              </DialogTitle>
+            )}
           </DialogHeader>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <div className="mb-4">
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleFileChange}
-                  className="hidden"
-                  id="file-input"
-                  ref={fileInputRef}
-                  aria-label="Select files to upload"
-                />
-                <Button
-                  variant="outline"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full py-8 border-dashed border-2 hover:border-primary"
-                >
-                  <FileUp className="mr-2 h-4 w-4" />
-                  Choose Files
-                </Button>
-                {!allFilesReady && (
-                  <div className='flex justify-center bg-red-100 mt-2 mb-5 py-2 rounded-md'>
-                    <p className="text-red-500 text-center font-medium">
-                      Please select all required files before uploading.
-                    </p>
-                  </div>
-                )}
-              </div>
-              {error && (
-                <Alert variant="destructive" className="mb-4">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-              {uploadComplete && ( // Display success message
-                <Alert className="mb-4">
-                  <Check className="h-4 w-4" />
-                  <AlertDescription>
-                    All files have been uploaded successfully!
-                  </AlertDescription>
-                </Alert>
-              )}
-              <div className="max-h-[400px] overflow-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>File Name</TableHead>
-                      <TableHead>Size</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {paginatedFiles.map((file) => (
-                      <TableRow key={file.id}>
-                        <TableCell className="font-medium">{file.name}</TableCell>
-                        <TableCell>{formatFileSize(file.size)}</TableCell>
-                        <TableCell>{getStatusBadge(file.status)}</TableCell>
-                        <TableCell>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleRemoveFile(file.id)}
-                            disabled={isUploading || uploadComplete} // Disable if upload complete
-                          >
-                            <X className="h-4 w-4" />
-                            <span className="sr-only">Remove file</span>
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-              {totalPages > 1 && (
-                <div className="flex items-center justify-between mt-4">
+          {uploadComplete ? (
+            <div className="flex flex-col items-center justify-center p-10">
+              <CircleCheck className="h-16 w-16 text-green-700 mb-4" />
+              <h2 className="text-2xl font-semibold text-green-700 text-center mb-6">
+                You have successfully uploaded your dataset.
+              </h2>
+              <Button
+                onClick={handleViewDashboard}
+                className="bg-green-800 text-white py-3 px-6 rounded hover:bg-green-700   transition-transform transform hover:scale-105 font-semibold"
+              >
+                View Dashboard
+              </Button>
+            </div>
+          ) : (
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <div className="mb-4">
+                  <input
+                    type="file"
+                    multiple
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="file-input"
+                    ref={fileInputRef}
+                    aria-label="Select files to upload"
+                  />
                   <Button
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full py-8 border-dashed border-2 hover:border-primary"
                   >
-                    <ChevronLeft className="h-4 w-4 mr-2" />
-                    Previous
-                  </Button>
-                  <span>
-                    Page {currentPage} of {totalPages}
-                  </span>
-                  <Button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    }
-                    disabled={currentPage === totalPages}
-                  >
-                    Next
-                    <ChevronRight className="h-4 w-4 ml-2" />
+                    <FileUp className="mr-2 h-4 w-4" />
+                    Choose Files
                   </Button>
                 </div>
-              )}
-              <div className="flex flex-col items-center mt-4">
-                <Button
-                  onClick={handleUpload}
-                  disabled={
-                    isUploading ||
-                    !allFilesReady ||
-                    uploadComplete // Disable after upload
-                  }
-                  className="bg-green-900"
-                >
-                  <Upload className="mr-2 h-4 w-4" />
-                  {isUploading ? "Uploading..." : "Upload Datasets"}
-                </Button>
+                {error && (
+                  <Alert variant="destructive" className="mb-4">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+                <div className="max-h-[400px] overflow-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>File Name</TableHead>
+                        <TableHead>Size</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Action</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {paginatedFiles.map((file) => (
+                        <TableRow key={file.id}>
+                          <TableCell className="font-medium">{file.name}</TableCell>
+                          <TableCell>{formatFileSize(file.size)}</TableCell>
+                          <TableCell>{getStatusBadge(file.status)}</TableCell>
+                          <TableCell>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleRemoveFile(file.id)}
+                              disabled={isUploading || uploadComplete}
+                            >
+                              <X className="h-4 w-4" />
+                              <span className="sr-only">Remove file</span>
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between mt-4">
+                    <Button
+                      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeft className="h-4 w-4 mr-2" />
+                      Previous
+                    </Button>
+                    <span>
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <Button
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                      }
+                      disabled={currentPage === totalPages}
+                    >
+                      Next
+                      <ChevronRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </div>
+                )}
+                <div className="flex flex-col items-center mt-4">
+                  <Button
+                    onClick={handleUpload}
+                    disabled={
+                      isUploading ||
+                      !allFilesReady ||
+                      uploadComplete
+                    }
+                    className="bg-green-900"
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    {isUploading ? "Uploading..." : "Upload Datasets"}
+                  </Button>
+                </div>
+              </div>
+              <div className="w-66 border-l pl-4">
+                <h3 className="font-semibold mb-2">Required Files</h3>
+                <ScrollArea className="h-[400px] pr-5">
+                  {requiredFiles.map((file, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between py-1"
+                    >
+                      <span
+                        className={
+                          isFileSelected(file.name)
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }
+                      >
+                        {file.name}
+                      </span>
+                      {isFileSelected(file.name) ? (
+                        <Check className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <X className="h-4 w-4 text-red-300" />
+                      )}
+                    </div>
+                  ))}
+                </ScrollArea>
               </div>
             </div>
-            <div className="w-66 border-l pl-4">
-              <h3 className="font-semibold mb-2">Required Files</h3>
-              <ScrollArea className="h-[400px] pr-5">
-                {requiredFiles.map((file, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between py-1"
-                  >
-                    <span
-                      className={
-                        isFileSelected(file.name)
-                          ? "text-green-500"
-                          : "text-red-500"
-                      }
-                    >
-                      {file.name}
-                    </span>
-                    {isFileSelected(file.name) ? (
-                      <Check className="h-4 w-4 text-green-500" />
-                    ) : (
-                      <X className="h-4 w-4 text-red-300" />
-                    )}
-                  </div>
-                ))}
-              </ScrollArea>
-            </div>
-          </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
