@@ -23,6 +23,7 @@ interface ResourceServiceMappingData {
 	resource_id: string;
 	resource_type: string;
 	status?: string;
+	optimized_status?: string;
 }
 
 interface ProductServiceMappingData {
@@ -38,8 +39,8 @@ interface ProductOfferingMappingData {
 }
 
 interface ResourceHealthStatus {
-	resource_id: string;
-	resource_risk_status: string;
+	resource_id: string | undefined;
+	resource_risk_status: string | undefined;
 }
 
 interface ServiceHealthStatus {
@@ -105,6 +106,12 @@ export default function OptimizedOPSRMapping({
 		}
 	};
 
+	const HEALTH_MAPPING: Record<string, number> = {
+		green: 1,
+		yellow: 5,
+		red: 10,
+	};
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -142,6 +149,69 @@ export default function OptimizedOPSRMapping({
 				const parsedResourceData: ResourceServiceMappingData[] =
 					resourceData;
 
+				const aggregatedResourceHealthData: ResourceHealthStatus[] =
+					parsedResourceData.map((resource) => ({
+						resource_id: resource.resource_id,
+						resource_risk_status: resource.optimized_status,
+					}));
+
+				////////// SERVICE HEALTH
+
+				const serviceHealthMap: Record<string, number[]> =
+					{};
+
+				// GROUP resource health scores by service
+				parsedResourceData.forEach((mapping) => {
+					const resourceHealth =
+						aggregatedResourceHealthData.find(
+							(health) =>
+								health.resource_id === mapping.resource_id,
+						);
+					console.log(resourceHealth);
+					if (
+						resourceHealth &&
+						resourceHealth?.resource_risk_status
+					) {
+						const healthScore =
+							HEALTH_MAPPING[
+								resourceHealth.resource_risk_status
+							] || 0;
+						console.log(healthScore);
+						if (!serviceHealthMap[mapping.service_id]) {
+							serviceHealthMap[mapping.service_id] = [];
+						}
+
+						serviceHealthMap[mapping.service_id].push(
+							healthScore,
+						);
+					}
+				});
+
+				// Calculate average health status per service
+				const derivedServiceHealthData: ServiceHealthStatus[] =
+					Object.keys(serviceHealthMap).map((serviceId) => {
+						const scores = serviceHealthMap[serviceId];
+						const avgScore =
+							scores.reduce(
+								(sum, score) => sum + score,
+								0,
+							) / scores.length;
+
+						let serviceRiskStatus: string;
+						if (avgScore <= 3) {
+							serviceRiskStatus = "Green";
+						} else if (avgScore > 3 && avgScore <= 7) {
+							serviceRiskStatus = "Yellow";
+						} else {
+							serviceRiskStatus = "Red";
+						}
+
+						return {
+							service_id: serviceId,
+							service_risk_status: serviceRiskStatus,
+						};
+					});
+
 				////////// PRODUCT HEALTH
 
 				// Step 2: Compute Product Health Status Based on Services
@@ -149,6 +219,63 @@ export default function OptimizedOPSRMapping({
 					Array.isArray(productData)
 						? productData
 						: Object.values(productData);
+
+				const productHealthMap: Record<string, number[]> =
+					{};
+
+				// Group service heatlh scores by product
+				parsedProductData.forEach((mapping) => {
+					const serviceHealth =
+						derivedServiceHealthData.find(
+							(service) =>
+								service.service_id === mapping.service_id,
+						);
+
+					if (
+						serviceHealth &&
+						serviceHealth.service_risk_status
+					) {
+						const healthScore =
+							HEALTH_MAPPING[
+								serviceHealth.service_risk_status.toLowerCase()
+							] || 0;
+						console.log(healthScore);
+
+						if (!productHealthMap[mapping.product_id]) {
+							productHealthMap[mapping.product_id] = [];
+						}
+
+						productHealthMap[mapping.product_id].push(
+							healthScore,
+						);
+					}
+				});
+
+				// Calculate average health status per product
+				const derivedProductHealthData: ProductHealthStatus[] =
+					Object.keys(productHealthMap).map((productId) => {
+						const scores = productHealthMap[productId];
+						const avgScore =
+							scores.reduce(
+								(sum, score) => sum + score,
+								0,
+							) / scores.length;
+						console.log(`${productId} ${avgScore}`);
+
+						let productRiskStatus: string;
+						if (avgScore <= 3) {
+							productRiskStatus = "Green";
+						} else if (avgScore > 3 && avgScore <= 7) {
+							productRiskStatus = "Yellow";
+						} else {
+							productRiskStatus = "Red";
+						}
+
+						return {
+							product_id: productId,
+							product_risk_status: productRiskStatus,
+						};
+					});
 
 				////////// OFFERING HEALTH
 
@@ -164,9 +291,9 @@ export default function OptimizedOPSRMapping({
 				setResourceMappingData(parsedResourceData);
 				setProductMappingData(parsedProductData);
 				setOfferingMappingData(parsedOfferingData);
-				// setResourceHealthData(aggregatedResourceHealthData);
-				// setServiceHealthData(derivedServiceHealthData);
-				// setProductHealthData(derivedProductHealthData);
+				setResourceHealthData(aggregatedResourceHealthData);
+				setServiceHealthData(derivedServiceHealthData);
+				setProductHealthData(derivedProductHealthData);
 				// setOfferingHealthData(derivedOfferingHealthData);
 
 				setError(null);
