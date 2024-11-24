@@ -185,7 +185,7 @@ const ProductRevenueForecastChart: React.FC<ProductRevenueForecastChartProps> = 
                         }}
                         style={{ fontSize: 12, fontWeight: "bold" }}
                     />
-                    <Tooltip />
+                    <Tooltip formatter={(value, name) => [`₱${value}`, name]} />
                     <Legend verticalAlign="top" height={36} />
 
                     {/* Lines for each metric */}

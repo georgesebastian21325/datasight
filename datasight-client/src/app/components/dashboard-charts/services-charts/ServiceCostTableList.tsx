@@ -89,7 +89,7 @@ export default function ServiceCostTableList({ data }: ServiceCostTableListProps
                                 <TableCell>{item.resource_id}</TableCell>
                                 <TableCell>{item.resource_type}</TableCell>
                                 <TableCell className="text-right">
-                                    ${item.cost_generated_based_on_resource_id.toFixed(2)}
+                                   ₱ {item.cost_generated_based_on_resource_id.toFixed(2)}
                                 </TableCell>
                             </TableRow>
                         ))

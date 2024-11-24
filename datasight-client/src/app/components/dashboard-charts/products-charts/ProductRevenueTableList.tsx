@@ -101,7 +101,7 @@ const ProductRevenueTableList: React.FC<ProductRevenueTableListProps> = ({
                                 <TableCell>{item.product_id}</TableCell>
                                 <TableCell>{item.service_id}</TableCell>
                                 <TableCell className="text-right">
-                                    $
+                                    ₱
                                     {item.service_contribution_revenue.toLocaleString("en-US", {
                                         minimumFractionDigits: 2,
                                         maximumFractionDigits: 2,

@@ -92,7 +92,7 @@ const OfferingRevenueTableList: React.FC<OfferingRevenueTableListProps> = ({ dat
                                 <TableCell>{item.offering_id}</TableCell>
                                 <TableCell>{item.product_id}</TableCell>
                                 <TableCell className="text-right">
-                                    ${item.product_contribution_revenue.toFixed(2)}
+                                    ₱{item.product_contribution_revenue.toFixed(2)}
                                 </TableCell>
                             </TableRow>
                         ))

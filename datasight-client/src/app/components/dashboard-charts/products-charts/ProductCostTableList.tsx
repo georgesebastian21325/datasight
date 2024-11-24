@@ -104,7 +104,7 @@ const ProductCostTableList: React.FC<ProductCostTableListProps> = ({ data }) => 
                                 <TableCell>{item.product_id}</TableCell>
                                 <TableCell>{item.service_id}</TableCell>
                                 <TableCell className="text-right">
-                                    ${parseFloat(item.service_contribution_cost as string).toFixed(2)}
+                                    ₱ {parseFloat(item.service_contribution_cost as string).toFixed(2)}
                                 </TableCell>
                             </TableRow>
                         ))

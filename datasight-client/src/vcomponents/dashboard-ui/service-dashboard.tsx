@@ -126,7 +126,7 @@ export default function ServiceDashboardComponent() {
               <CardTitle className="text-sm font-medium">Total Service Cost</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{loading ? '...' : `$ ${totalServiceCost}`}</div>
+              <div className="text-2xl font-bold">{loading ? '...' : `₱ ${totalServiceCost}`}</div>
             </CardContent>
           </Card>
           <Card className={`${loading ? 'skeleton bg-black' : 'bg-black'} text-white`}>
@@ -134,7 +134,7 @@ export default function ServiceDashboardComponent() {
               <CardTitle className="text-sm font-medium">Total Service Revenue</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{loading ? '...' : `$ ${totalServiceRevenue}`}</div>
+              <div className="text-2xl font-bold">{loading ? '...' : `₱ ${totalServiceRevenue}`}</div>
             </CardContent>
           </Card>
         </div>

@@ -90,7 +90,7 @@ const ServicesTableList: React.FC<ServicesTableListProps> = ({ data }) => {
                                 <TableCell>{item.resource_id}</TableCell>
                                 <TableCell>{item.resource_type}</TableCell>
                                 <TableCell className="text-right">
-                                    ${parseFloat(item.revenue_generated_based_on_resource_id as string).toFixed(2)}
+                                    ₱{parseFloat(item.revenue_generated_based_on_resource_id as string).toFixed(2)}
                                 </TableCell>
                             </TableRow>
                         ))

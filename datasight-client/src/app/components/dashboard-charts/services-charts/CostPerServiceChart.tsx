@@ -39,7 +39,7 @@ const CostPerServiceChart: React.FC<CostPerServiceProps> = ({ data }) => {
 
     // Formatter function for displaying numbers in 000,000,000 format
     const formatNumber = (value: number): string =>
-        `$${value.toLocaleString("en-US", {
+        `₱ ${value.toLocaleString("en-US", {
             minimumFractionDigits: 0,
             maximumFractionDigits: 2,
         })}`;

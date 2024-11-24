@@ -113,7 +113,7 @@ export default function ProductLayerDashboard() {
               <DollarSign className="h-4 w-4 text-white" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">$ {loading ? '...' : totalProductCost}</div>
+              <div className="text-2xl font-bold">₱ {loading ? '...' : totalProductCost}</div>
             </CardContent>
           </Card>
           <Card className={`${loading ? 'skeleton bg-brand-blue' : ' '} bg-brand-blue text-white` }>
@@ -122,7 +122,7 @@ export default function ProductLayerDashboard() {
               <DollarSign className="h-4 w-4 text-white" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">$ {loading ? '...' : totalProductRevenue}</div>
+              <div className="text-2xl font-bold">₱ {loading ? '...' : totalProductRevenue}</div>
             </CardContent>
           </Card>
         </div>
