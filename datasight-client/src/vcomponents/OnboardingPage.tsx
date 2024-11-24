@@ -1,4 +1,3 @@
-// Onboarding.tsx
 'use client'
 
 import { useState } from 'react'
@@ -18,7 +17,6 @@ interface FileInfo {
   status: "ready" | "uploaded" | "failed" | "uploading"
   file: File
 }
-
 
 export function Onboarding() {
   const [currentStep, setCurrentStep] = useState(1)
@@ -68,10 +66,18 @@ export function Onboarding() {
         <CardContent className="min-h-[250px] flex flex-col items-center justify-center">
           {currentStep === 1 && (
             <div className="text-center w-full flex flex-col items-center">
-              <h1 className='text-2xl font-bold'> Upload Your Data Set</h1>
-              <p className='mb-6 text-gray-600 w-[95%]'>Click on the Upload Enterprise Architecture Datasets to begin storing your datasets in to our system. </p>
-              <FileUploadModal onUploadComplete={(files) => setUploadedFiles(files)} />
-              {uploadedFiles.length > 0 && <p className="mt-4 text-sm text-gray-500">Files uploaded successfully!</p>}
+              {uploadedFiles.length === 0 ? (
+                <>
+                  <h1 className='text-2xl font-bold'>Upload Your Data Set</h1>
+                  <p className='mb-6 text-gray-600 w-[95%]'>Click on the Upload Enterprise Architecture Datasets to begin storing your datasets in our system.</p>
+                  <FileUploadModal onUploadComplete={(files) => setUploadedFiles(files)} />
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                  <h2 className="text-2xl font-semibold mb-4">Files Have Successfully Been Uploaded Into Our System!</h2>
+                </>
+              )}
             </div>
           )}
 

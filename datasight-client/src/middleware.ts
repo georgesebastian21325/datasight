@@ -8,7 +8,6 @@ export async function middleware(request: NextRequest) {
 
   // Define the routes that require authentication
   const protectedRoutes = [
-    "/onboarding",
     "/dashboard/resources",
     "/dashboard/services",
     "/dashboard/products",

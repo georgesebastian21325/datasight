@@ -142,43 +142,61 @@ export default function Component({
     setIsUploading(true);
     setError(null);
 
-    const formData = new FormData();
-    selectedFiles.forEach((fileInfo) => {
-      formData.append("files", fileInfo.file);
-      console.log(fileInfo)
-    });
+    for (const fileInfo of selectedFiles) {
+      if (fileInfo.status !== "uploaded") {
+        const formData = new FormData();
+        formData.append("files", fileInfo.file); // Use "files" to match the server
 
-    try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
+        try {
+          const response = await fetch("/api/upload", {
+            method: "POST",
+            body: formData,
+          });
 
-      if (response.ok) {
-        const uploadedFiles = selectedFiles.map((file) => ({
-          ...file,
-          status: "uploaded" as const,
-        }));
-        setSelectedFiles(uploadedFiles);
-        onUploadComplete(
-          uploadedFiles.filter((file) => file.status === "uploaded")
-        );
-        setUploadComplete(true); // Indicate upload completion
-      } else {
-        throw new Error("Upload failed");
+          if (response.ok) {
+            setSelectedFiles((prev) =>
+              prev.map((file) =>
+                file.id === fileInfo.id
+                  ? { ...file, status: "uploaded" }
+                  : file
+              )
+            );
+          } else {
+            setSelectedFiles((prev) =>
+              prev.map((file) =>
+                file.id === fileInfo.id
+                  ? { ...file, status: "failed" }
+                  : file
+              )
+            );
+            const errorData = await response.json();
+            setError(errorData.error || "Failed to upload the file.");
+          }
+        } catch (err) {
+          console.error("Upload error:", err);
+          setSelectedFiles((prev) =>
+            prev.map((file) =>
+              file.id === fileInfo.id
+                ? { ...file, status: "failed" }
+                : file
+            )
+          );
+          setError("Failed to upload the file.");
+        }
       }
-    } catch (err) {
-      setError("Upload failed. Please try again.");
-      setSelectedFiles((prev) =>
-        prev.map((file) => ({
-          ...file,
-          status: "failed",
-        }))
+    }
+
+    setIsUploading(false);
+
+    if (selectedFiles.every((file) => file.status === "uploaded")) {
+      setUploadComplete(true);
+      onUploadComplete(
+        selectedFiles.filter((file) => file.status === "uploaded")
       );
-    } finally {
-      setIsUploading(false);
     }
   };
+
+
 
   const handleRemoveFile = (id: string) => {
     setSelectedFiles((prev) => prev.filter((file) => file.id !== id));
