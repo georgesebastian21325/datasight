@@ -104,7 +104,7 @@ export default function ResourceDashboardComponent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {loading ? "..." : `$ ${totalResourceCost}`}
+              {loading ? "..." : `₱ ${totalResourceCost}`}
             </div>
           </CardContent>
         </Card>
@@ -117,7 +117,7 @@ export default function ResourceDashboardComponent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {loading ? "..." : `$ ${totalResourceRevenue}`}
+              {loading ? "..." : `₱ ${totalResourceRevenue}`}
             </div>
           </CardContent>
         </Card>

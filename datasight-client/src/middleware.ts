@@ -4,43 +4,31 @@ import { authenticatedUser } from "./utils/amplify-server-utils";
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
   const user = await authenticatedUser({ request, response });
+  const { pathname } = request.nextUrl;
 
-  const isOnHomePage = request.nextUrl.pathname.startsWith("/home-page");
-  const isOnEnterpriseView = request.nextUrl.pathname.startsWith("/enterprise-architecture");
-  const isOnSettings = request.nextUrl.pathname.startsWith("/settings");
-  const isOnAdminArea = request.nextUrl.pathname.startsWith("/dashboard/admins");
+  // Define the routes that require authentication
+  const protectedRoutes = [
+    '/typeshit',
+    '/onboarding',
+    '/dashboard/services',
+    '/dashboard/products',
+    '/dashboard/offerings',
+    '/enterprise-architecture',
+  ];
 
-  // Protecting the /home-page route
-  if (isOnHomePage) {
-    if (!user) {
-      return NextResponse.redirect(new URL("/", request.nextUrl));
-    }
-    return response;
-  }
-  {
+  // Check if the current path is one of the protected routes
+  const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
 
-  {/*
-if (isOnEnterpriseView || isOnSettings) {
-    if (!user) {
-      return NextResponse.redirect(new URL("/", request.nextUrl));
-    }
-    return response;
+  // Redirect unauthenticated users accessing protected routes to the login page
+  if (!user && isProtectedRoute) {
+    return NextResponse.redirect(new URL("/", request.nextUrl));
   }
 
-  */}
-
-  // If authenticated, redirect to the home page if trying to access the login page or other restricted areas
-  if (user && (request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/login")) {
-    return NextResponse.redirect(new URL("/home-page", request.nextUrl));
+  // Redirect authenticated users away from the login page to the dashboard
+  if (user && pathname === "/") {
+    return NextResponse.redirect(new URL("/dashboard/resources", request.nextUrl));
   }
 
-  }
-  // Protecting /enterprise-architecture and /settings routes
-
-
+  // Proceed with the response if none of the above conditions are met
   return response;
 }
-
-export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"], // Match all routes except static assets and APIs
-};

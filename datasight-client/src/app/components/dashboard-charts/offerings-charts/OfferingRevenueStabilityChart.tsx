@@ -60,19 +60,19 @@ const OfferingRevenueStabilityChart: React.FC<OfferingRevenueStabilityChartProps
             <ResponsiveContainer width="100%" height={400}>
                 <LineChart
                     data={filteredData}
-                    margin={{ top: 10, right: 30, left: 0, bottom: 5 }}
-                    style={{ fontSize: '9px', fontWeight: 'bold', fill: 'black' }}
+                    margin={{ top: 20, right: 30, bottom: 20, left: 60 }}
+                    style={{ fontSize: "9px", fontWeight: "bold" }}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" />
                     <YAxis
                         tickFormatter={(value) =>
-                            `$${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`
+                            `₱ ${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`
                         }
                     />
                     <Tooltip
                         formatter={(value) =>
-                            `$${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2 })}`
+                            `₱ ${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2 })}`
                         }
                     />
                     <Line

@@ -109,7 +109,7 @@ export default function OfferingDashboardComponent() {
             <CardTitle className="text-sm font-medium">Total Offering Cost</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? '...' : `$ ${offeringCost}`}</div>
+            <div className="text-2xl font-bold">{loading ? '...' : `₱ ${offeringCost}`}</div>
           </CardContent>
         </Card>
         <Card className={`${loading ? 'skeleton bg-black' : 'bg-black '} text-white`}>
@@ -117,7 +117,7 @@ export default function OfferingDashboardComponent() {
             <CardTitle className="text-sm font-medium">Total Offering Revenue</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? '...' : `$ ${offeringRevenue}`}</div>
+            <div className="text-2xl font-bold">{loading ? '...' : `₱ ${offeringRevenue}`}</div>
           </CardContent>
         </Card>
       </div>

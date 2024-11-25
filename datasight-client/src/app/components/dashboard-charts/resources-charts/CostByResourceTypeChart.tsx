@@ -56,7 +56,7 @@ const renderCustomLabel = ({
     total: number;
 }): string => {
     const percentage = calculatePercentage(value, total);
-    return `$${value.toLocaleString("en-US", {
+    return `₱ ${value.toLocaleString("en-US", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
     })} (${percentage}%)`;
@@ -98,7 +98,7 @@ const CostByResourceTypeChart: React.FC<CostByResourceTypeChartProps> = ({
                     </Pie>
                     <ChartTooltip
                         formatter={(value: number) =>
-                            `$${value.toLocaleString("en-US", {
+                            `₱ ${value.toLocaleString("en-US", {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2,
                             })}`

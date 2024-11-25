@@ -103,7 +103,7 @@ export default function LoginForm() {
 					<p className="mt-2 text-sm">
 						Don&apos;t have an account yet?
 						<span className="text-brand-blue font-semibold">
-							<Link href="/auth/signup" className="text-sm text-blue-600 hover:underline font-medium">
+							<Link href="/auth/signup" className="text-sm text-blue-600 hover:underline font-medium ml-2">
 								Sign Up
 							</Link>
 						</span>
