@@ -266,8 +266,7 @@ export default function FileUploadModal({
           </Button>
         </DialogTrigger>
         <DialogContent
-          className={`sm:max-w-${uploadComplete ? "[500px]" : "[1000px]"
-            }`}
+          className={uploadComplete ? "max-w-lg" : "max-w-5xl"}
         >
           <DialogHeader>
             {!uploadComplete && (
@@ -284,7 +283,7 @@ export default function FileUploadModal({
               </h2>
               <Button
                 onClick={handleViewDashboard}
-                className="bg-green-800 text-white py-3 px-6 rounded hover:bg-green-700   transition-transform transform hover:scale-105 font-semibold"
+                className="bg-green-800 text-white py-3 px-6 rounded hover:bg-green-700 transition-transform transform hover:scale-105 font-semibold"
               >
                 View Dashboard
               </Button>
