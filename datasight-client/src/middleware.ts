@@ -6,34 +6,25 @@ export async function middleware(request: NextRequest) {
   const user = await authenticatedUser({ request, response });
   const { pathname } = request.nextUrl;
 
-  console.log("Authenticated User:", user);
-  console.log("Current Pathname:", pathname);
-
   // Define the routes that require authentication
   const protectedRoutes = [
-    '/typeshit'
+    '/typeshit',
+    '/onboarding',
+    '/dashboard/services',
+    '/dashboard/products',
+    '/dashboard/offerings',
+    '/enterprise-architecture',
   ];
-  {
-    /*
-    "onboarding",
-    "/dashboard/services",
-    "/dashboard/products",
-    "/dashboard/offerings",
-    "/enterprise-architecture",
-    */
-  }
-
 
   // Check if the current path is one of the protected routes
   const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
-  console.log("Is Protected Route:", isProtectedRoute);
 
   // Redirect unauthenticated users accessing protected routes to the login page
   if (!user && isProtectedRoute) {
     return NextResponse.redirect(new URL("/", request.nextUrl));
   }
 
-  // Redirect authenticated users away from the login page
+  // Redirect authenticated users away from the login page to the dashboard
   if (user && pathname === "/") {
     return NextResponse.redirect(new URL("/dashboard/resources", request.nextUrl));
   }
