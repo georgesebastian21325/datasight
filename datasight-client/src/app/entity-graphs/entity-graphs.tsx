@@ -27,38 +27,47 @@ interface MetricRecord {
 	[key: string]: any; // Allow additional properties
 }
 
-// Derived Interfaces with optional properties
 interface ServiceMetricRecord extends MetricRecord {
 	service_id: string;
 	product_id?: string;
 	offering_id?: string;
 	resource_type: string;
-	avg_usage: string;
-	avg_cost: string;
+	avg_usage: number; // Ensure type matches
+	avg_cost: number;  // Ensure type matches
 	date: string;
+	year: string;      // Add the missing property
+	month: string;     // Add the missing property
 }
+
 
 interface ProductMetricRecord extends MetricRecord {
 	product_id: string;
 	service_id: string;
 	week: string;
-	avg_usage: string;
-	avg_cost: string;
+	avg_usage: number; // Ensure type matches
+	avg_cost: number;  // Ensure type matches
 	date: string;
 	month: string;
 	year: string;
-	weekly_revenue?: string; // Optional with default handling
+	weekly_revenue?: string; // Optional, if present
 }
 
 interface OfferingMetricRecord extends MetricRecord {
 	offering_id: string;
 	product_id: string;
 	week: string;
-	avg_usage: string;
-	avg_cost: string;
+	avg_usage: number; // Ensure type matches
+	avg_cost: number;  // Ensure type matches
 	date: string;
 	weekly_revenue: string;
+	service_id: string;      // Make it required
+	resource_type: string;   // Make it required
+	year: string;            // Add the missing property
+	month: string;           // Add the missing property
 }
+
+
+
 
 export default function EntityGraphs() {
 	const { selectedNodeId } = useGlobalState();
@@ -78,64 +87,61 @@ export default function EntityGraphs() {
 			setIsLoading(true);
 
 			const response = await fetch(
-				`${resourceEntityAPI}?entity_id=${selectedNodeId}`,
+				`${resourceEntityAPI}?entity_id=${selectedNodeId}`
 			);
 
 			setIsLoading(false);
 
 			if (response.ok) {
-				const result: MetricRecord[] =
-					await response.json();
-				let grouped;
-				console.log(result);
+				const result: MetricRecord[] = await response.json();
 
-				// Safer type-specific data formatting
+				// Map over the data to ensure correct types
+				const formattedResult = result.map((record) => ({
+					...record,
+					avg_usage: parseFloat(record.avg_usage), // Ensure avg_usage is a number
+					avg_cost: parseFloat(record.avg_cost),   // Optionally handle avg_cost similarly
+				}));
+
+				let grouped;
 				if (selectedNodeId?.startsWith("SVC")) {
 					grouped = formatDataForService(
-						result as ServiceMetricRecord[],
+						formattedResult as ServiceMetricRecord[]
 					);
 				} else if (selectedNodeId?.startsWith("P00")) {
 					grouped = formatDataForProduct(
-						result as ServiceMetricRecord[],
+						formattedResult as ProductMetricRecord[]
 					);
 				} else if (selectedNodeId?.startsWith("OFF")) {
 					grouped = formatDataForOffering(
-						result as ServiceMetricRecord[],
+						formattedResult as OfferingMetricRecord[]
 					);
-					console.log(grouped);
 				} else {
-					// Fallback for other types of nodes
-					grouped = result.reduce(
+					grouped = formattedResult.reduce(
 						(
 							acc: Record<string, MetricRecord[]>,
-							record: MetricRecord,
+							record: MetricRecord
 						) => {
-							// Use a default metric type if undefined
 							const metricType =
 								record.metric_type || "default";
-
 							if (!acc[metricType]) {
 								acc[metricType] = [];
 							}
 							acc[metricType].push(record);
 							return acc;
 						},
-						{},
+						{}
 					);
 				}
 
 				setGroupedData(grouped);
-				console.log(grouped);
 			} else {
-				console.error(
-					"Error fetching data:",
-					response.statusText,
-				);
+				console.error("Error fetching data:", response.statusText);
 			}
 		} catch (error) {
 			console.error("Error fetching data:", error);
 		}
 	};
+
 
 	useEffect(() => {
 		if (selectedNodeId) {
