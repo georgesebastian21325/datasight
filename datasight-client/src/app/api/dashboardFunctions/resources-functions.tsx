@@ -254,6 +254,38 @@ async function fetchResourceRevenueForecast() {
 }
 
 
+async function fetchGrossProfitVsPredictedCost() {
+    type GrossProfitVsPredictedCost = {
+        period: string;
+        resource_id: string;
+        current_gross: string;
+        predicted_gross: string;
+    };
+
+    try {
+        const response = await fetch('https://u4cav55e95.execute-api.ap-southeast-2.amazonaws.com/development/getGrossProfitVsPredCost');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        // Convert `total_resource_cost` to a number for each item
+        const formattedData = bodyData.map((item: GrossProfitVsPredictedCost) => ({
+            ...item,
+            predicted_gross: parseFloat(item.predicted_gross),
+            current_gross: parseFloat(item.current_gross)
+        }));
+
+        console.log('Gross Profit Vs. Predicted Cost', formattedData);
+
+        return formattedData;
+
+    } catch (error) {
+        console.error('Fetch Error:', error);
+        return null;
+    }
+}
+
 function formatCustom(number: number): string {
     return number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
@@ -268,5 +300,6 @@ export {
     fetchResourceRevenueForecast,
     fetchHighestUtilizedResources,
     fetchLowestUtilizedResources,
+    fetchGrossProfitVsPredictedCost,
     formatCustom
 }

@@ -89,8 +89,8 @@ export default function OfferingDashboardComponent() {
       setRevenueByOffering(revenueByOfferingData);
       setOfferingCostTableList(offeringCostTableListData);
       setOfferingRevenueTableList(offeringRevenueTableListData);
-      setOfferingRevenueStability(offeringRevenueStabilityData)
-      setOfferingRevenueForecast(offeringRevenueForecast)
+      //setOfferingRevenueStability(offeringRevenueStabilityData)
+      //setOfferingRevenueForecast(offeringRevenueForecast)
 
       setLoading(false);  // Stop loading after data is fetched
     }
@@ -159,6 +159,7 @@ export default function OfferingDashboardComponent() {
           </CardContent>
         </Card>
       </div>
+      {/*
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
         <Card>
           <CardHeader>
@@ -179,6 +180,7 @@ export default function OfferingDashboardComponent() {
           </CardContent>
         </Card>
       </div>
+      */}
     </div>
   )
 }

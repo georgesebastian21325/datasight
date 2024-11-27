@@ -14,13 +14,16 @@ import {
   fetchTopRevenueGeneratingResources,
   formatCustom,
   fetchAverageUtilizationResource,
-  fetchResourceRevenueForecast,
+  fetchResourceRevenueForecast, fetchGrossProfitVsPredictedCost
 } from "../../app/api/dashboardFunctions/resources-functions";
 
 import CostByResourceTypeChart from "../../app/components/dashboard-charts/resources-charts/CostByResourceTypeChart";
 import RevenueByResourceTypeChart from "../../app/components/dashboard-charts/resources-charts/RevenueByResourceType";
 import AverageUtilizationChart from "../../app/components/dashboard-charts/resources-charts/AverageUtilizationChart";
 import ResourceRevenueForecastChart from "@/app/components/dashboard-charts/resources-charts/ResourceRevenueForecastChart";
+import CurrentGrossVsPredictedCostCard from '../../app/components/dashboard-charts/resources-charts/CurrentGrossVsPredCostCard';
+
+
 
 type ResourceCostItem = {
   resource_type: string;
@@ -48,6 +51,13 @@ type ResourceRevenueForecastItems = {
   forecast_revenue: string;
 };
 
+type GrossProfitVsPredictedCost = {
+  period: string;
+  resource_id: string;
+  current_gross: string;
+  predicted_gross: string;
+};
+
 export default function ResourceDashboardComponent() {
   const [loading, setLoading] = useState(true); // Loading state
   const [totalResourceCost, setTotalResourceCost] = useState<string | null>(null);
@@ -56,6 +66,7 @@ export default function ResourceDashboardComponent() {
   const [revenueByResourceType, setRevenueResource] = useState<ResourceRevenueItem[]>([]);
   const [resourceRevenueForecast, setResourceRevenueForecast] = useState<ResourceRevenueForecastItems[]>([]);
   const [averageUtilization, setAverageUtilization] = useState<AverageUtilizationItems[]>([]);
+  const [grossProfitVsPredCost, setGrossProfitVsPredCost] = useState<GrossProfitVsPredictedCost[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -66,6 +77,7 @@ export default function ResourceDashboardComponent() {
       const revenueByResourceTypeData = await fetchTopRevenueGeneratingResources();
       const aveUtilizationResource = await fetchAverageUtilizationResource();
       const resourceRevenueForecastData = await fetchResourceRevenueForecast();
+      const grossProfitVsPredCostData = await fetchGrossProfitVsPredictedCost();
 
       if (resourceCost !== null) {
         setTotalResourceCost(formatCustom(resourceCost));
@@ -79,6 +91,8 @@ export default function ResourceDashboardComponent() {
       setRevenueResource(revenueByResourceTypeData);
       setAverageUtilization(aveUtilizationResource);
       setResourceRevenueForecast(resourceRevenueForecastData);
+      setGrossProfitVsPredCost(grossProfitVsPredCostData);
+
       setLoading(false); // Stop loading after data is fetched
     }
 
@@ -121,6 +135,9 @@ export default function ResourceDashboardComponent() {
             </div>
           </CardContent>
         </Card>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <CurrentGrossVsPredictedCostCard />
       </div>
 
       {/* 2. Performance and Financial Insights */}
