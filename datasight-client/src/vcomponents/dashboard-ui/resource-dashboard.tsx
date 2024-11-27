@@ -37,19 +37,17 @@ type ResourceRevenueItem = {
 };
 
 type AverageUtilizationItems = {
+  period: string; // Format: "YYYY-MM-DD"
   resource_id: string;
-  resource_type: string;
-  month: string;
-  year: string;
-  avg_monthly_resource_utilization: number;
+  predicted_cost_average: number;
+  predicted_revenue_average: number;
 };
 
 type ResourceRevenueForecastItems = {
+  period: string;
   resource_id: string;
-  month_year: string;
-  total_resource_revenue: string;
-  predicted_revenue: string;
-  forecast_revenue: string;
+  predicted_demand_percentage: number;
+  predicted_usage: number;
 };
 
 type GrossProfitVsPredictedCost = {
@@ -91,8 +89,8 @@ export default function ResourceDashboardComponent() {
       setCostByResourceType(costByResourceType);
       setRevenueResource(revenueByResourceTypeData);
       setAverageUtilization(aveUtilizationResource);
-      setResourceRevenueForecast(resourceRevenueForecastData);
-      setGrossProfitVsPredCost(grossProfitVsPredCostData);
+      //setResourceRevenueForecast(resourceRevenueForecastData);
+      //setGrossProfitVsPredCost(grossProfitVsPredCostData);
 
       setLoading(false); // Stop loading after data is fetched
     }
@@ -137,7 +135,9 @@ export default function ResourceDashboardComponent() {
           </CardContent>
         </Card>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+      {
+        /*
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         <Card>
           <CardHeader>
             <CardTitle className='text-lg font-bold'>Financial Comparison</CardTitle>
@@ -146,6 +146,8 @@ export default function ResourceDashboardComponent() {
           <CurrentGrossVsPredictedCostCard data={grossProfitVsPredCost} />
         </Card>
       </div>
+        */
+      }
 
       {/* 2. Performance and Financial Insights */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
@@ -180,11 +182,12 @@ export default function ResourceDashboardComponent() {
           </Card>
         </div>
       </div>
-      <div className="grid grid-cols-1 mb-8">
+      {/*
+        <div className="grid grid-cols-1 mb-8">
         <Card className={`${loading ? "animate-pulse" : ""}`}>
           <CardHeader>
             <CardTitle className="text-lg font-bold">
-              Resource Revenue Trend
+              Demand Percentage and Usage Prediction
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -196,6 +199,8 @@ export default function ResourceDashboardComponent() {
           </CardContent>
         </Card>
       </div>
+
+      */}
 
       {/* 3. Capacity and Utilization Insights */}
       <div className="grid grid-cols-1 gap-4 mb-8">

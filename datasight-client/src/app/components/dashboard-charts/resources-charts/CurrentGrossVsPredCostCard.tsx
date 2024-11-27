@@ -76,11 +76,11 @@ export default function CurrentGrossVsPredCostCard({ data }: CurrentGrossVsPredC
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'PHP', // Correct currency code for Philippine Peso
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
     }).format(amount);
   };
+
 
   // Recalculate valid start dates whenever the end date filter changes
   const validStartDates = startDates.filter((date) => new Date(date) <= new Date(endDateFilter));
