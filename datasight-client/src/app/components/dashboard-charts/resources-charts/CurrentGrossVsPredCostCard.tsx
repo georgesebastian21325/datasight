@@ -40,22 +40,22 @@ export default function CurrentGrossVsPredCostCard({ data }: CurrentGrossVsPredC
     const validStartDate = new Date(startDateFilter);
     const validEndDate = new Date(endDateFilter);
 
+    // If the selected start date is later than the end date, reset to the default values
     if (validStartDate > validEndDate) {
-      // If start date is later than end date, reset filters to default values
       setStartDateFilter(startDates[0]);
       setEndDateFilter(endDates[0]);
-      return; // Avoid filtering data in this case
-    }
+      filtered = data; // Reset the filter to show all data
+    } else {
+      // Apply the filters only if valid
+      if (resourceIdFilter) {
+        filtered = filtered.filter(item => item.resource_id === resourceIdFilter);
+      }
 
-    // Apply filters only if valid dates are selected
-    if (resourceIdFilter) {
-      filtered = filtered.filter(item => item.resource_id === resourceIdFilter);
+      filtered = filtered.filter(item => new Date(item.period) >= validStartDate && new Date(item.period) <= validEndDate);
     }
-
-    filtered = filtered.filter(item => new Date(item.period) >= validStartDate && new Date(item.period) <= validEndDate);
 
     setFilteredData(filtered);
-  }, [data, resourceIdFilter, startDateFilter, endDateFilter, startDates, endDates]);
+  }, [data, resourceIdFilter, startDateFilter, endDateFilter]);
 
   // Set the current data to display (use the first item from filtered data)
   const [currentData, setCurrentData] = useState<DataItem | null>(null);
