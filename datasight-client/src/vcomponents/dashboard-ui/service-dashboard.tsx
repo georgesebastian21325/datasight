@@ -107,7 +107,7 @@ export default function ServiceDashboardComponent() {
       setServiceCostList(serviceCostListData);
       setServiceResourceList(serviceResourceListData);
       setServiceUtilizationTrend(serviceUtilizationTrendData);
-      setServiceRevenueForecast(serviceRevenueForecastData);
+      // setServiceRevenueForecast(serviceRevenueForecastData);
       setLoading(false);  // Stop loading after data is fetched
     }
 
@@ -191,6 +191,7 @@ export default function ServiceDashboardComponent() {
             </CardContent>
           </Card>
         </div>
+        {/*
         <div className="grid grid-cols-1 gap-4">
           <Card>
             <CardHeader>
@@ -201,6 +202,7 @@ export default function ServiceDashboardComponent() {
             </CardContent>
           </Card>
         </div>
+        */}
       </section>
     </div>
   )

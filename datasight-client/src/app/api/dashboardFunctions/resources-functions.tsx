@@ -7,9 +7,9 @@ async function fetchTotalResourceCost() {
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
         const data = await response.json();
-        const bodyData = JSON.parse(data.body); 
-        const totalResourceCost = parseFloat(bodyData[0].total_resource_cost); 
-        
+        const bodyData = JSON.parse(data.body);
+        const totalResourceCost = parseFloat(bodyData[0].total_resource_cost);
+
 
         console.log('Total Resource Cost:', totalResourceCost);
         return totalResourceCost; // Return the fetched data
@@ -119,7 +119,7 @@ async function fetchTopRevenueGeneratingResources() {
             total_resource_revenue: parseFloat(item.total_resource_revenue)
         }));
 
-        console.log('Top Resource Generating Revenue', formattedData);
+        console.log('Revenue Per Resource Type', formattedData);
 
         return formattedData;
 
