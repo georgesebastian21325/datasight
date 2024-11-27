@@ -4,15 +4,18 @@ import { useGlobalState } from "../context/GlobalStateContext";
 import EntityGraphsLoadingState from "../components/global/EntityGraphsLoadingState";
 import React, { useState, useEffect } from "react";
 import { ResourceGraphs } from "../components/global/ResourceGraphs";
-import formatDataForServiceGraphs, {
+
+import formatDataForService, {
 	LineUsageCostChart,
 	StackedBarChart,
 } from "../components/global/ServiceGraphs";
-import { formatDataForOffering } from "../components/global/OfferingGraphs";
-import formatDataForService from "../components/global/ServiceGraphs";
 import formatDataForProduct, {
 	ProdStackedBarChart,
 } from "../components/global/ProductGraphs";
+import formatDataForOffering, {
+	OffLineUsageCostChart,
+	OffStackedBarChart,
+} from "../components/global/OfferingGraphs";
 
 // Base Metric Record Interface with more flexibility
 interface MetricRecord {
@@ -95,6 +98,11 @@ export default function EntityGraphs() {
 					grouped = formatDataForProduct(
 						result as ServiceMetricRecord[],
 					);
+				} else if (selectedNodeId?.startsWith("OFF")) {
+					grouped = formatDataForOffering(
+						result as ServiceMetricRecord[],
+					);
+					console.log(grouped);
 				} else {
 					// Fallback for other types of nodes
 					grouped = result.reduce(
@@ -155,7 +163,7 @@ export default function EntityGraphs() {
 					);
 				case "stackedUsage":
 					return (
-						<ProdStackedBarChart
+						<StackedBarChart
 							data={groupedData.stackedUsageData}
 							dataKey="usage"
 							title="Stacked Usage for All Resources"
@@ -163,7 +171,7 @@ export default function EntityGraphs() {
 					);
 				case "stackedCost":
 					return (
-						<ProdStackedBarChart
+						<StackedBarChart
 							data={groupedData.stackedCostData}
 							dataKey="cost"
 							title="Stacked Cost for All Resources"
@@ -174,11 +182,8 @@ export default function EntityGraphs() {
 			}
 		}
 
-		// Product or Offering charts
-		if (
-			selectedNodeId?.startsWith("P00") ||
-			selectedNodeId?.startsWith("OFF")
-		) {
+		// Product
+		if (selectedNodeId?.startsWith("P00")) {
 			switch (activeTab) {
 				case "lineUsageCost":
 					return (
@@ -188,18 +193,48 @@ export default function EntityGraphs() {
 					);
 				case "stackedUsage":
 					return (
-						<StackedBarChart
+						<ProdStackedBarChart
 							data={groupedData!.stackedUsageData}
 							dataKey="usage"
-							title="Stacked Usage for All Resources"
+							title="Stacked Usage for All Services"
 						/>
 					);
 				case "stackedCost":
 					return (
-						<StackedBarChart
+						<ProdStackedBarChart
 							data={groupedData!.stackedCostData}
 							dataKey="cost"
-							title="Stacked Cost for All Resources"
+							title="Stacked Cost for All Services"
+						/>
+					);
+				default:
+					return null;
+			}
+		}
+
+		// Offering
+		if (selectedNodeId?.startsWith("OFF")) {
+			switch (activeTab) {
+				case "lineUsageCost":
+					return (
+						<OffLineUsageCostChart
+							data={groupedData!.lineUsageCostData}
+						/>
+					);
+				case "stackedUsage":
+					return (
+						<OffStackedBarChart
+							data={groupedData!.stackedUsageData}
+							dataKey="usage"
+							title="Stacked Usage for All Products"
+						/>
+					);
+				case "stackedCost":
+					return (
+						<OffStackedBarChart
+							data={groupedData!.stackedCostData}
+							dataKey="cost"
+							title="Stacked Cost for All Products"
 						/>
 					);
 				default:
