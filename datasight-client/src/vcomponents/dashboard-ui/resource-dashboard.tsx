@@ -6,6 +6,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  CardDescription
 } from "@/vcomponents/dashboard-ui/resource-components/card";
 import {
   fetchTotalResourceCost,
@@ -14,13 +15,16 @@ import {
   fetchTopRevenueGeneratingResources,
   formatCustom,
   fetchAverageUtilizationResource,
-  fetchResourceRevenueForecast,
+  fetchResourceRevenueForecast, fetchGrossProfitVsPredictedCost
 } from "../../app/api/dashboardFunctions/resources-functions";
 
 import CostByResourceTypeChart from "../../app/components/dashboard-charts/resources-charts/CostByResourceTypeChart";
 import RevenueByResourceTypeChart from "../../app/components/dashboard-charts/resources-charts/RevenueByResourceType";
 import AverageUtilizationChart from "../../app/components/dashboard-charts/resources-charts/AverageUtilizationChart";
 import ResourceRevenueForecastChart from "@/app/components/dashboard-charts/resources-charts/ResourceRevenueForecastChart";
+import CurrentGrossVsPredictedCostCard from '../../app/components/dashboard-charts/resources-charts/CurrentGrossVsPredCostCard';
+
+
 
 type ResourceCostItem = {
   resource_type: string;
@@ -33,19 +37,24 @@ type ResourceRevenueItem = {
 };
 
 type AverageUtilizationItems = {
+  period: string; // Format: "YYYY-MM-DD"
   resource_id: string;
-  resource_type: string;
-  month: string;
-  year: string;
-  avg_monthly_resource_utilization: number;
+  predicted_cost_average: number;
+  predicted_revenue_average: number;
 };
 
 type ResourceRevenueForecastItems = {
+  period: string;
   resource_id: string;
-  month_year: string;
-  total_resource_revenue: string;
-  predicted_revenue: string;
-  forecast_revenue: string;
+  predicted_demand_percentage: number;
+  predicted_usage: number;
+};
+
+type GrossProfitVsPredictedCost = {
+  period: string;
+  resource_id: string;
+  current_gross_profit: number;
+  predicted_gross_profit: number;
 };
 
 export default function ResourceDashboardComponent() {
@@ -56,6 +65,7 @@ export default function ResourceDashboardComponent() {
   const [revenueByResourceType, setRevenueResource] = useState<ResourceRevenueItem[]>([]);
   const [resourceRevenueForecast, setResourceRevenueForecast] = useState<ResourceRevenueForecastItems[]>([]);
   const [averageUtilization, setAverageUtilization] = useState<AverageUtilizationItems[]>([]);
+  const [grossProfitVsPredCost, setGrossProfitVsPredCost] = useState<GrossProfitVsPredictedCost[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -66,6 +76,7 @@ export default function ResourceDashboardComponent() {
       const revenueByResourceTypeData = await fetchTopRevenueGeneratingResources();
       const aveUtilizationResource = await fetchAverageUtilizationResource();
       const resourceRevenueForecastData = await fetchResourceRevenueForecast();
+      const grossProfitVsPredCostData = await fetchGrossProfitVsPredictedCost();
 
       if (resourceCost !== null) {
         setTotalResourceCost(formatCustom(resourceCost));
@@ -78,7 +89,9 @@ export default function ResourceDashboardComponent() {
       setCostByResourceType(costByResourceType);
       setRevenueResource(revenueByResourceTypeData);
       setAverageUtilization(aveUtilizationResource);
-      setResourceRevenueForecast(resourceRevenueForecastData);
+      //setResourceRevenueForecast(resourceRevenueForecastData);
+      //setGrossProfitVsPredCost(grossProfitVsPredCostData);
+
       setLoading(false); // Stop loading after data is fetched
     }
 
@@ -122,6 +135,19 @@ export default function ResourceDashboardComponent() {
           </CardContent>
         </Card>
       </div>
+      {
+        /*
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className='text-lg font-bold'>Financial Comparison</CardTitle>
+            <CardDescription>Current gross profit vs predicted gross profit</CardDescription>
+          </CardHeader>
+          <CurrentGrossVsPredictedCostCard data={grossProfitVsPredCost} />
+        </Card>
+      </div>
+        */
+      }
 
       {/* 2. Performance and Financial Insights */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
@@ -156,11 +182,12 @@ export default function ResourceDashboardComponent() {
           </Card>
         </div>
       </div>
-      <div className="grid grid-cols-1 mb-8">
+      {/*
+        <div className="grid grid-cols-1 mb-8">
         <Card className={`${loading ? "animate-pulse" : ""}`}>
           <CardHeader>
             <CardTitle className="text-lg font-bold">
-              Resource Revenue Trend
+              Demand Percentage and Usage Prediction
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -172,6 +199,8 @@ export default function ResourceDashboardComponent() {
           </CardContent>
         </Card>
       </div>
+
+      */}
 
       {/* 3. Capacity and Utilization Insights */}
       <div className="grid grid-cols-1 gap-4 mb-8">

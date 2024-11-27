@@ -7,9 +7,9 @@ async function fetchTotalResourceCost() {
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
         const data = await response.json();
-        const bodyData = JSON.parse(data.body); 
-        const totalResourceCost = parseFloat(bodyData[0].total_resource_cost); 
-        
+        const bodyData = JSON.parse(data.body);
+        const totalResourceCost = parseFloat(bodyData[0].total_resource_cost);
+
 
         console.log('Total Resource Cost:', totalResourceCost);
         return totalResourceCost; // Return the fetched data
@@ -119,7 +119,7 @@ async function fetchTopRevenueGeneratingResources() {
             total_resource_revenue: parseFloat(item.total_resource_revenue)
         }));
 
-        console.log('Top Resource Generating Revenue', formattedData);
+        console.log('Revenue Per Resource Type', formattedData);
 
         return formattedData;
 
@@ -131,11 +131,10 @@ async function fetchTopRevenueGeneratingResources() {
 
 async function fetchAverageUtilizationResource() {
     type AverageUtilizationItems = {
+        period: string; // Format: "YYYY-MM-DD"
         resource_id: string;
-        resource_type: string;
-        month: string;
-        year:string;
-        avg_monthly_resource_utilization: string;
+        predicted_cost_average: number;
+        predicted_revenue_average: number;
     };
 
     try {
@@ -145,13 +144,15 @@ async function fetchAverageUtilizationResource() {
         const data = await response.json();
         const bodyData = JSON.parse(data.body);
 
-        // Ensure the correct field name `average_usage_percentage` is used
-        const formattedData = bodyData.map((item: AverageUtilizationItems) => ({
-            ...item
+        // Ensure the fields are correctly formatted
+        const formattedData: AverageUtilizationItems[] = bodyData.map((item: any) => ({
+            period: item.period,
+            resource_id: item.resource_id,
+            predicted_cost_average: parseFloat(item.predicted_cost_average),
+            predicted_revenue_average: parseFloat(item.predicted_revenue_average),
         }));
 
-
-        console.log('Average Utilization Per Resource:', formattedData);
+        console.log('Predicted Cost and Revenue Per Resource:', formattedData);
 
         return formattedData;
 
@@ -160,6 +161,7 @@ async function fetchAverageUtilizationResource() {
         return [];
     }
 }
+
 
 async function fetchHighestUtilizedResources() {
     type HighestUtilizedItems = {
@@ -221,38 +223,68 @@ async function fetchLowestUtilizedResources() {
 
 async function fetchResourceRevenueForecast() {
     type ResourceRevenueForecastItems = {
+        period: string;
         resource_id: string;
-        month_year: string;
-        total_resource_revenue: string;
-        predicted_revenue: string;
-        forecast_revenue: string;
+        predicted_demand_percentage: string;
+        predicted_usage: string;
     };
 
     try {
-        const response = await fetch('https://81lsv00jqf.execute-api.ap-southeast-2.amazonaws.com/development/getResourceRevenueForecast');
+        const response = await fetch(
+            'https://81lsv00jqf.execute-api.ap-southeast-2.amazonaws.com/development/getResourceRevenueForecast'
+        );
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
         const data = await response.json();
-        const bodyData = JSON.parse(data.body);
+        const bodyData: ResourceRevenueForecastItems[] = JSON.parse(data.body);
 
-        // Ensure the correct field name `average_usage_percentage` is used
-        const formattedData = bodyData.map((item: ResourceRevenueForecastItems) => ({
+        // Format the fetched data
+        const formattedData = bodyData.map((item) => ({
             ...item,
-            total_resource_revenue: parseFloat(item.total_resource_revenue),
-            predicted_revenue: parseFloat(item.predicted_revenue),
-            forecast_revenue: parseFloat(item.forecast_revenue)
+            demand_percentage_prediction: parseFloat(item.predicted_demand_percentage),
+            usage_percentage_prediction: parseFloat(item.predicted_usage),
         }));
 
-        console.log('Resource Revenue Forecast', formattedData);
-
         return formattedData;
-
     } catch (error) {
         console.error('Fetch Error:', error);
         return [];
     }
 }
 
+
+
+async function fetchGrossProfitVsPredictedCost() {
+    type GrossProfitVsPredictedCost = {
+        period: string;
+        resource_id: string;
+        current_gross_profit: string;
+        predicted_gross_profit: string;
+    };
+
+    try {
+        const response = await fetch('https://u4cav55e95.execute-api.ap-southeast-2.amazonaws.com/development/getGrossProfitVsPredCost');
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+        const data = await response.json();
+        const bodyData = JSON.parse(data.body);
+
+        // Convert `total_resource_cost` to a number for each item
+        const formattedData = bodyData.map((item: GrossProfitVsPredictedCost) => ({
+            ...item,
+            predicted_gross_profit: parseFloat(item.predicted_gross_profit),
+            current_gross_profit: parseFloat(item.current_gross_profit)
+        }));
+
+        console.log('Gross Profit Vs. Predicted Cost', formattedData);
+
+        return formattedData;
+
+    } catch (error) {
+        console.error('Fetch Error:', error);
+        return null;
+    }
+}
 
 function formatCustom(number: number): string {
     return number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -268,5 +300,6 @@ export {
     fetchResourceRevenueForecast,
     fetchHighestUtilizedResources,
     fetchLowestUtilizedResources,
+    fetchGrossProfitVsPredictedCost,
     formatCustom
 }
