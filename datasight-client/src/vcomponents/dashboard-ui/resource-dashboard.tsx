@@ -6,6 +6,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  CardDescription
 } from "@/vcomponents/dashboard-ui/resource-components/card";
 import {
   fetchTotalResourceCost,
@@ -54,8 +55,8 @@ type ResourceRevenueForecastItems = {
 type GrossProfitVsPredictedCost = {
   period: string;
   resource_id: string;
-  current_gross: string;
-  predicted_gross: string;
+  current_gross_profit: number;
+  predicted_gross_profit: number;
 };
 
 export default function ResourceDashboardComponent() {
@@ -137,7 +138,13 @@ export default function ResourceDashboardComponent() {
         </Card>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <CurrentGrossVsPredictedCostCard />
+        <Card>
+          <CardHeader>
+            <CardTitle className='text-lg font-bold'>Financial Comparison</CardTitle>
+            <CardDescription>Current gross profit vs predicted gross profit</CardDescription>
+          </CardHeader>
+          <CurrentGrossVsPredictedCostCard data={grossProfitVsPredCost} />
+        </Card>
       </div>
 
       {/* 2. Performance and Financial Insights */}

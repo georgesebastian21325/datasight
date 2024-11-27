@@ -258,8 +258,8 @@ async function fetchGrossProfitVsPredictedCost() {
     type GrossProfitVsPredictedCost = {
         period: string;
         resource_id: string;
-        current_gross: string;
-        predicted_gross: string;
+        current_gross_profit: string;
+        predicted_gross_profit: string;
     };
 
     try {
@@ -272,8 +272,8 @@ async function fetchGrossProfitVsPredictedCost() {
         // Convert `total_resource_cost` to a number for each item
         const formattedData = bodyData.map((item: GrossProfitVsPredictedCost) => ({
             ...item,
-            predicted_gross: parseFloat(item.predicted_gross),
-            current_gross: parseFloat(item.current_gross)
+            predicted_gross_profit: parseFloat(item.predicted_gross_profit),
+            current_gross_profit: parseFloat(item.current_gross_profit)
         }));
 
         console.log('Gross Profit Vs. Predicted Cost', formattedData);
