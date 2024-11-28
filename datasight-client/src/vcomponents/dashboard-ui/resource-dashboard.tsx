@@ -142,7 +142,7 @@ export default function ResourceDashboardComponent() {
           <Card className={`${loading ? "animate-pulse" : ""}`}>
             <CardHeader>
               <CardTitle className="text-lg font-bold">
-                Revenue Per Resource Type
+                Attributed Revenue Per Resource Type
               </CardTitle>
             </CardHeader>
             <CardContent>

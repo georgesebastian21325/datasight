@@ -62,20 +62,13 @@ interface ParsedMetricRecord {
 }
 
 interface FormattedData {
-	weeklyUsage: Record<string, ParsedMetricRecord[]>; // For Weekly Average Usage Line Chart
-	weeklyCost: Record<string, ParsedMetricRecord[]>; // For Weekly Average Cost Line Chart
-	lineUsageCostData: Record<string, ParsedMetricRecord[]>; // For Line Chart (Usage & Cost)
-	stackedUsageData: {
-		resource_id?: string;
-		usage: number;
-		cost: number;
-	}[]; // For Stacked Usage Chart
-	stackedCostData: {
-		resource_id?: string;
-		usage: number;
-		cost: number;
-	}[]; // For Stacked Cost Chart
+	weeklyUsage: Record<string, ParsedMetricRecord[]>; // Add weekly usage
+	weeklyCost: Record<string, ParsedMetricRecord[]>;  // Add weekly cost
+	lineUsageCostData: Record<string, ParsedMetricRecord[]>; // Add line ch
+	stackedUsageData: Array<{ month: string;[key: string]: number | string }>;
+	stackedCostData: Array<{ month: string;[key: string]: number | string }>;
 }
+
 
 export default function formatDataForService(
 	data: MetricRecord[],
@@ -102,6 +95,8 @@ export default function formatDataForService(
 				avg_cost: resourceCost, // Parsed resource cost
 				year: record.year,
 				month: record.month, // Extract the month from the date string
+				date: record.date,
+				week: record.week
 			};
 		},
 	);
