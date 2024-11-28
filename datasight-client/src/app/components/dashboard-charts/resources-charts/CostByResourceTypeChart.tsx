@@ -21,7 +21,7 @@ interface CostByResourceTypeChartProps {
 
 // Define color mapping for resource types
 const RESOURCE_COLORS: Record<string, string> = {
-    "Backup and Recovery Systems": "#4B0082", // Indigo
+    "Backup and Recovery System": "#4B0082", // Indigo
     "Cloud Infrastructure": "#2E8B57", // Sea Green
     "Communication Infrastructure": "#B8860B", // Dark Golden Rod
     Computer: "#556B2F", // Dark Olive Green
