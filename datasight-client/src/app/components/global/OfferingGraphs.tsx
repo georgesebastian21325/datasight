@@ -43,7 +43,7 @@ interface MetricRecord {
 	resource_type: string;
 	product_id?: string;
 	offering_id?: string;
-	product_cost?: number;
+	product_cost: number;
 	week: string;
 	avg_usage: number; // Original data as string
 	avg_cost: number; // Original data as string

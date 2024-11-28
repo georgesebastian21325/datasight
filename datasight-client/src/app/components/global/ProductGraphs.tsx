@@ -59,9 +59,10 @@ interface ParsedMetricRecord {
 	resource_id: string;
 	resource_type: string;
 	week: string;
-	avg_usage: number; // Parsed to number
-	avg_cost: number; // Parsed to number
+	avg_usage: number;
+	avg_cost: number;
 	date: string;
+	month: string;
 }
 
 interface FormattedData {
@@ -81,57 +82,86 @@ interface FormattedData {
 }
 
 export default function formatDataForProduct(
-	data: MetricRecord[],
+	data: MetricRecord[]
 ): FormattedData {
 	console.log("Original Data:", data);
 
-	// Parse usage_percentage and resource_cost as numbers
-	const parsedData: ParsedMetricRecord[] = data.map(
-		(record) => {
-			const usagePercentage =
-				record.usage_percentage !== undefined
-					? parseFloat(record.usage_percentage.toString())
-					: 0;
-			const resourceCost =
-				record.resource_cost !== undefined
-					? parseFloat(record.service_cost!.toString())
-					: 0;
+	// Parse and normalize data
+	const parsedData: ParsedMetricRecord[] = data.map((record) => {
+		return {
+			service_id: record.service_id || "Unknown Service",
+			resource_id: record.resource_id || "Unknown Resource",
+			resource_type: record.resource_type || "Unknown Type",
+			week: record.week || "N/A",
+			avg_usage: record.usage_percentage || 0,
+			avg_cost: record.service_cost || 0,
+			date: record.date || "N/A",
+			month: record.month,
+		};
+	});
 
-			return {
-				product_id: record.product_id,
-				service_id: record.service_id,
-				avg_usage: usagePercentage, // Parsed usage percentage
-				avg_cost: record.service_cost, // Parsed resource cost
-				year: record.year,
-				month: record.month, // Extract the month from the date string
-			};
-		},
-	);
-
-	// Group data by `month` and `service_id` for the stacked bar chart
+	// Aggregate usage data for stacked bar chart
 	const aggregatedUsage = parsedData.reduce(
 		(acc, record) => {
-			const { month, service_id, avg_usage } = record;
+			const { month, resource_id, avg_usage } = record;
 
-			// Find or create the entry for the given month
-			let monthData = acc.find(
-				(entry) => entry.month === month,
-			);
-			if (!monthData) {
-				monthData = { month }; // Initialize with only the month key
-				acc.push(monthData);
+			// Find or create the entry for the given resource_id
+			let resourceData = acc.find((item) => item.resource_id === resource_id);
+			if (!resourceData) {
+				resourceData = {
+					resource_id: resource_id || "Unknown Resource",
+					usage: 0,
+					cost: 0,
+				};
+				acc.push(resourceData);
 			}
 
-			// Add the usage for the current service_id
-			monthData[service_id] =
-				(monthData[service_id] || 0) + avg_usage;
+			// Add the usage and group by month
+			resourceData.usage += avg_usage;
 
 			return acc;
 		},
-		[] as Array<{ month: string; [key: string]: any }>,
+		[] as Array<{ resource_id?: string; usage: number; cost: number }>
 	);
 
-	// Group data by resource_id for line chart
+	// Aggregate cost data for stacked bar chart
+	const aggregatedCost = parsedData.reduce(
+		(acc, record) => {
+			const { month, resource_id, avg_cost } = record;
+
+			// Find or create the entry for the given resource_id
+			let resourceData = acc.find((item) => item.resource_id === resource_id);
+			if (!resourceData) {
+				resourceData = {
+					resource_id: resource_id || "Unknown Resource",
+					usage: 0,
+					cost: 0,
+				};
+				acc.push(resourceData);
+			}
+
+			// Add the cost and group by month
+			resourceData.cost += avg_cost;
+
+			return acc;
+		},
+		[] as Array<{ resource_id?: string; usage: number; cost: number }>
+	);
+
+	// Combine usage and cost data into the required format
+	const combinedStackedData = aggregatedUsage.map((usageItem) => {
+		const costItem = aggregatedCost.find(
+			(costItem) => costItem.resource_id === usageItem.resource_id
+		);
+
+		return {
+			resource_id: usageItem.resource_id,
+			usage: usageItem.usage,
+			cost: costItem ? costItem.cost : 0,
+		};
+	});
+
+	// Group data by service_id for line chart
 	const lineUsageCostData = parsedData.reduce(
 		(acc, record) => {
 			const { service_id } = record;
@@ -141,40 +171,17 @@ export default function formatDataForProduct(
 			acc[service_id].push(record);
 			return acc;
 		},
-		{} as Record<string, ParsedMetricRecord[]>,
+		{} as Record<string, ParsedMetricRecord[]>
 	);
 
-	const aggregatedCost = parsedData.reduce(
-		(acc, record) => {
-			const { month, service_id, avg_cost } = record;
-
-			// Find or create the entry for the given month
-			let monthData = acc.find(
-				(entry) => entry.month === month,
-			);
-			if (!monthData) {
-				monthData = { month }; // Initialize with only the month key
-				acc.push(monthData);
-			}
-
-			// Add the cost for the current service_id
-			monthData[service_id] =
-				(monthData[service_id] || 0) + avg_cost;
-
-			return acc;
-		},
-		[] as Array<{ month: string; [key: string]: any }>,
-	);
-
-	console.log("Stacked Usage Data:", aggregatedUsage);
-	console.log("Stacked Cost Data:", aggregatedCost);
+	console.log("Stacked Usage Data:", combinedStackedData);
 
 	return {
 		weeklyUsage: {}, // Not needed here
 		weeklyCost: {}, // Not needed here
-		lineUsageCostData: lineUsageCostData, // Not needed here
-		stackedUsageData: aggregatedUsage, // Stacked usage data structured for Recharts
-		stackedCostData: aggregatedCost, // Stacked cost data structured for Recharts
+		lineUsageCostData: lineUsageCostData, // Line chart data
+		stackedUsageData: combinedStackedData, // Stacked usage data
+		stackedCostData: combinedStackedData, // Stacked cost data
 	};
 }
 
