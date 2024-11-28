@@ -64,7 +64,7 @@ export default function ResourceDashboardComponent() {
       const resourceRevenue = await fetchTotalResourceRevenue();
       const costByResourceType = await fetchCostByResourceType();
       const revenueByResourceTypeData = await fetchTopRevenueGeneratingResources();
-      const aveUtilizationResource = await fetchAverageUtilizationResource();
+      //const aveUtilizationResource = await fetchAverageUtilizationResource();
       const resourceRevenueForecastData = await fetchResourceRevenueForecast();
 
       if (resourceCost !== null) {
@@ -77,7 +77,6 @@ export default function ResourceDashboardComponent() {
 
       setCostByResourceType(costByResourceType);
       setRevenueResource(revenueByResourceTypeData);
-      setAverageUtilization(aveUtilizationResource);
       setResourceRevenueForecast(resourceRevenueForecastData);
       setLoading(false); // Stop loading after data is fetched
     }
@@ -156,6 +155,7 @@ export default function ResourceDashboardComponent() {
           </Card>
         </div>
       </div>
+      {/*
       <div className="grid grid-cols-1 mb-8">
         <Card className={`${loading ? "animate-pulse" : ""}`}>
           <CardHeader>
@@ -172,9 +172,12 @@ export default function ResourceDashboardComponent() {
           </CardContent>
         </Card>
       </div>
+      */}
+
 
       {/* 3. Capacity and Utilization Insights */}
-      <div className="grid grid-cols-1 gap-4 mb-8">
+      {/*
+            <div className="grid grid-cols-1 gap-4 mb-8">
         <Card className={`${loading ? "animate-pulse" : ""}`}>
           <CardHeader>
             <CardTitle className="text-lg font-bold">
@@ -191,6 +194,7 @@ export default function ResourceDashboardComponent() {
           </CardContent>
         </Card>
       </div>
+      */}
     </div>
   );
 }
