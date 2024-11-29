@@ -17,8 +17,7 @@ export default function AIPresenter({
 	const [isMinimized, setIsMinimized] = useState(false); // State for minimizing the modal
 	const [scrollPosition, setScrollPosition] = useState(0); // Track scroll position
 
-	const API_KEY =
-		"anVkZ2UubW9uZ2NhbC5jaWNzQHVzdC5lZHUucGg:o7TU4ENjRnOh689pHzlx2";
+	const API_KEY = "anVkZ2UubW9uZ2NhbC5jaWNzQHVzdC5lZHUucGg:o7TU4ENjRnOh689pHzlx2";
 
 	useEffect(() => {
 		// Set up a scroll event listener
@@ -199,7 +198,7 @@ export default function AIPresenter({
 						position: "absolute",
 						left: "-1250px",
 						top: 150 + scrollPosition + "px",
-						width: isMinimized ? "250px" : "450px",
+						width: isMinimized ? "250px" : "600px",
 						maxHeight: "300px",
 						padding: "10px",
 						backgroundColor: "white",
