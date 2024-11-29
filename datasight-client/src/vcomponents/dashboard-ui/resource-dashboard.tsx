@@ -155,46 +155,6 @@ export default function ResourceDashboardComponent() {
           </Card>
         </div>
       </div>
-      {/*
-      <div className="grid grid-cols-1 mb-8">
-        <Card className={`${loading ? "animate-pulse" : ""}`}>
-          <CardHeader>
-            <CardTitle className="text-lg font-bold">
-              Resource Revenue Trend
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="h-48"></div>
-            ) : (
-              <ResourceRevenueForecastChart data={resourceRevenueForecast} />
-            )}
-          </CardContent>
-        </Card>
-      </div>
-      */}
-
-
-      {/* 3. Capacity and Utilization Insights */}
-      {/*
-            <div className="grid grid-cols-1 gap-4 mb-8">
-        <Card className={`${loading ? "animate-pulse" : ""}`}>
-          <CardHeader>
-            <CardTitle className="text-lg font-bold">
-              {" "}
-              Resource Utilization Trend{" "}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="h-48"></div>
-            ) : (
-              <AverageUtilizationChart data={averageUtilization} />
-            )}
-          </CardContent>
-        </Card>
-      </div>
-      */}
     </div>
   );
 }
