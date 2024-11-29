@@ -4,152 +4,151 @@ import { useGlobalState } from "../context/GlobalStateContext";
 import EntityGraphsLoadingState from "../components/global/EntityGraphsLoadingState";
 import React, { useState, useEffect } from "react";
 import { ResourceGraphs } from "../components/global/ResourceGraphs";
-import formatDataForServiceGraphs, {
-	DualAxisLineChart,
-	ResourceTypeCostBarChart,
-	WeeklyCostChart,
-	WeeklyUsageChart,
-} from "../components/global/ServiceGraphs";
-import {
-	formatDataForProduct,
-	YearlyRevenueLineChart,
-	YearlyStackedCostCharts,
-	YearlyStackedUsageCharts,
-} from "../components/global/ProductGraphs";
-import { formatDataForOffering } from "../components/global/OfferingGraphs";
 
+import formatDataForService, {
+	LineUsageCostChart,
+	StackedBarChart,
+} from "../components/global/ServiceGraphs";
+import formatDataForProduct, {
+	ProdStackedBarChart,
+} from "../components/global/ProductGraphs";
+import formatDataForOffering, {
+	OffLineUsageCostChart,
+	OffStackedBarChart,
+} from "../components/global/OfferingGraphs";
+
+// Base Metric Record Interface with more flexibility
 interface MetricRecord {
 	resource_id: string;
-	metric_type: string;
+	metric_type?: string;
 	week: string;
-	average_metric_value: number;
-}
-
-interface GroupedData {
-	[metric_type: string]: MetricRecord[];
+	weekly_revenue?: string;
+	average_metric_value?: number;
+	[key: string]: any; // Allow additional properties
 }
 
 interface ServiceMetricRecord extends MetricRecord {
 	service_id: string;
+	product_id?: string;
+	offering_id?: string;
 	resource_type: string;
-	avg_usage: string;
-	avg_cost: string;
+	avg_usage: number; // Ensure type matches
+	avg_cost: number;  // Ensure type matches
 	date: string;
+	year: string;      // Add the missing property
+	month: string;     // Add the missing property
 }
+
 
 interface ProductMetricRecord extends MetricRecord {
 	product_id: string;
 	service_id: string;
 	week: string;
-	avg_usage: string; // Original data as string
-	avg_cost: string; // Original data as string
+	avg_usage: number; // Ensure type matches
+	avg_cost: number;  // Ensure type matches
 	date: string;
-	weekly_revenue: string;
+	month: string;
+	year: string;
+	weekly_revenue?: string; // Optional, if present
 }
 
 interface OfferingMetricRecord extends MetricRecord {
 	offering_id: string;
 	product_id: string;
 	week: string;
-	avg_usage: string; // Original data as string
-	avg_cost: string; // Original data as string
+	avg_usage: number; // Ensure type matches
+	avg_cost: number;  // Ensure type matches
 	date: string;
 	weekly_revenue: string;
+	service_id: string;      // Make it required
+	resource_type: string;   // Make it required
+	year: string;            // Add the missing property
+	month: string;           // Add the missing property
 }
 
-interface ApiResponseEntry {
-	week: string;
-	avg_usage: string;
-	avg_cost: string;
-	date: string;
-}
 
-interface ProductMetricRecord extends ApiResponseEntry {
-	product_id: string;
-}
 
-interface StackedFormattedData {
-	week: string;
-	[serviceId: string]:
-		| {
-				usage: number;
-				cost: number;
-		  }
-		| string;
-}
 
 export default function EntityGraphs() {
 	const { selectedNodeId } = useGlobalState();
 	const [isLoading, setIsLoading] =
-		useState<Boolean>(false);
+		useState<boolean>(false);
 	const [groupedData, setGroupedData] = useState<Record<
 		string,
 		any
 	> | null>(null);
 	const [activeTab, setActiveTab] = useState<string>("");
+
 	const resourceEntityAPI =
 		"https://8i6i5nm7ba.execute-api.ap-southeast-2.amazonaws.com/development/getEntityMetrics";
-	let stackedData: StackedFormattedData[] = [];
+
 	const handleFetchData = async () => {
 		try {
 			setIsLoading(true);
 
 			const response = await fetch(
-				`${resourceEntityAPI}?entity_id=${selectedNodeId}`,
+				`${resourceEntityAPI}?entity_id=${selectedNodeId}`
 			);
 
 			setIsLoading(false);
 
 			if (response.ok) {
-				const result: MetricRecord[] =
-					await response.json();
+				const result: MetricRecord[] = await response.json();
+
+				// Map over the data to ensure correct types
+				const formattedResult = result.map((record) => ({
+					...record,
+					avg_usage: parseFloat(record.avg_usage), // Ensure avg_usage is a number
+					avg_cost: parseFloat(record.avg_cost),   // Optionally handle avg_cost similarly
+				}));
+
 				let grouped;
 				if (selectedNodeId?.startsWith("SVC")) {
-					grouped = formatDataForServiceGraphs(
-						result as ServiceMetricRecord[],
+					grouped = formatDataForService(
+						formattedResult as ServiceMetricRecord[]
 					);
 				} else if (selectedNodeId?.startsWith("P00")) {
 					grouped = formatDataForProduct(
-						result as ProductMetricRecord[],
+						formattedResult as ProductMetricRecord[]
 					);
-					console.log(grouped);
 				} else if (selectedNodeId?.startsWith("OFF")) {
 					grouped = formatDataForOffering(
-						result as OfferingMetricRecord[],
+						formattedResult as OfferingMetricRecord[]
 					);
 				} else {
-					grouped = result.reduce(
-						(acc: GroupedData, record: MetricRecord) => {
-							const { metric_type } = record;
-							if (!acc[metric_type]) {
-								acc[metric_type] = [];
+					grouped = formattedResult.reduce(
+						(
+							acc: Record<string, MetricRecord[]>,
+							record: MetricRecord
+						) => {
+							const metricType =
+								record.metric_type || "default";
+							if (!acc[metricType]) {
+								acc[metricType] = [];
 							}
-							acc[metric_type].push(record);
+							acc[metricType].push(record);
 							return acc;
 						},
-						{},
+						{}
 					);
 				}
 
 				setGroupedData(grouped);
-				console.log(grouped);
 			} else {
-				console.error(
-					"Error fetching data:",
-					response.statusText,
-				);
+				console.error("Error fetching data:", response.statusText);
 			}
 		} catch (error) {
 			console.error("Error fetching data:", error);
 		}
 	};
 
+
 	useEffect(() => {
 		if (selectedNodeId) {
 			handleFetchData();
 			setActiveTab("");
 		}
-	}, [selectedNodeId, setActiveTab]);
+	}, [selectedNodeId]);
 
 	const renderChart = () => {
 		if (
@@ -159,30 +158,29 @@ export default function EntityGraphs() {
 			return null;
 		}
 
+		// Service-specific charts
 		if (groupedData && selectedNodeId?.startsWith("SVC")) {
 			switch (activeTab) {
-				case "weeklyUsage":
+				case "lineUsageCost":
 					return (
-						<WeeklyUsageChart
-							data={groupedData!.weeklyUsage}
+						<LineUsageCostChart
+							data={groupedData.lineUsageCostData}
 						/>
 					);
-				case "weeklyCost":
+				case "stackedUsage":
 					return (
-						<WeeklyCostChart
-							data={groupedData!.weeklyCost}
+						<StackedBarChart
+							data={groupedData.stackedUsageData}
+							dataKey="usage"
+							title="Stacked Usage for All Resources"
 						/>
 					);
-				case "resourceTypeCost":
+				case "stackedCost":
 					return (
-						<ResourceTypeCostBarChart
-							data={groupedData!.resourceTypeCost}
-						/>
-					);
-				case "dualAxis":
-					return (
-						<DualAxisLineChart
-							data={groupedData!.dualAxisData}
+						<StackedBarChart
+							data={groupedData.stackedCostData}
+							dataKey="cost"
+							title="Stacked Cost for All Resources"
 						/>
 					);
 				default:
@@ -190,39 +188,59 @@ export default function EntityGraphs() {
 			}
 		}
 
-		if (
-			selectedNodeId?.startsWith("P00") ||
-			selectedNodeId?.startsWith("OFF")
-		) {
+		// Product
+		if (selectedNodeId?.startsWith("P00")) {
 			switch (activeTab) {
-				case "weeklyUsage":
+				case "lineUsageCost":
 					return (
-						<WeeklyUsageChart
-							data={groupedData!.weeklyUsage}
+						<LineUsageCostChart
+							data={groupedData!.lineUsageCostData}
 						/>
 					);
-				case "weeklyCost":
+				case "stackedUsage":
 					return (
-						<WeeklyCostChart
-							data={groupedData!.weeklyCost}
+						<ProdStackedBarChart
+							data={groupedData!.stackedUsageData}
+							dataKey="usage"
+							title="Stacked Usage for All Services"
 						/>
 					);
-				case "usageComparison":
+				case "stackedCost":
 					return (
-						<YearlyStackedUsageCharts
-							data={groupedData!.yearlyStackedData}
+						<ProdStackedBarChart
+							data={groupedData!.stackedCostData}
+							dataKey="cost"
+							title="Stacked Cost for All Services"
 						/>
 					);
-				case "costComparison":
+				default:
+					return null;
+			}
+		}
+
+		// Offering
+		if (selectedNodeId?.startsWith("OFF")) {
+			switch (activeTab) {
+				case "lineUsageCost":
 					return (
-						<YearlyStackedCostCharts
-							data={groupedData!.yearlyStackedData}
+						<OffLineUsageCostChart
+							data={groupedData!.lineUsageCostData}
 						/>
 					);
-				case "revenueOvertime":
+				case "stackedUsage":
 					return (
-						<YearlyRevenueLineChart
-							data={groupedData!.yearlyRevenue}
+						<OffStackedBarChart
+							data={groupedData!.stackedUsageData}
+							dataKey="usage"
+							title="Stacked Usage for All Products"
+						/>
+					);
+				case "stackedCost":
+					return (
+						<OffStackedBarChart
+							data={groupedData!.stackedCostData}
+							dataKey="cost"
+							title="Stacked Cost for All Products"
 						/>
 					);
 				default:
@@ -233,6 +251,7 @@ export default function EntityGraphs() {
 		return null;
 	};
 
+	// If no node is selected, return an empty container
 	if (!selectedNodeId) {
 		return (
 			<div className="flex items-center justify-center h-[10%]"></div>
@@ -242,6 +261,8 @@ export default function EntityGraphs() {
 	return (
 		<>
 			{isLoading && <EntityGraphsLoadingState />}
+
+			{/* Resource Graphs for non-Service/Product/Offering nodes */}
 			{groupedData &&
 				!isLoading &&
 				!selectedNodeId?.startsWith("SVC") &&
@@ -252,65 +273,12 @@ export default function EntityGraphs() {
 						selectedNodeId={selectedNodeId ?? ""}
 					/>
 				)}
+
+			{/* Service-specific graphs with tabs */}
 			{groupedData &&
 				!isLoading &&
-				selectedNodeId?.startsWith("SVC") && (
-					<div className="flex flex-col justify-center text-center py-[2rem]">
-						<h1 className="text-[1.5rem] font-bold">
-							{selectedNodeId}
-						</h1>
-						<div className="tabs flex flex-row items-center justify-center gap-4 my-[1rem]">
-							<button
-								onClick={() => setActiveTab("weeklyUsage")}
-								className={`px-4 py-2 text-white rounded-md ${
-									activeTab == "weeklyUsage"
-										? "bg-brand-orange"
-										: "bg-black"
-								}`}
-							>
-								Weekly Usage
-							</button>
-							{/* <button
-							onClick={() => setActiveTab("weeklyCost")}
-							className={`px-4 py-2 text-white rounded-md ${
-								activeTab == "weeklyCost"
-									? "bg-brand-orange"
-									: "bg-black"
-							}`}
-						>
-							Weekly Cost
-						</button>
-						<button
-							onClick={() =>
-								setActiveTab("resourceTypeCost")
-							}
-							className={`px-4 py-2 text-white rounded-md ${
-								activeTab == "resourceTypeCost"
-									? "bg-brand-orange"
-									: "bg-black"
-							}`}
-						>
-							Resource Type Cost
-						</button>
-						<button
-							onClick={() => setActiveTab("dualAxis")}
-							className={`px-4 py-2 text-white rounded-md ${
-								activeTab == "dualAxis"
-									? "bg-brand-orange"
-									: "bg-black"
-							}`}
-						>
-							Dual Axis
-						</button> */}
-						</div>
-						<div className="chart-container">
-							{renderChart()}
-						</div>
-					</div>
-				)}
-			{groupedData &&
-				!isLoading &&
-				(selectedNodeId?.startsWith("P00") ||
+				(selectedNodeId?.startsWith("SVC") ||
+					selectedNodeId?.startsWith("P00") ||
 					selectedNodeId?.startsWith("OFF")) && (
 					<div className="flex flex-col justify-center text-center py-[2rem]">
 						<h1 className="text-[1.5rem] font-bold">
@@ -318,27 +286,36 @@ export default function EntityGraphs() {
 						</h1>
 						<div className="tabs flex flex-row items-center justify-center gap-4 my-[1rem]">
 							<button
-								onClick={() => setActiveTab("weeklyUsage")}
-								className={`px-4 py-2 text-white rounded-md ${
-									activeTab === "weeklyUsage"
-										? "bg-brand-orange"
-										: "bg-black"
-								}`}
-							>
-								Weekly Usage
-							</button>
-
-							<button
 								onClick={() =>
-									setActiveTab("usageComparison")
+									setActiveTab("lineUsageCost")
 								}
 								className={`px-4 py-2 text-white rounded-md ${
-									activeTab === "usageComparison"
+									activeTab === "lineUsageCost"
 										? "bg-brand-orange"
 										: "bg-black"
 								}`}
 							>
-								Usage Comparison
+								Line Usage & Cost
+							</button>
+							<button
+								onClick={() => setActiveTab("stackedUsage")}
+								className={`px-4 py-2 text-white rounded-md ${
+									activeTab === "stackedUsage"
+										? "bg-brand-orange"
+										: "bg-black"
+								}`}
+							>
+								Stacked Usage
+							</button>
+							<button
+								onClick={() => setActiveTab("stackedCost")}
+								className={`px-4 py-2 text-white rounded-md ${
+									activeTab === "stackedCost"
+										? "bg-brand-orange"
+										: "bg-black"
+								}`}
+							>
+								Stacked Cost
 							</button>
 						</div>
 						<div className="chart-container">

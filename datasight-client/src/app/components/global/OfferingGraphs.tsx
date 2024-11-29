@@ -1,11 +1,5 @@
 import React from "react";
 import {
-	eachDayOfInterval,
-	format,
-	getYear,
-	parseISO,
-} from "date-fns";
-import {
 	LineChart,
 	Line,
 	XAxis,
@@ -14,8 +8,6 @@ import {
 	Tooltip,
 	Legend,
 	ResponsiveContainer,
-	ScatterChart,
-	Scatter,
 	BarChart,
 	Bar,
 } from "recharts";
@@ -24,263 +16,256 @@ import {
 interface ParsedMetricRecord {
 	week: string;
 	avg_usage: number;
+	month: string;
 	avg_cost: number;
-	product_id: string;
-	weekly_revenue: number;
+	resource_id: string;
+	usage_percentage?: number;
+	resource_cost?: number;
+}
+
+interface WeeklyUsageChartProps {
+	data: Record<string, ParsedMetricRecord[]>;
+}
+
+interface StackedBarChartProps {
+	data: {
+		resource_id: string;
+		usage: number;
+		cost: number;
+	}[];
+	dataKey: "usage" | "cost";
+	title: string;
 }
 
 interface MetricRecord {
-	offering_id: string;
-	product_id: string;
+	service_id: string;
+	resource_id: string;
+	resource_type: string;
+	product_id?: string;
+	offering_id?: string;
+	product_cost: number;
 	week: string;
-	avg_usage: string; // Original data as string
-	avg_cost: string; // Original data as string
+	avg_usage: number; // Original data as string
+	avg_cost: number; // Original data as string
 	date: string;
-	weekly_revenue: string;
+	usage_percentage?: number;
+	resource_cost?: number;
+	year: string;
+	month: string;
 }
 
 interface ParsedMetricRecord {
-	offering_id: string;
+	service_id: string;
+	resource_id: string;
 	product_id: string;
+	resource_type: string;
 	week: string;
 	avg_usage: number; // Parsed to number
 	avg_cost: number; // Parsed to number
 	date: string;
-	weekly_revenue: number;
+	product_cost: number;
 }
 
 interface FormattedData {
 	weeklyUsage: Record<string, ParsedMetricRecord[]>; // For Weekly Average Usage Line Chart
 	weeklyCost: Record<string, ParsedMetricRecord[]>; // For Weekly Average Cost Line Chart
-	yearlyRevenue: Record<
-		string,
-		{ week: string; revenue: number }[]
-	>; // Weekly data by year for Yearly Revenue Line Chart
-	yearlyStackedData: {
-		[year: string]: YearlyFormattedData[];
-	};
+	lineUsageCostData: Record<string, ParsedMetricRecord[]>; // For Line Chart (Usage & Cost)
+	stackedUsageData: {
+		resource_id?: string;
+		usage: number;
+		cost: number;
+	}[]; // For Stacked Usage Chart
+	stackedCostData: {
+		resource_id?: string;
+		usage: number;
+		cost: number;
+	}[]; // For Stacked Cost Chart
 }
 
-interface YearlyFormattedData {
-	year: string;
-	[serviceId: string]:
-		| { usage: number; cost: number }
-		| string; // Only `product_id` entries have `{ usage: number }`
-}
-
-export function formatDataForOffering(
+export default function formatDataForOffering(
 	data: MetricRecord[],
 ): FormattedData {
-	// Step 1: Parse avg_usage and avg_cost to numbers
+	console.log("Original Data:", data);
+
+	// Parse usage_percentage and resource_cost as numbers
 	const parsedData: ParsedMetricRecord[] = data.map(
-		(record) => ({
-			...record,
-			avg_usage: parseFloat(record.avg_usage),
-			avg_cost: parseFloat(record.avg_cost),
-			weekly_revenue: parseFloat(record.weekly_revenue),
-		}),
+		(record) => {
+			const usagePercentage =
+				record.usage_percentage !== undefined
+					? parseFloat(record.usage_percentage.toString())
+					: 0;
+			const resourceCost =
+				record.resource_cost !== undefined
+					? parseFloat(record.product_cost.toString())
+					: 0;
+
+			return {
+				offering_id: record.offering_id,
+				product_id: record.product_id,
+				usage_percentage: usagePercentage, // Parsed usage percentage
+				product_cost: record.product_cost, // Parsed resource cost
+				year: record.year,
+				month: record.month, // Extract the month from the date string
+			};
+		},
 	);
 
-	// Step 2: Prepare data for daily aggregation by year
-	const dailyMap: { [key: string]: YearlyFormattedData[] } =
-		{};
+	// Group data by `month` and `service_id` for the stacked bar chart
+	const aggregatedUsage = parsedData.reduce(
+		(acc, record) => {
+			const { month, product_id, usage_percentage } =
+				record;
 
-	parsedData.forEach((entry) => {
-		const { product_id, avg_usage, avg_cost } = entry;
-
-		// Parse the date to get the year
-		const date = parseISO(entry.date);
-		const year = getYear(date).toString();
-		const formattedDate = format(date, "yyyy-MM-dd");
-
-		// Initialize the year if it doesn’t exist in dailyMap
-		if (!dailyMap[year]) {
-			dailyMap[year] = [];
-		}
-
-		// Find or create the daily record for this date
-		let dayEntry = dailyMap[year].find(
-			(d) => d.year === formattedDate,
-		);
-		if (!dayEntry) {
-			dayEntry = { year: formattedDate };
-			dailyMap[year].push(dayEntry);
-		}
-
-		// Initialize usage for the product_id if not already set
-		if (!dayEntry[product_id]) {
-			dayEntry[product_id] = { usage: 0, cost: 0 };
-		}
-
-		// Aggregate daily usage and cost
-		(
-			dayEntry[product_id] as {
-				usage: number;
-				cost: number;
+			// Find or create the entry for the given month
+			let monthData = acc.find(
+				(entry) => entry.month === month,
+			);
+			if (!monthData) {
+				monthData = { month }; // Initialize with only the month key
+				acc.push(monthData);
 			}
-		).usage += avg_usage;
-		(
-			dayEntry[product_id] as {
-				usage: number;
-				cost: number;
-			}
-		).cost += avg_cost;
-	});
 
-	// Step 3: Convert dailyMap to arrays for each year
-	const dailyDataByYear = Object.fromEntries(
-		Object.entries(dailyMap).map(([year, dailyData]) => [
-			year,
-			dailyData,
-		]),
+			// Add the usage for the current service_id
+			monthData[product_id] =
+				(monthData[product_id] || 0) + usage_percentage;
+
+			return acc;
+		},
+		[] as Array<{ month: string; [key: string]: any }>,
 	);
 
-	// Step 3: Prepare weekly usage and cost data grouped by product_id
-	const weeklyUsage = parsedData.reduce((acc, record) => {
-		const { product_id } = record;
-		if (!acc[product_id]) {
-			acc[product_id] = [];
-		}
-		acc[product_id].push(record);
-		return acc;
-	}, {} as Record<string, ParsedMetricRecord[]>);
+	// Group data by resource_id for line chart
+	const lineUsageCostData = parsedData.reduce(
+		(acc, record) => {
+			const { product_id } = record;
+			if (!acc[product_id]) {
+				acc[product_id] = [];
+			}
+			acc[product_id].push(record);
+			return acc;
+		},
+		{} as Record<string, ParsedMetricRecord[]>,
+	);
 
-	const weeklyCost = { ...weeklyUsage };
+	const aggregatedCost = parsedData.reduce(
+		(acc, record) => {
+			const { month, product_id, product_cost } = record;
 
-	// Aggregate weekly revenue for each year
-	const yearlyRevenue = parsedData.reduce((acc, record) => {
-		const year = getYear(parseISO(record.date)).toString();
-		if (!acc[year]) {
-			acc[year] = [];
-		}
-		acc[year].push({
-			week: record.week,
-			revenue: record.weekly_revenue,
-		});
-		return acc;
-	}, {} as Record<string, { week: string; revenue: number }[]>);
+			// Find or create the entry for the given month
+			let monthData = acc.find(
+				(entry) => entry.month === month,
+			);
+			if (!monthData) {
+				monthData = { month }; // Initialize with only the month key
+				acc.push(monthData);
+			}
 
-	// Step 4: Return formatted data
+			// Add the cost for the current service_id
+			monthData[product_id] =
+				(monthData[product_id] || 0) + product_cost;
+
+			return acc;
+		},
+		[] as Array<{ month: string; [key: string]: any }>,
+	);
+
+	console.log("Stacked Usage Data:", aggregatedUsage);
+	console.log("Stacked Cost Data:", aggregatedCost);
+
 	return {
-		yearlyStackedData: dailyDataByYear,
-		weeklyUsage,
-		weeklyCost,
-		yearlyRevenue,
+		weeklyUsage: {}, // Not needed here
+		weeklyCost: {}, // Not needed here
+		lineUsageCostData: lineUsageCostData, // Not needed here
+		stackedUsageData: aggregatedUsage, // Stacked usage data structured for Recharts
+		stackedCostData: aggregatedCost, // Stacked cost data structured for Recharts
 	};
 }
 
-const COLORS = [
-	"#8884d8",
-	"#82ca9d",
-	"#ffc658",
-	"#ff8042",
-	"#8dd1e1",
-];
-
-export const YearlyStackedUsageCharts: React.FC<{
-	data: { [year: string]: YearlyFormattedData[] }; // Updated type to match structure
-}> = ({ data }) => {
-	// Check if data is empty or undefined to prevent accessing undefined properties
-	if (!data || Object.keys(data).length === 0) {
-		return <div>No data available</div>;
-	}
-
+// Line Chart for Usage and Cost
+export function OffLineUsageCostChart({
+	data,
+}: {
+	data: Record<string, ParsedMetricRecord[]>;
+}) {
+	console.log(data);
 	return (
 		<div>
-			{Object.entries(data).map(([year, dailyData]) => (
+			{Object.entries(data).map(([productId, records]) => (
 				<div
-					key={year}
-					style={{ marginBottom: "2rem" }}
+					key={productId}
+					style={{ marginBottom: "5rem" }}
 				>
-					<h3>Usage for {year}</h3>
+					<h3 className="font-bold my-[1rem]">
+						Usage & Cost for Product ID: {productId}
+					</h3>
 					<ResponsiveContainer
 						width="100%"
-						height={400}
+						height={700}
 					>
-						<BarChart
-							data={dailyData}
-							margin={{
-								top: 20,
-								right: 30,
-								left: 20,
-								bottom: 5,
-							}}
-						>
+						<LineChart data={records}>
 							<CartesianGrid strokeDasharray="3 3" />
-							<XAxis dataKey="year" />
-							<YAxis domain={[0, 100]} />
+
+							<XAxis dataKey="month" />
+							<YAxis yAxisId="left" />
+							<YAxis
+								yAxisId="right"
+								orientation="right"
+							/>
 							<Tooltip />
 							<Legend />
-							{dailyData[0] &&
-								Object.keys(dailyData[0])
-									.filter((key) => key !== "year")
-									.map((serviceId, index) => (
-										<Bar
-											key={serviceId}
-											dataKey={`${serviceId}.usage`}
-											stackId="a"
-											fill={COLORS[index % COLORS.length]}
-											name={`${serviceId} Usage`}
-										/>
-									))}
-						</BarChart>
+							<Line
+								yAxisId="left"
+								type="monotone"
+								dataKey="usage_percentage"
+								stroke="#8884d8"
+								strokeWidth={2}
+							/>
+							<Line
+								yAxisId="right"
+								type="monotone"
+								dataKey="product_cost"
+								stroke="#82ca9d"
+								strokeWidth={2}
+							/>
+						</LineChart>
 					</ResponsiveContainer>
 				</div>
 			))}
 		</div>
 	);
-};
+}
 
-export const YearlyStackedCostCharts: React.FC<{
-	data: { [year: string]: YearlyFormattedData[] }; // Updated type to match structure
-}> = ({ data }) => {
-	// Check if data is empty or undefined to prevent accessing undefined properties
-	if (!data || Object.keys(data).length === 0) {
-		return <div>No data available</div>;
-	}
-
+// Stacked Bar Chart for Usage or Cost
+export function OffStackedBarChart({
+	data,
+	dataKey,
+	title,
+}: StackedBarChartProps) {
 	return (
-		<div>
-			{Object.entries(data).map(([year, dailyData]) => (
-				<div
-					key={year}
-					style={{ marginBottom: "2rem" }}
-				>
-					<h3>Usage for {year}</h3>
-					<ResponsiveContainer
-						width="100%"
-						height={400}
-					>
-						<BarChart
-							data={dailyData}
-							margin={{
-								top: 20,
-								right: 30,
-								left: 20,
-								bottom: 5,
-							}}
-						>
-							<CartesianGrid strokeDasharray="3 3" />
-							<XAxis dataKey="year" />
-							<YAxis />
-							<Tooltip />
-							<Legend />
-							{dailyData[0] &&
-								Object.keys(dailyData[0])
-									.filter((key) => key !== "year")
-									.map((serviceId, index) => (
-										<Bar
-											key={serviceId}
-											dataKey={`${serviceId}.cost`}
-											stackId="a"
-											fill={COLORS[index % COLORS.length]}
-											name={`${serviceId} Cost`}
-										/>
-									))}
-						</BarChart>
-					</ResponsiveContainer>
-				</div>
-			))}
-		</div>
+		<ResponsiveContainer
+			width="100%"
+			height={400}
+		>
+			<BarChart data={data}>
+				<CartesianGrid strokeDasharray="3 3" />
+				<XAxis dataKey="month" />
+				<YAxis />
+				<Tooltip />
+				<Legend />
+				{/* Dynamically render a bar for each resource */}
+				{Object.keys(data[0])
+					.filter((key) => key !== "month") // Exclude the X-axis key
+					.map((productId) => (
+						<Bar
+							key={productId}
+							dataKey={productId}
+							stackId="a"
+							fill={`#${Math.floor(
+								Math.random() * 16777215,
+							).toString(16)}`} // Random color
+						/>
+					))}
+			</BarChart>
+		</ResponsiveContainer>
 	);
-};
+}
