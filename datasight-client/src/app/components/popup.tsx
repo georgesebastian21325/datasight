@@ -9,7 +9,9 @@ interface AuthenticationErrorPopUpProps {
 interface MappingViewPopUpProps {
     message: string;
     bgColor: string;
+    loading: boolean; // Add a loading prop
 }
+
 
 
 const AuthenticationErrorPopUp: React.FC<AuthenticationErrorPopUpProps> = ({ errorMessage }) => {
@@ -50,10 +52,14 @@ function SuccessMessage() {
 };
 
 
-function MappingViewPopUp({ message, bgColor }: MappingViewPopUpProps) {
+function MappingViewPopUp({ message, bgColor, loading }: MappingViewPopUpProps) {
     return (
         <div className={`${bgColor} font-medium rounded-md px-2 flex items-center`}>
-            <EyeIcon className="h-5 w-5 text-black mr-2" /> {/* Eye icon */}
+            {loading ? (
+                <span className="loading mr-2" />  // Spinner icon for loading
+            ) : (
+                <EyeIcon className="h-5 w-5 text-black mr-2" />  // Eye icon when not loading
+            )}
             <p>{message}</p>
         </div>
     );

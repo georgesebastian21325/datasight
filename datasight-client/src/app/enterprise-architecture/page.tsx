@@ -76,7 +76,7 @@ export default function Page() {
 						? `${
 								optimizationType.charAt(0).toUpperCase() +
 								optimizationType.slice(1)
-						  } Optimized Enterprise Architecture`
+						  } OPTIMIZED ENTERPRISE ARCHITECTURE`
 						: "ENTERPRISE ARCHITECTURE"}
 				</h2>
 
@@ -85,10 +85,10 @@ export default function Page() {
 					<div>
 						<GenerateMappingBtn onGenerateMapping={handleGenerateMapping} />
 					</div>
-					<div className="flex flex-row gap-2">
+					<div className="flex flex-row gap-4">
 						<GenerateOptimizedMappingBtn onGenerateOptimizedMapping={handleGenerateOptimizedMapping} />
-						<MappingViewPopUp message={message} bgColor={bgColor} />
-					</div>
+						<MappingViewPopUp message={message} bgColor={bgColor} loading={loading || optimizedLoading} />
+							</div>
 					{/* Move AIPresenter to the right side */}
 					<div className="ml-auto">
 						<AIPresenter optimizationType={optimizationType} />
