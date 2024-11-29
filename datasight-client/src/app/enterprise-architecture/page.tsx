@@ -75,35 +75,11 @@ export default function Page() {
 				</p>
 
 				{/* Generate Mapping Buttons */}
-				<div className="flex flex-col gap-2 mb-4 w-fit">
+				<div className="flex flex-row gap-4 mb-4 w-fit">
 					<GenerateMappingBtn
 						onGenerateMapping={handleGenerateMapping}
 					/>
-					<p className="mt-3 font-bold">
-						Optimized Mapping
-					</p>
-					<p className=" text-gray-500">
-						Select Optimization type for the mapping.
-					</p>
 					<div className="flex flex-row gap-2">
-						<select
-							id="fruit-select"
-							value={optimizationType}
-							onChange={(e) =>
-								setOptimizationType(e.target.value)
-							}
-							className="block w-fit px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-						>
-							<option value="default">
-								Choose an option
-							</option>
-							<option value="capacity">Capacity</option>
-							<option value="finance">Finance</option>
-							<option value="risk">Risk</option>
-							<option value="obsolescence">
-								Obsolescence
-							</option>
-						</select>
 						<GenerateOptimizedMappingBtn
 							onGenerateOptimizedMapping={
 								handleGenerateOptimizedMapping
