@@ -1,4 +1,3 @@
-"use client";
 import React, { useState, useEffect } from "react";
 import { CircleX, Loader } from "lucide-react";
 
@@ -9,15 +8,12 @@ interface OptimizedOPSRMappingProps {
 export default function AIPresenter({
 	optimizationType,
 }: OptimizedOPSRMappingProps) {
-	const [text, setText] = useState<string | JSX.Element[]>(
-		"",
-	); // State to store the fetched text
-	const [loading, setLoading] = useState<Boolean>(false); // State to handle loading status
+	const [text, setText] = useState<string>(""); // State to store the fetched text
+	const [loading, setLoading] = useState<boolean>(false); // State to handle loading status
 	const [error, setError] = useState<string | null>(null); // State to handle errors
-	const [videoUrl, setVideoUrl] = useState<string | null>(
-		null,
-	); // State to store the generated video URL
+	const [videoUrl, setVideoUrl] = useState<string | null>(null); // State to store the generated video URL
 	const [showVideo, setShowVideo] = useState(false);
+	const [modalOpen, setModalOpen] = useState(false); // State for modal visibility
 	const API_KEY =
 		"anVkZ2UubW9uZ2NhbC5jaWNzQHVzdC5lZHUucGg:o7TU4ENjRnOh689pHzlx2";
 
@@ -26,7 +22,6 @@ export default function AIPresenter({
 			const timer = setTimeout(() => {
 				setError(null);
 			}, 2000);
-
 			return () => clearTimeout(timer);
 		}
 	}, [error]);
@@ -34,9 +29,7 @@ export default function AIPresenter({
 	// Function to generate a video with D-ID API
 	const generateVideo = async (text: string) => {
 		if (!text) {
-			setError(
-				"No text available for generating the video.",
-			);
+			setError("No text available for generating the video.");
 			return;
 		}
 
@@ -45,38 +38,33 @@ export default function AIPresenter({
 			setError(null);
 
 			// Step 1: Create the talk
-			const createResponse = await fetch(
-				"https://api.d-id.com/talks",
-				{
-					method: "POST",
-					headers: {
-						Authorization: `Basic ${API_KEY}`,
-						"Content-Type": "application/json", // Added this header
-					},
-					body: JSON.stringify({
-						script: {
-							type: "text",
-							input: text,
-							provider: {
-								type: "microsoft",
-								voice_id: "en-US-SaraNeural", // Fixed voice ID
-							},
-						},
-						config: {
-							stitch: true,
-						},
-						source_url:
-							"https://img.freepik.com/premium-photo/free-photo-business-finance-employment-female_837074-7695.jpg",
-					}),
+			const createResponse = await fetch("https://api.d-id.com/talks", {
+				method: "POST",
+				headers: {
+					Authorization: `Basic ${API_KEY}`,
+					"Content-Type": "application/json",
 				},
-			);
+				body: JSON.stringify({
+					script: {
+						type: "text",
+						input: text,
+						provider: {
+							type: "microsoft",
+							voice_id: "en-US-SaraNeural", // Fixed voice ID
+						},
+					},
+					config: {
+						stitch: true,
+					},
+					source_url:
+						"https://img.freepik.com/premium-photo/free-photo-business-finance-employment-female_837074-7695.jpg",
+				}),
+			});
 
 			if (!createResponse.ok) {
 				const errorData = await createResponse.json();
 				throw new Error(
-					`Failed to create talk: ${
-						errorData.message || createResponse.statusText
-					}`,
+					`Failed to create talk: ${errorData.message || createResponse.statusText}`
 				);
 			}
 
@@ -92,13 +80,11 @@ export default function AIPresenter({
 						headers: {
 							Authorization: `Basic ${API_KEY}`,
 						},
-					},
+					}
 				);
 
 				if (!resultResponse.ok) {
-					throw new Error(
-						`Failed to get talk status: ${resultResponse.statusText}`,
-					);
+					throw new Error(`Failed to get talk status: ${resultResponse.statusText}`);
 				}
 
 				result = await resultResponse.json();
@@ -109,15 +95,11 @@ export default function AIPresenter({
 					setShowVideo(true);
 					break;
 				} else if (result.status === "failed") {
-					throw new Error(
-						`Video generation failed: ${result.error}`,
-					);
+					throw new Error(`Video generation failed: ${result.error}`);
 				}
 
 				// Wait for 2 seconds before polling again
-				await new Promise((resolve) =>
-					setTimeout(resolve, 2000),
-				);
+				await new Promise((resolve) => setTimeout(resolve, 2000));
 			}
 		} catch (err: any) {
 			console.error("Video generation error:", err);
@@ -126,18 +108,15 @@ export default function AIPresenter({
 			setLoading(false);
 		}
 	};
+
 	// Function to fetch data on button click
 	const fetchText = async () => {
-		if (!optimizationType) {
-			setError("Optimization type is required");
-			return;
-		}
-
 		try {
-			setLoading(true); // Start loading
-			setError(null); // Clear any previous errors
+			setLoading(true);
+			setError(null);
+
 			const response = await fetch(
-				`https://gmmfmpar9j.execute-api.ap-southeast-2.amazonaws.com/development/getPrescription?optimization_type=${optimizationType}`,
+				`https://gmmfmpar9j.execute-api.ap-southeast-2.amazonaws.com/development/getPrescription?optimization_type=risk`
 			);
 
 			if (!response.ok) {
@@ -145,91 +124,112 @@ export default function AIPresenter({
 			}
 
 			const data = await response.json();
-			console.log(data);
 
-			const parts_text = Object.keys(data)
-				.filter((key) => data[key]?.response) // Filter out keys without a valid response
-				.map((key) => data[key].response) // Map to valid response strings
-				.join("\n\n"); // Concatenate with double newlines for better readability
+			// Fetch the response and parse markdown to HTML
+			const part1Response = data.first_response?.part1?.response || "No valid response received.";
 
-			// Concatenate valid responses while ignoring errors
-			const parts = Object.keys(data)
-				.filter((key) => data[key]?.response) // Filter out keys without a valid response
-				.map((key, index) => (
-					<div
-						key={index}
-						style={{ marginBottom: "1rem" }}
-					>
-						<strong>{`Part ${index + 1}:`}</strong>
-						<p>{data[key].response}</p>
-					</div>
-				)); // Format responses as HTML
+			// Format the text into a cleaner structure with **bold headers**
+			// Format the text by adding ** Markdown-style bold around headers
+			const formattedText = part1Response
+				.replace(/^([^\d]+):/gm, "$1") // Bold the header before the colon (no numbers)
+				.replace(/\n/g, "<br />")
+				.replace(/###/g, "")                 // Remove any occurrence of "###"
+				.replace(/#/g, "")
+				.replace(/\*/g, "")
+				.replace(/\*\*/g, "")
+				.replace(/#/g, "");                  // Remove any sharp sign (#)
+			// Set the final HTML text with **bold headers**
+			setText(formattedText);
 
-			setText(parts);
-			await generateVideo(parts_text);
-		} catch (err: any) {
-			setError(err.message);
+		} catch (error) {
+			setError(error.message);
 		} finally {
-			setLoading(false); // End loading
+			setLoading(false);
 		}
+	};
+
+	// Toggle the modal visibility
+	const toggleModal = () => {
+		setModalOpen(!modalOpen);
 	};
 
 	return (
 		<div style={{ position: "relative" }}>
-			{/* {loading && <p>Loading...</p>} */}
+			{/* Button to trigger modal */}
+			<button
+				onClick={toggleModal}
+				className="py-3 px-4 rounded-md bg-black text-white font-bold transition-all duration-300 hover:bg-brand-orange hover:scale-105"
+			>
+				View Results
+			</button>
 
-			<p>{text}</p>
-			{!loading && !error && videoUrl && showVideo && (
-				<video
-					controls
+			{/* Modal positioned at the bottom left */}
+			{modalOpen && (
+				<div
 					style={{
-						position: "fixed",
-						bottom: "10px",
-						right: "10px",
-						width: "300px",
-						height: "auto",
-						boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+						position: "absolute",
+						right: "400px",
+						top: "400px",
+						width: "450px", // Set a fixed width for the modal
+						maxHeight: "300px", // Set a max height to allow scrolling if content exceeds
+						padding: "10px", // Padding for content
+						backgroundColor: "white",
+						boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
 						borderRadius: "8px",
+						zIndex: 9999, // Ensure modal is on top
+						overflowY: "auto", // Enables vertical scrolling
 					}}
+					className='shadow-lg'
 				>
-					<source
-						src={videoUrl}
-						type="video/mp4"
+					<h3 className="font-bold">Optimization Results</h3>
+					{/* Render the formatted markdown content as HTML */}
+					<div
+						style={{
+							whiteSpace: "normal", // Ensure text wraps normally
+							fontSize: "14px",
+							lineHeight: "1.6",
+							color: "#333",
+						}}
+						dangerouslySetInnerHTML={{ __html: text }} // Render HTML safely
 					/>
-					Your browser does not support the video tag.
-				</video>
+
+					{/* Close Modal Button */}
+					<button
+						onClick={toggleModal}
+						className="mt-3 py-2 px-4 bg-red-500 text-white rounded-md hover:bg-red-700"
+					>
+						Close
+					</button>
+				</div>
 			)}
+
 			{!showVideo && (
 				<button
-					className={`py-3 px-4 rounded-md bg-black text-white font-bold transition-all duration-300  hover:bg-brand-orange hover:scale-105${
-						optimizationType
-							? ""
-							: "cursor-not-allowed opacity-50"
-					}`}
+					className={`py-3 px-4 rounded-md bg-black text-white font-bold transition-all duration-300 hover:bg-brand-orange hover:scale-105${optimizationType ? "" : "cursor-not-allowed opacity-50"
+						}`}
 					onClick={() => fetchText()}
 				>
 					Present with AI
 				</button>
 			)}
+
 			{loading && (
 				<p className="mt-4 px-5 py-2 bg-blue-100 rounded-md w-fit flex flex-row gap-2 font-semibold">
 					<Loader /> Loading...
 				</p>
 			)}
+
 			{error && (
 				<p className="mt-4 px-5 py-2 bg-red-300 rounded-md w-fit flex flex-row gap-2">
 					<CircleX />
-					<span className="font-semibold">Error:</span>{" "}
-					{error}
+					<span className="font-semibold">Error:</span> {error}
 				</p>
 			)}
+
 			{showVideo && (
 				<button
-					className={`py-3 px-4 rounded-md bg-red-500 text-white font-bold transition-all duration-300  hover:bg-red-900 hover:scale-105${
-						optimizationType
-							? ""
-							: "cursor-not-allowed opacity-50"
-					}`}
+					className={`py-3 px-4 rounded-md bg-red-500 text-white font-bold transition-all duration-300  hover:bg-red-900 hover:scale-105${optimizationType ? "" : "cursor-not-allowed opacity-50"
+						}`}
 					onClick={() => setShowVideo(!showVideo)}
 				>
 					Hide Video
