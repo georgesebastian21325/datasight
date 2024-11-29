@@ -176,6 +176,15 @@ export default function AIPresenter({
 	return (
 		<div style={{ position: "relative" }} className="flex flex-row gap-x-4">
 			{/* Button to trigger modal */}
+
+			{(loading &&
+				<p className="text-center items-center px-5 bg-blue-100 rounded-md flex flex-row gap-2 font-semibold ">
+					<span className="loading"></span>Loading AI Presenter
+				</p>
+			)}
+
+
+
 			<button
 				onClick={toggleModal}
 				className="py-3 px-4 rounded-md bg-black text-white font-medium transition-all duration-300 hover:bg-brand-orange hover:scale-105"
@@ -187,7 +196,7 @@ export default function AIPresenter({
 				<div
 					style={{
 						position: "absolute",
-						left: "-550px",
+						left: "-1250px",
 						top: 150 + scrollPosition + "px",
 						width: isMinimized ? "250px" : "450px",
 						maxHeight: "300px",
@@ -260,11 +269,6 @@ export default function AIPresenter({
 				</button>
 			)}
 
-			{loading && (
-				<p className="mt-4 px-5 py-2 bg-blue-100 rounded-md w-fit flex flex-row gap-2 font-semibold">
-					<Loader /> Loading...
-				</p>
-			)}
 
 			{error && (
 				<p className="mt-4 px-5 py-2 bg-red-300 rounded-md w-fit flex flex-row gap-2">
