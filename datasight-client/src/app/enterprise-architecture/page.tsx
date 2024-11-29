@@ -75,21 +75,19 @@ export default function Page() {
 				</p>
 
 				{/* Generate Mapping Buttons */}
-				<div className="flex flex-row gap-4 mb-4 w-fit">
-					<GenerateMappingBtn
-						onGenerateMapping={handleGenerateMapping}
-					/>
-					<div className="flex flex-row gap-2">
-						<GenerateOptimizedMappingBtn
-							onGenerateOptimizedMapping={
-								handleGenerateOptimizedMapping
-							}
-						/>
+				<div className="flex flex-row gap-4 mb-4 w-full justify-between">
+					<div>
+						<GenerateMappingBtn onGenerateMapping={handleGenerateMapping} />
 					</div>
-					<AIPresenter
-						optimizationType={optimizationType}
-					/>
+					<div className="flex flex-row gap-2">
+						<GenerateOptimizedMappingBtn onGenerateOptimizedMapping={handleGenerateOptimizedMapping} />
+					</div>
+					{/* Move AIPresenter to the right side */}
+					<div className="ml-auto">
+						<AIPresenter optimizationType={optimizationType} />
+					</div>
 				</div>
+
 
 				{/* Always show the dashed container */}
 				<div className="flex items-center justify-center w-full h-[calc(100%-80px)] border-2 border-dashed border-gray-300 rounded-lg">

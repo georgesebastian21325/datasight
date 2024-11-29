@@ -174,11 +174,11 @@ export default function AIPresenter({
 	};
 
 	return (
-		<div style={{ position: "relative" }}>
+		<div style={{ position: "relative" }} className="flex flex-row gap-x-4">
 			{/* Button to trigger modal */}
 			<button
 				onClick={toggleModal}
-				className="py-3 px-4 rounded-md bg-black text-white font-bold transition-all duration-300 hover:bg-brand-orange hover:scale-105"
+				className="py-3 px-4 rounded-md bg-black text-white font-medium transition-all duration-300 hover:bg-brand-orange hover:scale-105"
 			>
 				View Results
 			</button>
@@ -252,7 +252,7 @@ export default function AIPresenter({
 
 			{!showVideo && (
 				<button
-					className={`py-3 px-4 rounded-md bg-black text-white font-bold transition-all duration-300 hover:bg-brand-orange hover:scale-105${optimizationType ? "" : "cursor-not-allowed opacity-50"
+					className={`py-3 px-4 rounded-md bg-black text-white font-medium transition-all duration-300 hover:bg-brand-orange hover:scale-105${optimizationType ? "" : "cursor-not-allowed opacity-50"
 						}`}
 					onClick={() => fetchText()}
 				>
