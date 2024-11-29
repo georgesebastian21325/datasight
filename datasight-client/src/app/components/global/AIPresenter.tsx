@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CircleX, Loader } from "lucide-react";
+import { CircleX, Loader, Minimize2 } from "lucide-react";
 
 interface OptimizedOPSRMappingProps {
 	optimizationType: string;
@@ -14,6 +14,7 @@ export default function AIPresenter({
 	const [videoUrl, setVideoUrl] = useState<string | null>(null); // State to store the generated video URL
 	const [showVideo, setShowVideo] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false); // State for modal visibility
+	const [isMinimized, setIsMinimized] = useState(false); // State for minimizing the modal
 	const [scrollPosition, setScrollPosition] = useState(0); // Track scroll position
 
 	const API_KEY =
@@ -146,18 +147,15 @@ export default function AIPresenter({
 			const part1Response = data.first_response?.part1?.response || "No valid response received.";
 
 			// Format the text into a cleaner structure with **bold headers**
-			// Format the text by adding ** Markdown-style bold around headers
 			const formattedText = part1Response
-				.replace(/^([^\d]+):/gm, "$1:") // Bold the header before the colon (no numbers)
+				.replace(/^([^\d]+):/gm, "$1:")
 				.replace(/\n/g, "<br />")
-				.replace(/###/g, "")                 // Remove any occurrence of "###"
+				.replace(/###/g, "")
 				.replace(/#/g, "")
 				.replace(/\*/g, "")
 				.replace(/\*\*/g, "")
-				.replace(/#/g, "");                  // Remove any sharp sign (#)
-			// Set the final HTML text with **bold headers**
+				.replace(/#/g, "");
 			setText(formattedText);
-
 		} catch (error) {
 			setError(error.message);
 		} finally {
@@ -170,6 +168,11 @@ export default function AIPresenter({
 		setModalOpen(!modalOpen);
 	};
 
+	// Toggle the minimize state
+	const toggleMinimize = () => {
+		setIsMinimized(!isMinimized);
+	};
+
 	return (
 		<div style={{ position: "relative" }}>
 			{/* Button to trigger modal */}
@@ -180,47 +183,72 @@ export default function AIPresenter({
 				View Results
 			</button>
 
-			{/* Modal positioned at the bottom left */}
 			{modalOpen && (
 				<div
 					style={{
 						position: "absolute",
-						right: "400px",
-						top: 150 + scrollPosition + "px", // Adjust modal position with scroll
-						width: "450px", // Set a fixed width for the modal
-						maxHeight: "300px", // Set a max height to allow scrolling if content exceeds
-						padding: "10px", // Padding for content
+						left: "-550px",
+						top: 150 + scrollPosition + "px",
+						width: isMinimized ? "250px" : "450px",
+						maxHeight: "300px",
+						padding: "10px",
 						backgroundColor: "white",
-						boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
 						borderRadius: "8px",
-						zIndex: 9999, // Ensure modal is on top
-						overflowY: "auto", // Enables vertical scrolling
+						zIndex: 9999,
+						overflowY: "auto",
+						transition: "width 0.3s, height 0.3s",
 					}}
-					className='shadow-lg'
+					className="shadow-2xl border-2"
 				>
-					<h3 className="font-bold">Optimization Results</h3>
-					{/* Render the formatted markdown content as HTML */}
-					<div
-						style={{
-							whiteSpace: "normal", // Ensure text wraps normally
-							fontSize: "14px",
-							lineHeight: "1.6",
-							color: "#333",
-						}}
-						dangerouslySetInnerHTML={{ __html: text }} // Render HTML safely
-					/>
+					{/* Modal Header */}
+					<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+						<h3 className="font-bold" style={{ margin: 0 }}>
+							Optimization Results
+						</h3>
+						<div className='mt-[-0.75rem]'>
+							<button
+								onClick={toggleMinimize}
+								style={{
+									backgroundColor: "yellow",
+									borderRadius: "60%",
+									padding: "5px",
+									border: "none",
+									cursor: "pointer"
+								}}
+							>
+							</button>
+							<button
+								onClick={toggleModal} // This will close the modal
+								style={{
+									backgroundColor: "red",
+									borderRadius: "60%",
+									padding: "5px",
+									border: "none",
+									cursor: "pointer",
+									marginLeft: "10px",
+								}}
+							>
 
-					{/* Close Modal Button */}
-					<div className='flex items-center justify-center '>
-						<button
-							onClick={toggleModal}
-							className="mt-3 py-2 px-4 bg-red-500 text-white rounded-md hover:bg-red-700"
-						>
-							Close
-						</button>
+							</button>
+						</div>
 					</div>
+
+					{/* Modal Body */}
+					{!isMinimized && (
+						<div
+							style={{
+								whiteSpace: "normal",
+								fontSize: "14px",
+								lineHeight: "1.6",
+								color: "#333",
+							}}
+							dangerouslySetInnerHTML={{ __html: text }}
+						/>
+					)}
 				</div>
 			)}
+
+
 
 			{!showVideo && (
 				<button
@@ -247,7 +275,7 @@ export default function AIPresenter({
 
 			{showVideo && (
 				<button
-					className={`py-3 px-4 rounded-md bg-red-500 text-white font-bold transition-all duration-300  hover:bg-red-900 hover:scale-105${optimizationType ? "" : "cursor-not-allowed opacity-50"
+					className={`py-3 px-4 rounded-md bg-red-500 text-white font-bold transition-all duration-300 hover:bg-red-900 hover:scale-105${optimizationType ? "" : "cursor-not-allowed opacity-50"
 						}`}
 					onClick={() => setShowVideo(!showVideo)}
 				>
