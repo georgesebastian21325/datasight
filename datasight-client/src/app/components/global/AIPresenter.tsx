@@ -14,8 +14,25 @@ export default function AIPresenter({
 	const [videoUrl, setVideoUrl] = useState<string | null>(null); // State to store the generated video URL
 	const [showVideo, setShowVideo] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false); // State for modal visibility
+	const [scrollPosition, setScrollPosition] = useState(0); // Track scroll position
+
 	const API_KEY =
 		"anVkZ2UubW9uZ2NhbC5jaWNzQHVzdC5lZHUucGg:o7TU4ENjRnOh689pHzlx2";
+
+	useEffect(() => {
+		// Set up a scroll event listener
+		const handleScroll = () => {
+			setScrollPosition(window.scrollY); // Update scroll position on scroll
+		};
+
+		// Add event listener when the component mounts
+		window.addEventListener("scroll", handleScroll);
+
+		// Clean up the event listener when the component unmounts
+		return () => {
+			window.removeEventListener("scroll", handleScroll);
+		};
+	}, []);
 
 	useEffect(() => {
 		if (error) {
@@ -131,7 +148,7 @@ export default function AIPresenter({
 			// Format the text into a cleaner structure with **bold headers**
 			// Format the text by adding ** Markdown-style bold around headers
 			const formattedText = part1Response
-				.replace(/^([^\d]+):/gm, "$1") // Bold the header before the colon (no numbers)
+				.replace(/^([^\d]+):/gm, "$1:") // Bold the header before the colon (no numbers)
 				.replace(/\n/g, "<br />")
 				.replace(/###/g, "")                 // Remove any occurrence of "###"
 				.replace(/#/g, "")
@@ -169,7 +186,7 @@ export default function AIPresenter({
 					style={{
 						position: "absolute",
 						right: "400px",
-						top: "400px",
+						top: 150 + scrollPosition + "px", // Adjust modal position with scroll
 						width: "450px", // Set a fixed width for the modal
 						maxHeight: "300px", // Set a max height to allow scrolling if content exceeds
 						padding: "10px", // Padding for content
@@ -194,12 +211,14 @@ export default function AIPresenter({
 					/>
 
 					{/* Close Modal Button */}
-					<button
-						onClick={toggleModal}
-						className="mt-3 py-2 px-4 bg-red-500 text-white rounded-md hover:bg-red-700"
-					>
-						Close
-					</button>
+					<div className='flex items-center justify-center '>
+						<button
+							onClick={toggleModal}
+							className="mt-3 py-2 px-4 bg-red-500 text-white rounded-md hover:bg-red-700"
+						>
+							Close
+						</button>
+					</div>
 				</div>
 			)}
 
