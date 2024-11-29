@@ -56,11 +56,16 @@ function MappingViewPopUp({ message, bgColor, loading }: MappingViewPopUpProps) 
     return (
         <div className={`${bgColor} font-medium rounded-md px-2 flex items-center`}>
             {loading ? (
-                <span className="loading mr-2" />  // Spinner icon for loading
+                <div className="flex items-center">
+                    <div className={`loading h-5 w-5 border-4 border-t-transparent border-${bgColor} rounded-full mr-2`} />
+                    <p>Loading...</p>
+                </div>
             ) : (
-                <EyeIcon className="h-5 w-5 text-black mr-2" />  // Eye icon when not loading
+                <>
+                    <EyeIcon className="h-5 w-5 text-black mr-2" />
+                    <p>{message}</p>
+                </>
             )}
-            <p>{message}</p>
         </div>
     );
 }

@@ -88,7 +88,7 @@ export default function Page() {
 					<div className="flex flex-row gap-4">
 						<GenerateOptimizedMappingBtn onGenerateOptimizedMapping={handleGenerateOptimizedMapping} />
 						<MappingViewPopUp message={message} bgColor={bgColor} loading={loading || optimizedLoading} />
-							</div>
+						</div>
 					{/* Move AIPresenter to the right side */}
 					<div className="ml-auto">
 						<AIPresenter optimizationType={optimizationType} />
