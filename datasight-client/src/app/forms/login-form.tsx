@@ -100,6 +100,7 @@ export default function LoginForm() {
 				</div>
 				<div className='flex flex-col mt-5 items-center'>
 					<LoginButton />
+					{/*
 					<p className="mt-2 text-sm">
 						Don&apos;t have an account yet?
 						<span className="text-brand-blue font-semibold">
@@ -109,6 +110,7 @@ export default function LoginForm() {
 						</span>
 					</p>
 
+					*/}
 				</div>
 			</div>
 		</form>

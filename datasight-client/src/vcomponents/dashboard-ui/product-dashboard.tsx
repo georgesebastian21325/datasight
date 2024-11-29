@@ -92,7 +92,7 @@ export default function ProductLayerDashboard() {
 
       setCostPerProduct(costPerProductData);
       setRevenuePerProduct(revenuePerProductData);
-      setProductRevenueForecast(productRevenueForecastData);
+      // setProductRevenueForecast(productRevenueForecastData);
       setProductCostTableList(productCostTableListData);
       setProductRevenueTableList(productRevenueTableListData);
 

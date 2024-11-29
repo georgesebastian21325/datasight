@@ -10,76 +10,41 @@ import {
   Legend,
 } from "recharts";
 
-// Define the data type for chart entries
 interface DataItem {
+  period: string; // Format: "YYYY-MM-DD"
   resource_id: string;
-  month_year: string; // Format: "YYYY-MM"
-  total_resource_revenue: number | string;
-  predicted_revenue: number | string;
-  forecast_revenue: number | string;
+  predicted_demand_percentage: number;
+  predicted_usage: number;
 }
 
-// Define the component props
 interface ResourceRevenueForecastChartProps {
   data: DataItem[];
 }
 
-const ResourceRevenueForecastChart: React.FC<ResourceRevenueForecastChartProps> = ({
-  data,
-}) => {
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+const ResourceRevenueForecastChart: React.FC<ResourceRevenueForecastChartProps> = ({ data }) => {
+  // Extract unique resource IDs
+  const resourceIds = Array.from(new Set(data.map((item) => item.resource_id)));
 
-  // Format the data and ensure proper parsing
+  const [selectedResourceId, setSelectedResourceId] = useState(resourceIds[0] || "");
+
+  // Format the period as "Month Year"
   const formattedData = data.map((item) => {
-    const [year, month] = item.month_year.split("-");
-    const monthName = monthNames[parseInt(month, 10) - 1];
-    return {
-      ...item,
-      resource_id: item.resource_id.trim(),
-      month_year: `${monthName} ${year}`, // Format as "Month Year"
-      total_resource_revenue: parseFloat(String(item.total_resource_revenue)) || 0,
-      predicted_revenue: parseFloat(String(item.predicted_revenue)) || 0,
-      forecast_revenue: parseFloat(String(item.forecast_revenue)) || 0,
-    };
+    const date = new Date(item.period);
+    const monthYear = date.toLocaleString("default", { month: "long", year: "numeric" });
+    return { ...item, monthYear };
   });
 
-  // Extract unique resource IDs and sorted month-year options
-  const resourceIds: string[] = Array.from(
-    new Set(formattedData.map((item) => item.resource_id))
+  // Extract unique periods (month-year) and sort them
+  const periods = Array.from(new Set(formattedData.map((item) => item.monthYear))).sort(
+    (a, b) => new Date(a).getTime() - new Date(b).getTime()
   );
 
-  const monthYearOptions: string[] = Array.from(
-    new Set(formattedData.map((item) => item.month_year))
-  ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+  const [startDate, setStartDate] = useState(periods[0] || "");
+  const [endDate, setEndDate] = useState(periods[periods.length - 1] || "");
 
-
-  // Ensure valid default values
-  const initialResourceId = resourceIds[0] || "";
-  const initialStartDate = monthYearOptions[0] || "";
-  const initialEndDate = monthYearOptions[monthYearOptions.length - 1] || "";
-
-  // State for selected filters
-  const [selectedResourceId, setSelectedResourceId] =
-    useState<string>(initialResourceId);
-  const [startDate, setStartDate] = useState<string>(initialStartDate);
-  const [endDate, setEndDate] = useState<string>(initialEndDate);
-
-  // Filter data by selected resource ID and date range
+  // Filter data for the selected resource and date range
   const filteredData = formattedData.filter((item) => {
-    const itemDate = new Date(item.month_year);
+    const itemDate = new Date(item.monthYear);
     const start = new Date(startDate);
     const end = new Date(endDate);
     return (
@@ -89,20 +54,12 @@ const ResourceRevenueForecastChart: React.FC<ResourceRevenueForecastChartProps> 
     );
   });
 
-  // Sort data by month_year for proper rendering
-  filteredData.sort(
-    (a, b) => new Date(a.month_year).getTime() - new Date(b.month_year).getTime()
-  );
-
   return (
     <div style={{ margin: "2rem" }}>
       {/* Filters */}
       <div style={{ marginBottom: "1rem", textAlign: "center" }}>
         {/* Resource Filter */}
-        <label
-          htmlFor="resource-filter"
-          style={{ marginRight: "0.5rem", fontWeight: "bold" }}
-        >
+        <label htmlFor="resource-filter" style={{ marginRight: "0.5rem", fontWeight: "bold" }}>
           Select Resource ID:
         </label>
         <select
@@ -120,42 +77,36 @@ const ResourceRevenueForecastChart: React.FC<ResourceRevenueForecastChartProps> 
         </select>
 
         {/* Start Date Filter */}
-        <label
-          htmlFor="start-date-filter"
-          style={{ marginRight: "0.5rem", fontWeight: "bold" }}
-        >
+        <label htmlFor="start-date" style={{ marginRight: "0.5rem", fontWeight: "bold" }}>
           Start Date:
         </label>
         <select
-          id="start-date-filter"
+          id="start-date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
           style={{ marginRight: "1rem" }}
           className="border rounded p-2"
         >
-          {monthYearOptions.map((date) => (
-            <option key={date} value={date}>
-              {date}
+          {periods.map((period) => (
+            <option key={period} value={period}>
+              {period}
             </option>
           ))}
         </select>
 
         {/* End Date Filter */}
-        <label
-          htmlFor="end-date-filter"
-          style={{ marginRight: "0.5rem", fontWeight: "bold" }}
-        >
+        <label htmlFor="end-date" style={{ marginRight: "0.5rem", fontWeight: "bold" }}>
           End Date:
         </label>
         <select
-          id="end-date-filter"
+          id="end-date"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
           className="border rounded p-2"
         >
-          {monthYearOptions.map((date) => (
-            <option key={date} value={date}>
-              {date}
+          {periods.map((period) => (
+            <option key={period} value={period}>
+              {period}
             </option>
           ))}
         </select>
@@ -163,57 +114,48 @@ const ResourceRevenueForecastChart: React.FC<ResourceRevenueForecastChartProps> 
 
       {/* Line Chart */}
       <ResponsiveContainer width="100%" height={500}>
-        <LineChart
-          data={filteredData}
-          margin={{ top: 20, right: 30, bottom: 20, left: 20 }}
-        >
+        <LineChart data={filteredData} margin={{ top: 20, right: 30, bottom: 20, left: 20 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
-            dataKey="month_year"
-            label={{
-              value: "Month-Year",
-              position: "insideBottom",
-              offset: -10,
-            }}
+            type="category"
+            dataKey="monthYear"
+            label={{ value: "Date", position: "insideBottom", offset: -10 }}
             style={{ fontSize: 12, fontWeight: "bold" }}
           />
           <YAxis
+            type="number"
             label={{
-              value: "Revenue",
+              value: "Prediction Percentage",
               angle: -90,
               position: "insideLeft",
               offset: -10,
             }}
+            tickFormatter={(value) => `${(value * 100).toFixed(2)}%`}
             style={{ fontSize: 12, fontWeight: "bold" }}
           />
-          <Tooltip formatter={(value, name) => [`₱${value}`, name]} />
+          <Tooltip
+            formatter={(value, name) => [`${(value as number) * 100}%`, name]}
+            labelFormatter={(label) => `Period: ${label}`}
+          />
           <Legend verticalAlign="top" height={36} />
 
-          {/* Lines for each metric */}
+          {/* Line for Demand Prediction */}
           <Line
-
             type="monotone"
-            dataKey="total_resource_revenue"
+            dataKey="demand_percentage_prediction"
             stroke="#8884d8"
             strokeWidth={2}
             dot={{ r: 2 }}
-            name="Total Resource Revenue"
+            name="Demand Prediction (%)"
           />
+          {/* Line for Usage Prediction */}
           <Line
             type="monotone"
-            dataKey="predicted_revenue"
+            dataKey="usage_percentage_prediction"
             stroke="#82ca9d"
             strokeWidth={2}
             dot={{ r: 2 }}
-            name="Predicted Revenue"
-          />
-          <Line
-            type="monotone"
-            dataKey="forecast_revenue"
-            stroke="#ff7300"
-            strokeWidth={2}
-            dot={{ r: 2 }}
-            name="Forecast Revenue"
+            name="Usage Prediction (%)"
           />
         </LineChart>
       </ResponsiveContainer>
