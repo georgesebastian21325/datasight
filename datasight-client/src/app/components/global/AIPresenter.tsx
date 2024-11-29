@@ -178,10 +178,11 @@ export default function AIPresenter({
 			{/* Button to trigger modal */}
 
 			{(loading &&
-				<p className="text-center items-center px-5 bg-blue-100 rounded-md flex flex-row gap-2 font-semibold ">
+			<p className="text-center items-center px-5 bg-blue-100 rounded-md flex flex-row gap-2 font-semibold ">
 					<span className="loading"></span>Loading AI Presenter
 				</p>
-			)}
+				)}
+
 
 
 
