@@ -1,10 +1,16 @@
 import { useState, useEffect } from 'react';
-import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import { ExclamationCircleIcon, EyeIcon } from '@heroicons/react/24/outline';
 import { FaCheckCircle } from 'react-icons/fa';
 
 interface AuthenticationErrorPopUpProps {
     errorMessage: string; // Define the type of errorMessage
 }
+
+interface MappingViewPopUpProps {
+    message: string;
+    bgColor: string;
+}
+
 
 const AuthenticationErrorPopUp: React.FC<AuthenticationErrorPopUpProps> = ({ errorMessage }) => {
     const [visible, setVisible] = useState<boolean>(!!errorMessage);
@@ -44,10 +50,20 @@ function SuccessMessage() {
 };
 
 
+function MappingViewPopUp({ message, bgColor }: MappingViewPopUpProps) {
+    return (
+        <div className={`${bgColor} font-medium rounded-md px-2 flex items-center`}>
+            <EyeIcon className="h-5 w-5 text-black mr-2" /> {/* Eye icon */}
+            <p>{message}</p>
+        </div>
+    );
+}
+
 
 
 
 export {
     AuthenticationErrorPopUp,
-    SuccessMessage
+    SuccessMessage,
+    MappingViewPopUp
 }
