@@ -18,7 +18,7 @@ export default function AIPresenter({
 	const [scrollPosition, setScrollPosition] = useState(0); // Track scroll position
 
 	const API_KEY =
-		"anVkZ2UubW9uZ2NhbC5jaWNzQHVzdC5lZHUucGg:o7TU4ENjRnOh689pHzlx2";
+		"anVkZ2Vtb25nY2FsQGdtYWlsLmNvbQ:NKxU7Bj-w4nYWAKx7YdJx";
 
 	useEffect(() => {
 		// Set up a scroll event listener
@@ -156,6 +156,10 @@ export default function AIPresenter({
 				.replace(/\*\*/g, "")
 				.replace(/#/g, "");
 			setText(formattedText);
+
+			// Call the generateVideo function and pass the formatted text
+			await generateVideo(formattedText);
+
 		} catch (error) {
 			setError(error.message);
 		} finally {
@@ -182,9 +186,6 @@ export default function AIPresenter({
 					<span className="loading"></span>Loading AI Presenter
 				</p>
 			)}
-
-
-
 
 			<button
 				onClick={toggleModal}
@@ -258,8 +259,6 @@ export default function AIPresenter({
 				</div>
 			)}
 
-
-
 			{!showVideo && (
 				<button
 					className={`py-3 px-4 rounded-md bg-black text-white font-medium transition-all duration-300 hover:bg-brand-orange hover:scale-105${optimizationType ? "" : "cursor-not-allowed opacity-50"
@@ -270,14 +269,32 @@ export default function AIPresenter({
 				</button>
 			)}
 
-
 			{error && (
 				<p className="mt-4 px-5 py-2 bg-red-300 rounded-md w-fit flex flex-row gap-2">
 					<CircleX />
 					<span className="font-semibold">Error:</span> {error}
 				</p>
 			)}
-
+			{!loading && !error && videoUrl && showVideo && (
+				<video
+					controls
+					style={{
+						position: "fixed",
+						bottom: "10px",
+						right: "10px",
+						width: "300px",
+						height: "auto",
+						boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+						borderRadius: "8px",
+					}}
+				>
+					<source
+						src={videoUrl}
+						type="video/mp4"
+					/>
+					Your browser does not support the video tag.
+				</video>
+			)}
 			{showVideo && (
 				<button
 					className={`py-3 px-4 rounded-md bg-red-500 text-white font-bold transition-all duration-300 hover:bg-red-900 hover:scale-105${optimizationType ? "" : "cursor-not-allowed opacity-50"
