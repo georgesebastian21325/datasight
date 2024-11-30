@@ -10,7 +10,7 @@ import EntityGraphs from "../entity-graphs/entity-graphs";
 import NavigationBar from "../components/global/NavigationBar";
 import GenerateOptimizedFinanceMappingBtn from "../components/button/GenerateOptimizedFinanceMappingBtn";
 import GenerateOptimizedRiskMappingBtn from "../components/button/GenerateOptimizedRiskMappingBtn";
-import OptimizedOPSRMapping from "../data-mapping/OptimizedOPSRMapping";
+import OptimizedOPSRMapping from "../data-mapping/OptimizedOPSRFinanceMapping";
 import AIPresenter from "../components/global/AIPresenter";
 import { MappingViewPopUp } from '../components/popup';
 

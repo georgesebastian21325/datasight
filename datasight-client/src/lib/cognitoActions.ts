@@ -78,7 +78,7 @@ export async function handleSignIn(
   formData: FormData
 ) {
   const redirectToOnboarding = '/onboarding';
-  const redirectToDashboard = '/dashboard/resources';
+  const redirectToDashboard = '/enterprise-architecture';
   let isSignedIn = false;
   let isBucketEmpty = false;
 
