@@ -25,11 +25,11 @@ export default function RiskOptimizationTable() {
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
       case 'green':
-        return 'bg-green-200 px-2 py-1 rounded-full text-center flex items-center justify-center'
+        return 'bg-green-200 text-green-800 px-2 py-1 rounded-full '
       case 'yellow':
-        return 'bg-yellow-200 px-2 py-1 rounded-full text-center flex items-center justify-center'
+        return 'bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full '
       case 'red':
-        return 'bg-red-200 px-2 py-1 rounded-full text-center flex items-center justify-center'
+        return 'bg-red-200 text-red-800 px-4 py-1 rounded-full'
       default:
         return ''
     }
@@ -51,8 +51,8 @@ export default function RiskOptimizationTable() {
         // Format the fetched data
         const formattedData = bodyData.map((item) => ({
           ...item,
-          predicted_usage_percentage: parseFloat(item.predicted_usage_percentage),
-          distributed_utilization_percentage: parseFloat(item.distributed_utilization_percentage),
+          predicted_usage_percentage: parseFloat(item.predicted_usage_percentage).toFixed(2),
+          distributed_utilization_percentage: parseFloat(item.distributed_utilization_percentage).toFixed(2),
         }))
 
         setData(formattedData)

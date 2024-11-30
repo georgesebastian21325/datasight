@@ -111,17 +111,6 @@ export default function ProfitabilityOptimizationTable() {
        ))}
       </SelectContent>
      </Select>
-     <Select onValueChange={(value) => handleFilterChange('period', value)}>
-      <SelectTrigger className="w-[180px]">
-       <SelectValue placeholder="Period" />
-      </SelectTrigger>
-      <SelectContent>
-       <SelectItem value="all">All Periods</SelectItem>
-       {uniqueValues.period.map(period => (
-        <SelectItem key={period} value={period}>{period}</SelectItem>
-       ))}
-      </SelectContent>
-     </Select>
      <Select onValueChange={(value) => handleFilterChange('new_service_id', value)}>
       <SelectTrigger className="w-[180px]">
        <SelectValue placeholder="New Service ID" />
@@ -130,6 +119,17 @@ export default function ProfitabilityOptimizationTable() {
        <SelectItem value="all">All Services</SelectItem>
        {uniqueValues.new_service_id.map(id => (
         <SelectItem key={id} value={id}>{id}</SelectItem>
+       ))}
+      </SelectContent>
+     </Select>
+     <Select onValueChange={(value) => handleFilterChange('period', value)}>
+      <SelectTrigger className="w-[180px]">
+       <SelectValue placeholder="Period" />
+      </SelectTrigger>
+      <SelectContent>
+       <SelectItem value="all">All Periods</SelectItem>
+       {uniqueValues.period.map(period => (
+        <SelectItem key={period} value={period}>{period}</SelectItem>
        ))}
       </SelectContent>
      </Select>
