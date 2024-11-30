@@ -36,10 +36,11 @@ export default function Page() {
 		setMessage("Current Mapping In View");  // Set message for Generate Mapping
 		setBgColor("bg-blue-200");  // Set background color for current mapping
 		setShowMessage(false); // Hide message initially
-		setShowOptimizedButton(true); // Show Optimized Mapping button after Generate Mapping
+		setShowOptimizedButton(false); // Hide Optimized Mapping button while loading
 		setShowAIPresenter(false); // Hide AIPresenter button until Optimized Mapping is clicked
 		setTimeout(() => {
 			setLoading(false); // Set loading to false after 5 seconds
+			setShowOptimizedButton(true); // Show Optimized Mapping button after Generate Mapping is complete
 			setShowMessage(true); // Show message after loading completes
 		}, 5000);
 	};
@@ -77,19 +78,21 @@ export default function Page() {
 					<div>
 						<GenerateMappingBtn onGenerateMapping={handleGenerateMapping} />
 					</div>
-						{/* Conditionally render the Optimized Mapping button */}
-						{showOptimizedButton && (
-							<GenerateOptimizedMappingBtn onGenerateOptimizedMapping={handleGenerateOptimizedMapping} />
-						)}
-						{/* Always show the pop-up once loading or optimized loading is done */}
-						{(loading || optimizedLoading || showMessage) && (
-							<MappingViewPopUp
-								message={message}
-								bgColor={bgColor}
-								loading={loading || optimizedLoading}
-							/>
-						)}
-					{/* Move AIPresenter to the right side */}
+
+					{/* Only show the Optimized Mapping button after Generate Mapping is done */}
+					{!loading && showOptimizedButton && (
+						<GenerateOptimizedMappingBtn onGenerateOptimizedMapping={handleGenerateOptimizedMapping} />
+					)}
+
+					{/* Always show the pop-up once loading or optimized loading is done */}
+					{(loading || optimizedLoading || showMessage) && (
+						<MappingViewPopUp
+							message={message}
+							bgColor={bgColor}
+							loading={loading || optimizedLoading}
+						/>
+					)}
+
 					{/* Conditionally render AIPresenter button */}
 					{showAIPresenter && (
 						<div className="ml-auto">
