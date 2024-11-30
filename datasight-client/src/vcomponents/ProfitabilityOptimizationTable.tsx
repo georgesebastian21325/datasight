@@ -44,43 +44,44 @@ export default function ProfitabilityOptimizationTable() {
    try {
     const response = await fetch(
      'https://d9b890dlsg.execute-api.ap-southeast-2.amazonaws.com/development/getProfitabilityOptimizedTable'
-    )
-    if (!response.ok) throw new Error(`Error: ${response.statusText}`)
+    );
+    if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
-    const data = await response.json()
+    const data = await response.json();
     // Assuming the response data is in the correct format
-    const bodyData = data.body ? JSON.parse(data.body) : data
+    const bodyData = data.body ? JSON.parse(data.body) : data;
 
     // Format the fetched data
     const formattedData = bodyData.map((item) => ({
      ...item,
-     predicted_usage: parseFloat(item.predicted_usage),
-     ideal_usage: parseFloat(item.ideal_usage),
-     resource_optimized_usage: parseFloat(item.resource_optimized_usage),
-     predicted_demand_percentage: parseFloat(item.predicted_demand_percentage),
-     deviation_from_ideal_usage: parseFloat(item.deviation_from_ideal_usage),
-    }))
+     predicted_usage: parseFloat(item.predicted_usage).toFixed(2),
+     ideal_usage: parseFloat(item.ideal_usage).toFixed(2),
+     resource_optimized_usage: parseFloat(item.resource_optimized_usage).toFixed(2),
+     predicted_demand_percentage: parseFloat(item.predicted_demand_percentage).toFixed(2),
+     deviation_from_ideal_usage: parseFloat(item.deviation_from_ideal_usage).toFixed(2),
+    }));
 
-    setData(formattedData)
-    setFilteredData(formattedData)
+    setData(formattedData);
+    setFilteredData(formattedData);
 
     // Extract unique values for filters
     setUniqueValues({
-     resource_id: Array.from(new Set(formattedData.map(item => item.resource_id))),
-     period: Array.from(new Set(formattedData.map(item => item.period))),
-     new_service_id: Array.from(new Set(formattedData.map(item => item.new_service_id)))
-    })
+     resource_id: Array.from(new Set(formattedData.map((item) => item.resource_id))),
+     period: Array.from(new Set(formattedData.map((item) => item.period))),
+     new_service_id: Array.from(new Set(formattedData.map((item) => item.new_service_id))),
+    });
 
-    setLoading(false)
+    setLoading(false);
    } catch (error) {
-    console.error('Fetch Error:', error)
-    setError('Failed to fetch data. Please try again later.')
-    setLoading(false)
+    console.error('Fetch Error:', error);
+    setError('Failed to fetch data. Please try again later.');
+    setLoading(false);
    }
   }
 
-  fetchProfitabilityOptimizationTable()
- }, [])
+  fetchProfitabilityOptimizationTable();
+ }, []);
+
 
  const handleFilterChange = (key, value) => {
   const newFilters = { ...filters, [key]: value === 'all' ? '' : value }
@@ -140,7 +141,7 @@ export default function ProfitabilityOptimizationTable() {
     ) : error ? (
      <p className="text-red-500">{error}</p>
     ) : (
-     <Table>
+     <Table className="table-fixed w-full border-collapse">
       <TableHeader>
        <TableRow>
         <TableHead>Resource ID</TableHead>
@@ -171,10 +172,10 @@ export default function ProfitabilityOptimizationTable() {
          <TableCell>
           <span className={getStatusColor(item.predicted_usage_risk_status)}> {item.predicted_usage_risk_status} </span>
          </TableCell>
-         <TableCell >
+         <TableCell>
           <span className={getStatusColor(item.resource_optimized_usage_risk_status)}> {item.resource_optimized_usage_risk_status} </span>
          </TableCell>
-         <TableCell >
+         <TableCell>
           <span className={getStatusColor(item.predicted_usage_finance_status)}> {item.predicted_usage_finance_status} </span>
          </TableCell>
          <TableCell>
