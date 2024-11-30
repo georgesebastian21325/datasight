@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CircleX } from "lucide-react";
-import ActionButtons from "../button/AIPresenterBtn"; // Assuming your ActionButtons component is in this directory
+import { CircleX, Loader, Minimize2 } from "lucide-react";
 
 interface OptimizedOPSRMappingProps {
 	optimizationType: string;
@@ -17,25 +16,25 @@ export default function AIPresenter({
 	const [modalOpen, setModalOpen] = useState(false); // State for modal visibility
 	const [isMinimized, setIsMinimized] = useState(false); // State for minimizing the modal
 	const [scrollPosition, setScrollPosition] = useState(0); // Track scroll position
-	const [showResultsButton, setShowResultsButton] = useState(false); // State to control "View Results" button visibility
 
-	const API_KEY = "anVkZ2UubW9uZ2NhbC5jaWNzQHVzdC5lZHUucGg:o7TU4ENjRnOh689pHzlx2"; // Your API key (ensure to keep it safe)
+	const API_KEY =
+		"anVkZ2UubW9uZ2NhbC5jaWNzQHVzdC5lZHUucGg:o7TU4ENjRnOh689pHzlx2";
 
-	// Set up scroll listener for handling scroll events
 	useEffect(() => {
+		// Set up a scroll event listener
 		const handleScroll = () => {
 			setScrollPosition(window.scrollY); // Update scroll position on scroll
 		};
 
-		window.addEventListener("scroll", handleScroll); // Adding event listener
+		// Add event listener when the component mounts
+		window.addEventListener("scroll", handleScroll);
 
-		// Cleanup event listener on unmount
+		// Clean up the event listener when the component unmounts
 		return () => {
 			window.removeEventListener("scroll", handleScroll);
 		};
 	}, []);
 
-	// Auto-clear error after 2 seconds
 	useEffect(() => {
 		if (error) {
 			const timer = setTimeout(() => {
@@ -45,7 +44,7 @@ export default function AIPresenter({
 		}
 	}, [error]);
 
-	// Function to generate a video using the D-ID API
+	// Function to generate a video with D-ID API
 	const generateVideo = async (text: string) => {
 		if (!text) {
 			setError("No text available for generating the video.");
@@ -76,7 +75,7 @@ export default function AIPresenter({
 						stitch: true,
 					},
 					source_url:
-						"https://img.freepik.com/premium-photo/free-photo-business-finance-employment-female_837074-7695.jpg", // Example image URL
+						"https://img.freepik.com/premium-photo/free-photo-business-finance-employment-female_837074-7695.jpg",
 				}),
 			});
 
@@ -110,7 +109,7 @@ export default function AIPresenter({
 				console.log("Poll result:", result);
 
 				if (result.status === "done") {
-					setVideoUrl(result.result_url); // Video URL after successful creation
+					setVideoUrl(result.result_url);
 					setShowVideo(true);
 					break;
 				} else if (result.status === "failed") {
@@ -122,13 +121,13 @@ export default function AIPresenter({
 			}
 		} catch (err: any) {
 			console.error("Video generation error:", err);
-			setError(err.message); // Error handling
+			setError(err.message);
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	// Function to fetch data from API on button click
+	// Function to fetch data on button click
 	const fetchText = async () => {
 		try {
 			setLoading(true);
@@ -144,10 +143,10 @@ export default function AIPresenter({
 
 			const data = await response.json();
 
-			// Parse the response and clean up the text for presentation
+			// Fetch the response and parse markdown to HTML
 			const part1Response = data.first_response?.part1?.response || "No valid response received.";
 
-			// Clean up the text for HTML formatting
+			// Format the text into a cleaner structure with **bold headers**
 			const formattedText = part1Response
 				.replace(/^([^\d]+):/gm, "$1:")
 				.replace(/\n/g, "<br />")
@@ -156,9 +155,9 @@ export default function AIPresenter({
 				.replace(/\*/g, "")
 				.replace(/\*\*/g, "")
 				.replace(/#/g, "");
-			setText(formattedText); // Set formatted text
+			setText(formattedText);
 		} catch (error) {
-			setError(error.message); // Error handling
+			setError(error.message);
 		} finally {
 			setLoading(false);
 		}
@@ -169,45 +168,124 @@ export default function AIPresenter({
 		setModalOpen(!modalOpen);
 	};
 
-	// Toggle the minimized state for the modal
+	// Toggle the minimize state
 	const toggleMinimize = () => {
 		setIsMinimized(!isMinimized);
 	};
 
-	// Handle the "Present with AI" button click
-	const handlePresentWithAI = () => {
-		setShowResultsButton(true); // Show the "View Results" button after fetching text
-		fetchText();
-	};
-
 	return (
 		<div style={{ position: "relative" }} className="flex flex-row gap-x-4">
-			<ActionButtons
-				loading={loading}
-				error={error}
-				optimizationType={optimizationType}
-				fetchText={handlePresentWithAI} // Pass the new handler to fetch text
-				toggleModal={toggleModal}
-				showVideo={showVideo}
-				setShowVideo={setShowVideo}
-				showResultsButton={showResultsButton} // Pass the state to control button visibility
-			/>
+			{/* Button to trigger modal */}
 
-			{/* Additional modal or content rendering */}
+			{(loading &&
+				<p className="text-center items-center px-5 bg-blue-100 rounded-md flex flex-row gap-2 font-semibold ">
+					<span className="loading"></span>Loading AI Presenter
+				</p>
+			)}
+
+
+
+
+			<button
+				onClick={toggleModal}
+				className="py-3 px-4 rounded-md bg-black text-white font-medium transition-all duration-300 hover:bg-brand-orange hover:scale-105"
+			>
+				View Results
+			</button>
+
 			{modalOpen && (
-				<div className="modal">
-					<button onClick={toggleModal}>
-						<CircleX size={24} />
-					</button>
-					<div>{text && <div dangerouslySetInnerHTML={{ __html: text }} />}</div>
+				<div
+					style={{
+						position: "absolute",
+						left: "-1250px",
+						top: 150 + scrollPosition + "px",
+						width: isMinimized ? "250px" : "450px",
+						maxHeight: "300px",
+						padding: "10px",
+						backgroundColor: "white",
+						borderRadius: "8px",
+						zIndex: 9999,
+						overflowY: "auto",
+						transition: "width 0.3s, height 0.3s",
+					}}
+					className="shadow-2xl border-2"
+				>
+					{/* Modal Header */}
+					<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+						<h3 className="font-bold" style={{ margin: 0 }}>
+							Optimization Results
+						</h3>
+						<div className='mt-[-0.75rem]'>
+							<button
+								onClick={toggleMinimize}
+								style={{
+									backgroundColor: "yellow",
+									borderRadius: "60%",
+									padding: "5px",
+									border: "none",
+									cursor: "pointer"
+								}}
+							>
+							</button>
+							<button
+								onClick={toggleModal} // This will close the modal
+								style={{
+									backgroundColor: "red",
+									borderRadius: "60%",
+									padding: "5px",
+									border: "none",
+									cursor: "pointer",
+									marginLeft: "10px",
+								}}
+							>
+
+							</button>
+						</div>
+					</div>
+
+					{/* Modal Body */}
+					{!isMinimized && (
+						<div
+							style={{
+								whiteSpace: "normal",
+								fontSize: "14px",
+								lineHeight: "1.6",
+								color: "#333",
+							}}
+							dangerouslySetInnerHTML={{ __html: text }}
+						/>
+					)}
 				</div>
 			)}
 
-			{/* Conditionally render the video if available */}
-			{showVideo && videoUrl && (
-				<div>
-					<video controls src={videoUrl}></video>
-				</div>
+
+
+			{!showVideo && (
+				<button
+					className={`py-3 px-4 rounded-md bg-black text-white font-medium transition-all duration-300 hover:bg-brand-orange hover:scale-105${optimizationType ? "" : "cursor-not-allowed opacity-50"
+						}`}
+					onClick={() => fetchText()}
+				>
+					Present with AI
+				</button>
+			)}
+
+
+			{error && (
+				<p className="mt-4 px-5 py-2 bg-red-300 rounded-md w-fit flex flex-row gap-2">
+					<CircleX />
+					<span className="font-semibold">Error:</span> {error}
+				</p>
+			)}
+
+			{showVideo && (
+				<button
+					className={`py-3 px-4 rounded-md bg-red-500 text-white font-bold transition-all duration-300 hover:bg-red-900 hover:scale-105${optimizationType ? "" : "cursor-not-allowed opacity-50"
+						}`}
+					onClick={() => setShowVideo(!showVideo)}
+				>
+					Hide Video
+				</button>
 			)}
 		</div>
 	);

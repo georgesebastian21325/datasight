@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState } from "react";
 import Header from "../components/global/header";
@@ -25,8 +25,6 @@ export default function Page() {
 	const [bgColor, setBgColor] = useState("bg-blue-200"); // Default bg color
 
 	const [showMessage, setShowMessage] = useState(false); // Control message visibility
-	const [showOptimizedButton, setShowOptimizedButton] = useState(false); // State to show Optimized Mapping Button
-	const [showAIPresenter, setShowAIPresenter] = useState(false); // State to show AIPresenter button
 
 	const handleGenerateMapping = () => {
 		setSelectedNodeId("");
@@ -36,11 +34,8 @@ export default function Page() {
 		setMessage("Current Mapping In View");  // Set message for Generate Mapping
 		setBgColor("bg-blue-200");  // Set background color for current mapping
 		setShowMessage(false); // Hide message initially
-		setShowOptimizedButton(false); // Hide Optimized Mapping button while loading
-		setShowAIPresenter(false); // Hide AIPresenter button until Optimized Mapping is clicked
 		setTimeout(() => {
 			setLoading(false); // Set loading to false after 5 seconds
-			setShowOptimizedButton(true); // Show Optimized Mapping button after Generate Mapping is complete
 			setShowMessage(true); // Show message after loading completes
 		}, 5000);
 	};
@@ -53,7 +48,6 @@ export default function Page() {
 		setMessage("Optimized Mapping In View");  // Set message for Optimized Mapping
 		setBgColor("bg-orange-200");  // Set background color for optimized mapping
 		setShowMessage(false); // Hide message initially
-		setShowAIPresenter(true); // Show AIPresenter button after Optimized Mapping is generated
 		setTimeout(() => {
 			setOptimizedLoading(false); // Clear optimized loading state after 6 seconds
 			setShowMessage(true); // Show message after optimized loading completes
@@ -74,31 +68,25 @@ export default function Page() {
 				</h2>
 
 				{/* Generate Mapping Buttons */}
-				<div className="flex flex-row gap-4 mb-4 w-full justify-start">
+				<div className="flex flex-row gap-4 mb-4 w-full justify-between">
 					<div>
 						<GenerateMappingBtn onGenerateMapping={handleGenerateMapping} />
 					</div>
-
-					{/* Only show the Optimized Mapping button after Generate Mapping is done */}
-					{!loading && showOptimizedButton && (
+					<div className="flex flex-row gap-4">
 						<GenerateOptimizedMappingBtn onGenerateOptimizedMapping={handleGenerateOptimizedMapping} />
-					)}
-
-					{/* Always show the pop-up once loading or optimized loading is done */}
-					{(loading || optimizedLoading || showMessage) && (
-						<MappingViewPopUp
-							message={message}
-							bgColor={bgColor}
-							loading={loading || optimizedLoading}
-						/>
-					)}
-
-					{/* Conditionally render AIPresenter button */}
-					{showAIPresenter && (
-						<div className="ml-auto">
-							<AIPresenter optimizationType={optimizationType} />
-						</div>
-					)}
+						{/* Always show the pop-up once loading or optimized loading is done */}
+						{(loading || optimizedLoading || showMessage) && (
+							<MappingViewPopUp
+								message={message}
+								bgColor={bgColor}
+								loading={loading || optimizedLoading}
+							/>
+						)}
+					</div>
+					{/* Move AIPresenter to the right side */}
+					<div className="ml-auto">
+						<AIPresenter optimizationType={optimizationType} />
+					</div>
 				</div>
 
 				{/* Always show the dashed container */}
