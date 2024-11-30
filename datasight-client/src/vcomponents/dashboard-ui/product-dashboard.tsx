@@ -143,7 +143,7 @@ export default function ProductLayerDashboard() {
             </Card>
             <Card className={`${loading ? 'skeleton animate-pulse' : ''}`}>
               <CardHeader>
-                <CardTitle className='text-lg font-bold'>Product Revenue By ID</CardTitle>
+                <CardTitle className='text-lg font-bold'> Attributed Product Revenue By ID</CardTitle>
               </CardHeader>
               <CardContent>
                 {loading ? <div className="skeleton animate-pulse"></div> : <RevenueByProductChart data={revenuePerProduct} />}
