@@ -20,7 +20,7 @@ export default function AIPresenter({
 	const [scrollPosition, setScrollPosition] = useState(0); // Track scroll position
 
 	const API_KEY =
-		"Z2Vvcmdlc2ViYXN0aWFuODc1NUBnbWFpbC5jb20:GD0QI2HM55psJ1-lVRPhk";
+		"Z2VvcmdlY29uc3RhbnRlLnNlYmFzdGlhbi5jaWNzQHVzdC5lZHUucGg:90Zc8jwtY5AvLnd80CQ8_";
 
 	useEffect(() => {
 		// Set up a scroll event listener
@@ -349,21 +349,22 @@ export default function AIPresenter({
 				{/* Close Button */}
 
 				{/* Video */}
-				<video
-					controls
-					style={{
-						width: "100%",  // Ensure video width is responsive to the container width
-						height: "100%",
-						borderRadius: "8px",
-						display: videoMinimized ? "none" : "block",  // Hide video when minimized
-					}}
-				>
-					<source
-						src={videoUrl}
-						type="video/mp4"
-					/>
-					Your browser does not support the video tag.
-				</video>
+				{!loading && !error && videoUrl && showVideo && (
+					<video
+						controls
+						style={{
+							width: "100%",  // Ensure video width is responsive to the container width
+							height: "100%",
+							borderRadius: "8px",
+						}}
+					>
+						<source
+							src={videoUrl}
+							type="video/mp4"
+						/>
+						Your browser does not support the video tag.
+					</video>
+				)}
 			</div>
 
 
