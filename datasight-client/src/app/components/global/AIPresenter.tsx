@@ -14,11 +14,13 @@ export default function AIPresenter({
 	const [videoUrl, setVideoUrl] = useState<string | null>(null); // State to store the generated video URL
 	const [showVideo, setShowVideo] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false); // State for modal visibility
-	const [isMinimized, setIsMinimized] = useState(false); // State for minimizing the modal
+	const [videoModal, setVideoModal] = useState(false);
+	const [optimizationMinimized, setOptimizationMinimized] = useState(false); // Separate state for optimization results minimize
+	const [videoMinimized, setVideoMinimized] = useState(false); // Separate state for AI presenter video minimize
 	const [scrollPosition, setScrollPosition] = useState(0); // Track scroll position
 
 	const API_KEY =
-		"anVkZ2Vtb25nY2FsQGdtYWlsLmNvbQ:NKxU7Bj-w4nYWAKx7YdJx";
+		"Z2Vvcmdlc2ViYXN0aWFuODc1NUBnbWFpbC5jb20:GD0QI2HM55psJ1-lVRPhk";
 
 	useEffect(() => {
 		// Set up a scroll event listener
@@ -172,17 +174,38 @@ export default function AIPresenter({
 		setModalOpen(!modalOpen);
 	};
 
-	// Toggle the minimize state
-	const toggleMinimize = () => {
-		setIsMinimized(!isMinimized);
+	// Toggle the minimize state for the optimization results modal
+	const toggleOptimizationMinimize = () => {
+		setOptimizationMinimized(!optimizationMinimized);
 	};
+
+	// Toggle the minimize state for the video container
+	const toggleVideoMinimize = () => {
+		setVideoMinimized(!videoMinimized);
+	};
+
+	// Close the modal for optimization results
+	const closeOptimizationModal = () => {
+		setModalOpen(false);
+	};
+
+	const closeVideoModal = () => {
+		setVideoModal(false);  // Close the video modal
+	};
+
+
+	// Close the AI Presenter video
+	const closeAIPlayer = () => {
+		setShowVideo(false);  // This will hide the video player
+		setVideoMinimized(true);  // You can also minimize the video if needed
+	};
+
 
 	return (
 		<div style={{ position: "relative" }} className="flex flex-row gap-x-4">
 			{/* Button to trigger modal */}
-
 			{(loading &&
-				<p className="text-center items-center px-5 bg-blue-100 rounded-md flex flex-row gap-2 font-semibold ">
+				<p className="text-center items-center px-5 bg-green-300 rounded-md flex flex-row gap-2 font-semibold ">
 					<span className="loading"></span>Loading AI Presenter
 				</p>
 			)}
@@ -200,8 +223,8 @@ export default function AIPresenter({
 						position: "absolute",
 						left: "-1250px",
 						top: 150 + scrollPosition + "px",
-						width: isMinimized ? "250px" : "450px",
-						maxHeight: "300px",
+						width: optimizationMinimized ? "250px" : "450px",
+						maxHeight: "500px",
 						padding: "10px",
 						backgroundColor: "white",
 						borderRadius: "8px",
@@ -216,9 +239,9 @@ export default function AIPresenter({
 						<h3 className="font-bold" style={{ margin: 0 }}>
 							Optimization Results
 						</h3>
-						<div className='mt-[-0.75rem]'>
+						<div className='flex gap-x-2'>
 							<button
-								onClick={toggleMinimize}
+								onClick={toggleOptimizationMinimize}
 								style={{
 									backgroundColor: "yellow",
 									borderRadius: "60%",
@@ -229,7 +252,7 @@ export default function AIPresenter({
 							>
 							</button>
 							<button
-								onClick={toggleModal} // This will close the modal
+								onClick={closeOptimizationModal} // This will close the modal
 								style={{
 									backgroundColor: "red",
 									borderRadius: "60%",
@@ -239,13 +262,12 @@ export default function AIPresenter({
 									marginLeft: "10px",
 								}}
 							>
-
 							</button>
 						</div>
 					</div>
 
 					{/* Modal Body */}
-					{!isMinimized && (
+					{!optimizationMinimized && (
 						<div
 							style={{
 								whiteSpace: "normal",
@@ -275,17 +297,65 @@ export default function AIPresenter({
 					<span className="font-semibold">Error:</span> {error}
 				</p>
 			)}
-			{!loading && !error && videoUrl && showVideo && (
+
+
+			<div
+				style={{
+					position: "absolute",
+					right: "-30px",
+					top: 150 + scrollPosition + "px",
+					width: videoMinimized ? "250px" : "450px",
+					maxHeight: "500px",
+					padding: "10px",
+					backgroundColor: "white",
+					borderRadius: "8px",
+					zIndex: 9999,
+					overflowY: "auto",
+					transition: "width 0.3s, height 0.3s",
+				}}
+				className='border border-1'
+			>
+				<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+					<p className="font-bold" style={{ margin: 0 }}> AI Presenter </p>
+					<div className="flex gap-x-2">
+						{/* Minimize Button */}
+						<button
+							onClick={toggleVideoMinimize}
+							style={{
+								backgroundColor: "yellow",
+								borderRadius: "60%",
+								padding: "5px",
+								border: "none",
+								cursor: "pointer"
+							}}
+						>
+						</button>
+						<button
+							onClick={closeVideoModal}
+							style={{
+								backgroundColor: "red",
+								borderRadius: "60%",
+								padding: "5px",
+								border: "none",
+								cursor: "pointer",
+								marginLeft: "10px",
+							}}
+						>
+						</button>
+					</div>
+
+				</div>
+
+				{/* Close Button */}
+
+				{/* Video */}
 				<video
 					controls
 					style={{
-						position: "fixed",
-						bottom: "10px",
-						right: "10px",
-						width: "300px",
-						height: "auto",
-						boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+						width: "100%",  // Ensure video width is responsive to the container width
+						height: "100%",
 						borderRadius: "8px",
+						display: videoMinimized ? "none" : "block",  // Hide video when minimized
 					}}
 				>
 					<source
@@ -294,7 +364,9 @@ export default function AIPresenter({
 					/>
 					Your browser does not support the video tag.
 				</video>
-			)}
+			</div>
+
+
 			{showVideo && (
 				<button
 					className={`py-3 px-4 rounded-md bg-red-500 text-white font-bold transition-all duration-300 hover:bg-red-900 hover:scale-105${optimizationType ? "" : "cursor-not-allowed opacity-50"
