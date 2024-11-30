@@ -151,7 +151,9 @@ export default function Page() {
 						loading={loading || optimizedLoading}
 					/>
 				)}
-				<EntityGraphs />
+				{( optimizationType === "" &&
+						<EntityGraphs />
+				)}
 			</div>
 		</div>
 	);
