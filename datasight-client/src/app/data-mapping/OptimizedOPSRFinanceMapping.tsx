@@ -15,6 +15,7 @@ import { useGlobalState } from "../context/GlobalStateContext"; // Import the gl
 
 import { fetchResourceOptimizedProfitabilityStatus, fetchServiceOptimizedProfitabilityStatus , fetchProductOptimizedProfitabilityStatus, fetchOfferingOptimizedProfitabilityStatus } from '../api/dataMapping/mapping-functions'
 
+
 interface ResourceServiceMappingData {
 	service_id: string;
 	resource_id: string;

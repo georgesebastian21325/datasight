@@ -8,7 +8,7 @@ import Link from "next/link";
 
 import SignOutModal from "../modal/SignOutModal";
 import { handleSignOut } from "@/lib/cognitoActions";
-import { Button } from "@/vcomponents/recommendations-components/button"; 
+import { Button } from "@/vcomponents/recommendations-components/button";
 
 import NavigationBarComponent from "@/vcomponents/NavigationBar";
 

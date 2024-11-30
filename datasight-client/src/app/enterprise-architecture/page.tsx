@@ -15,6 +15,9 @@ import OptimizedOPSRRiskMapping from "../data-mapping/OptimizedOPSRRiskMapping";
 import AIPresenter from "../components/global/AIPresenter";
 import { MappingViewPopUp } from '../components/popup';
 
+import RiskOptimizationTable from "@/vcomponents/RiskOptimizationTable";
+import ProfitabilityOptimizationTable from "@/vcomponents/ProfitabilityOptimizationTable";
+
 export default function Page() {
 	const [loading, setLoading] = useState(false);
 	const [optimizedLoading, setOptimizedLoading] = useState(false); // Separate state for optimized loading
@@ -153,6 +156,14 @@ export default function Page() {
 				)}
 				{( optimizationType === "" &&
 						<EntityGraphs />
+				)}
+
+				{optimizationType === "risk" && (
+									<RiskOptimizationTable />
+				)}
+
+				{optimizationType === "finance" && (
+					<ProfitabilityOptimizationTable />
 				)}
 			</div>
 		</div>

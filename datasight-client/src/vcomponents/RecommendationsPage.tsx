@@ -66,7 +66,7 @@ export default function RecommendationsLayout() {
             ) : (
               <>
                 <p className="text-gray-500 text-center">
-                  
+
                 </p>
               </>
             )}
