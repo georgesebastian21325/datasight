@@ -550,7 +550,7 @@ export default function OPSRMapping() {
 	const { nodes, edges } = generateNodesAndEdges();
 
 	return (
-		<div style={{ height: "77vh" }}>
+		<div style={{ height: "86vh" }}>
 			<ReactFlow
 				nodes={nodes}
 				edges={edges}

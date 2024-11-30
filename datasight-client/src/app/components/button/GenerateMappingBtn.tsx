@@ -9,7 +9,7 @@ const GenerateMappingBtn: React.FC<
 > = ({ onGenerateMapping }) => {
 	return (
 		<button
-			className=" px-6 py-3 bg-black hover:bg-brand-blue font-medium text-white rounded-md transition-transform transform hover:scale-105 w-fit"
+			className=" px-6 py-3 bg-brand-blue hover:bg-black font-medium text-white rounded-md transition-transform transform hover:scale-105 w-fit"
 			onClick={onGenerateMapping}
 		>
 			Generate Mapping
