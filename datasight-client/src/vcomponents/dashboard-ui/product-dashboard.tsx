@@ -104,8 +104,11 @@ export default function ProductLayerDashboard() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="mb-4 text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820]">Product Layer Dashboard</h1>
-      <section className="mb-8">
+      <Card className="mb-6 flex items-center text-center justify-center">
+        <h1 className="text-3xl text-center mt-5 font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820]">
+          PRODUCT LAYER
+        </h1>
+      </Card>      <section className="mb-8">
         <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
           <Card className={`${loading ? 'skeleton bg-black' : ''} bg-black text-white`}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
