@@ -75,11 +75,11 @@ export default function OPSRMapping() {
 
 	const getHealthColor = (health: string) => {
 		switch (health) {
-			case 'Green':
+			case 'green':
 				return 'green';
-			case 'Yellow':
+			case 'yellow':
 				return 'yellow';
-			case 'Red':
+			case 'red':
 				return 'red';
 			default:
 				return 'gray'; // Default color if the health status is unknown

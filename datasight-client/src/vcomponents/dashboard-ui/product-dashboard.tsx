@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardDescription, CardTitle } from '@/vco
 
 import CostByProductChart from '@/app/components/dashboard-charts/products-charts/CostByProductChart.tsx';
 import RevenueByProductChart from '@/app/components/dashboard-charts/products-charts/RevenueByProductChart';
-import ProductRevenueForecastChart from '@/app/components/dashboard-charts/products-charts/ProductRevenueForecastChart';
 import ProductCostTableList from '@/app/components/dashboard-charts/products-charts/ProductCostTableList';
 import ProductRevenueTableList from '@/app/components/dashboard-charts/products-charts/ProductRevenueTableList';
 

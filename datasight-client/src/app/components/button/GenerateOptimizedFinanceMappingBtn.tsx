@@ -4,17 +4,17 @@ interface GenerateOptimizedMappingBtnProps {
 	onGenerateOptimizedMapping: () => void;
 }
 
-const GenerateOptimizedMappingBtn: React.FC<
+const GenerateOptimizedFinanceMappingBtn: React.FC<
 	GenerateOptimizedMappingBtnProps
 > = ({ onGenerateOptimizedMapping }) => {
 	return (
 		<button
-			className=" px-6 py-2 bg-brand-orange hover:bg-black font-medium text-white rounded-md transition-transform transform hover:scale-105"
+			className=" px-3 py-2 bg-green-800 hover:bg-black font-medium text-white rounded-md transition-transform transform hover:scale-105"
 			onClick={onGenerateOptimizedMapping}
 		>
-			Generate Optimized Mapping
+			Generate Finance-Optimized Mapping
 		</button>
 	);
 };
 
-export default GenerateOptimizedMappingBtn;
+export default GenerateOptimizedFinanceMappingBtn;

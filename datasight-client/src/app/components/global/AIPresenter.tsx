@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { CircleX, Loader, Minimize2 } from "lucide-react";
 
 interface OptimizedOPSRMappingProps {
 	optimizationType: string;
@@ -14,13 +13,11 @@ export default function AIPresenter({
 	const [videoUrl, setVideoUrl] = useState<string | null>(null); // State to store the generated video URL
 	const [showVideo, setShowVideo] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false); // State for modal visibility
-	const [videoModal, setVideoModal] = useState(false);
 	const [optimizationMinimized, setOptimizationMinimized] = useState(false); // Separate state for optimization results minimize
 	const [videoMinimized, setVideoMinimized] = useState(false); // Separate state for AI presenter video minimize
 	const [scrollPosition, setScrollPosition] = useState(0); // Track scroll position
 
-	const API_KEY =
-		"Z2VvcmdlY29uc3RhbnRlLnNlYmFzdGlhbi5jaWNzQHVzdC5lZHUucGg:90Zc8jwtY5AvLnd80CQ8_";
+	const API_KEY = "Z2VvcmdlY29uc3RhbnRlLnNlYmFzdGlhbi5jaWNzQHVzdC5lZHUucGg:LlzfDd4OxSbTyh0bo1Oie"; // Replace with your actual API key
 
 	useEffect(() => {
 		// Set up a scroll event listener
@@ -104,7 +101,9 @@ export default function AIPresenter({
 				);
 
 				if (!resultResponse.ok) {
-					throw new Error(`Failed to get talk status: ${resultResponse.statusText}`);
+					throw new Error(
+						`Failed to get talk status: ${resultResponse.statusText}`
+					);
 				}
 
 				result = await resultResponse.json();
@@ -112,6 +111,7 @@ export default function AIPresenter({
 
 				if (result.status === "done") {
 					setVideoUrl(result.result_url);
+					console.log("Video URL:", result.result_url);
 					setShowVideo(true);
 					break;
 				} else if (result.status === "failed") {
@@ -123,7 +123,7 @@ export default function AIPresenter({
 			}
 		} catch (err: any) {
 			console.error("Video generation error:", err);
-			setError(err.message);
+			setError(err.message || "An unexpected error occurred.");
 		} finally {
 			setLoading(false);
 		}
@@ -146,7 +146,8 @@ export default function AIPresenter({
 			const data = await response.json();
 
 			// Fetch the response and parse markdown to HTML
-			const part1Response = data.first_response?.part1?.response || "No valid response received.";
+			const part1Response =
+				data.first_response?.part1?.response || "No valid response received.";
 
 			// Format the text into a cleaner structure with **bold headers**
 			const formattedText = part1Response
@@ -161,9 +162,8 @@ export default function AIPresenter({
 
 			// Call the generateVideo function and pass the formatted text
 			await generateVideo(formattedText);
-
-		} catch (error) {
-			setError(error.message);
+		} catch (err: any) {
+			setError(err.message || "An unexpected error occurred.");
 		} finally {
 			setLoading(false);
 		}
@@ -189,22 +189,15 @@ export default function AIPresenter({
 		setModalOpen(false);
 	};
 
-	const closeVideoModal = () => {
-		setVideoModal(false);  // Close the video modal
-	};
-
-
 	// Close the AI Presenter video
-	const closeAIPlayer = () => {
-		setShowVideo(false);  // This will hide the video player
-		setVideoMinimized(true);  // You can also minimize the video if needed
+	const closeVideoModal = () => {
+		setShowVideo(false); // Close the video modal
 	};
-
 
 	return (
 		<div style={{ position: "relative" }} className="flex flex-row gap-x-4">
 			{/* Button to trigger modal */}
-			{(loading &&
+			{loading && (
 				<p className="text-center items-center px-5 bg-green-300 rounded-md flex flex-row gap-2 font-semibold ">
 					<span className="loading"></span>Loading AI Presenter
 				</p>
@@ -235,11 +228,17 @@ export default function AIPresenter({
 					className="shadow-2xl border-2"
 				>
 					{/* Modal Header */}
-					<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+					<div
+						style={{
+							display: "flex",
+							justifyContent: "space-between",
+							alignItems: "center",
+						}}
+					>
 						<h3 className="font-bold" style={{ margin: 0 }}>
 							Optimization Results
 						</h3>
-						<div className='flex gap-x-2'>
+						<div className="flex gap-x-2">
 							<button
 								onClick={toggleOptimizationMinimize}
 								style={{
@@ -247,10 +246,9 @@ export default function AIPresenter({
 									borderRadius: "60%",
 									padding: "5px",
 									border: "none",
-									cursor: "pointer"
+									cursor: "pointer",
 								}}
-							>
-							</button>
+							></button>
 							<button
 								onClick={closeOptimizationModal} // This will close the modal
 								style={{
@@ -261,8 +259,7 @@ export default function AIPresenter({
 									cursor: "pointer",
 									marginLeft: "10px",
 								}}
-							>
-							</button>
+							></button>
 						</div>
 					</div>
 
@@ -293,80 +290,80 @@ export default function AIPresenter({
 
 			{error && (
 				<p className="mt-4 px-5 py-2 bg-red-300 rounded-md w-fit flex flex-row gap-2">
-					<CircleX />
 					<span className="font-semibold">Error:</span> {error}
 				</p>
 			)}
 
-
-			<div
-				style={{
-					position: "absolute",
-					right: "-30px",
-					top: 150 + scrollPosition + "px",
-					width: videoMinimized ? "250px" : "450px",
-					maxHeight: "500px",
-					padding: "10px",
-					backgroundColor: "white",
-					borderRadius: "8px",
-					zIndex: 9999,
-					overflowY: "auto",
-					transition: "width 0.3s, height 0.3s",
-				}}
-				className='border border-1'
-			>
-				<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-					<p className="font-bold" style={{ margin: 0 }}> AI Presenter </p>
-					<div className="flex gap-x-2">
-						{/* Minimize Button */}
-						<button
-							onClick={toggleVideoMinimize}
-							style={{
-								backgroundColor: "yellow",
-								borderRadius: "60%",
-								padding: "5px",
-								border: "none",
-								cursor: "pointer"
-							}}
-						>
-						</button>
-						<button
-							onClick={closeVideoModal}
-							style={{
-								backgroundColor: "red",
-								borderRadius: "60%",
-								padding: "5px",
-								border: "none",
-								cursor: "pointer",
-								marginLeft: "10px",
-							}}
-						>
-						</button>
-					</div>
-
-				</div>
-
-				{/* Close Button */}
-
-				{/* Video */}
-				{!loading && !error && videoUrl && showVideo && (
-					<video
-						controls
+			{/* Conditionally render the video container */}
+			{showVideo && videoUrl && (
+				<div
+					style={{
+						position: "absolute",
+						right: "-30px",
+						top: 150 + scrollPosition + "px",
+						width: videoMinimized ? "250px" : "450px",
+						maxHeight: "500px",
+						padding: "10px",
+						backgroundColor: "white",
+						borderRadius: "8px",
+						zIndex: 9999,
+						overflowY: "auto",
+						transition: "width 0.3s, height 0.3s",
+					}}
+					className="border border-1"
+				>
+					<div
 						style={{
-							width: "100%",  // Ensure video width is responsive to the container width
-							height: "100%",
-							borderRadius: "8px",
+							display: "flex",
+							justifyContent: "space-between",
+							alignItems: "center",
 						}}
 					>
-						<source
-							src={videoUrl}
-							type="video/mp4"
-						/>
-						Your browser does not support the video tag.
-					</video>
-				)}
-			</div>
+						<p className="font-bold" style={{ margin: 0 }}>
+							AI Presenter
+						</p>
+						<div className="flex gap-x-2">
+							{/* Minimize Button */}
+							<button
+								onClick={toggleVideoMinimize}
+								style={{
+									backgroundColor: "yellow",
+									borderRadius: "60%",
+									padding: "5px",
+									border: "none",
+									cursor: "pointer",
+								}}
+							></button>
+							<button
+								onClick={closeVideoModal}
+								style={{
+									backgroundColor: "red",
+									borderRadius: "60%",
+									padding: "5px",
+									border: "none",
+									cursor: "pointer",
+									marginLeft: "10px",
+								}}
+							></button>
+						</div>
+					</div>
 
+					{/* Video */}
+					{!loading && !error && videoUrl && (
+						<video
+							controls
+							style={{
+								width: "100%", // Ensure video width is responsive to the container width
+								height: "100%",
+								borderRadius: "8px",
+							}}
+						>
+							<source src={videoUrl} type="video/mp4" />
+							Your browser does not support the video tag.
+						</video>
+					)}
+				</div>
+			)}
 
 			{showVideo && (
 				<button

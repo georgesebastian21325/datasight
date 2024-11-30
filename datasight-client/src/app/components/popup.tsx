@@ -12,8 +12,6 @@ interface MappingViewPopUpProps {
     loading: boolean; // Add a loading prop
 }
 
-
-
 const AuthenticationErrorPopUp: React.FC<AuthenticationErrorPopUpProps> = ({ errorMessage }) => {
     const [visible, setVisible] = useState<boolean>(!!errorMessage);
 
@@ -32,7 +30,7 @@ const AuthenticationErrorPopUp: React.FC<AuthenticationErrorPopUpProps> = ({ err
 
     return (
         <div
-            className="flex items-center justify-center p-2 mt-2 rounded-md bg-[#FFD1D1] space-x-2"
+            className="flex items-center justify-center p-2 mt-2 bg-[#FFD1D1] space-x-2"
             aria-live="polite"
             aria-atomic="true"
         >
@@ -54,10 +52,10 @@ function SuccessMessage() {
 
 function MappingViewPopUp({ message, bgColor, loading }: MappingViewPopUpProps) {
     return (
-        <div className={`${bgColor} font-medium rounded-md px-2 flex items-center`}>
+        <div className={`${bgColor} font-medium px-2 flex items-center rounded-br-md rounded-bl-md mt-[-0.3rem] absolute`}>
             {loading ? (
                 <div className="flex items-center">
-                    <div className={`loading h-5 w-5 border-4 border-t-transparent border-${bgColor} rounded-full mr-2`} />
+                    <div className={`loading h-5 w-5 border-4 border-t-transparent border-${bgColor}  mr-2`} />
                     <p>Loading...</p>
                 </div>
             ) : (
