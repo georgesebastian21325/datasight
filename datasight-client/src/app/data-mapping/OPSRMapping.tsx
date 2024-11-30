@@ -10,7 +10,6 @@ import ReactFlow, {
 	Edge,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import DataMappingLoadingState from "../components/global/DataMappingLoadingState";
 import { useGlobalState } from "../context/GlobalStateContext"; // Import the global state
 
 import { fetchResourceHealthStatus, fetchServiceHealthStatus, fetchProductHealthStatus, fetchOfferingHealthStatus } from '../api/dataMapping/mapping-functions'
@@ -35,11 +34,11 @@ interface ProductOfferingMappingData {
 
 interface ResourceHealthStatus {
 	resource_id: string;
-	resource_risk_status: string;
+	resource_risk_status	: string;
 }
 
 interface ServiceHealthStatus {
-    service_id: string;
+ service_id: string;
 	service_risk_status: string;
 }
 
@@ -49,7 +48,7 @@ interface ProductHealthStatus {
 }
 
 interface OfferingHealthStatus {
-    offering_id: string;
+ offering_id: string;
 	offering_risk_status: string;
 }
 
@@ -61,10 +60,10 @@ export default function OPSRMapping() {
 	const [productMappingData, setProductMappingData] = useState<ProductServiceMappingData[]>([]);
 	const [offeringMappingData, setOfferingMappingData] = useState<ProductOfferingMappingData[]>([]);
 
-    const [healthResourceData, setResourceHealthData] = useState<ResourceHealthStatus[]>([]);
-    const [healthServiceData, setServiceHealthData] = useState<ServiceHealthStatus[]>([]);
-    const [healthProductData, setProductHealthData] = useState<ProductHealthStatus[]>([]);
-    const [healthOfferingData, setOfferingHealthData] = useState<OfferingHealthStatus[]>([]);
+	const [healthResourceData, setResourceHealthData] = useState<ResourceHealthStatus[]>([]);
+	const [healthServiceData, setServiceHealthData] = useState<ServiceHealthStatus[]>([]);
+	const [healthProductData, setProductHealthData] = useState<ProductHealthStatus[]>([]);
+	const [healthOfferingData, setOfferingHealthData] = useState<OfferingHealthStatus[]>([]);
 
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -99,7 +98,6 @@ export default function OPSRMapping() {
 					fetchProductHealthStatus(),
 					fetchOfferingHealthStatus()
 				]);
-
 
 				// Ensure responses are OK before parsing JSON
 				if (!resourceRes.ok || !productRes.ok || !offeringRes.ok) {

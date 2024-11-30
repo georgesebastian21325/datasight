@@ -26,7 +26,7 @@ export async function middleware(request: NextRequest) {
 
   // Redirect authenticated users away from the login page to the dashboard
   if (user && pathname === "/") {
-    return NextResponse.redirect(new URL("/dashboard/resources", request.nextUrl));
+    return NextResponse.redirect(new URL("/enterprise-architecture", request.nextUrl));
   }
 
   // Proceed with the response if none of the above conditions are met

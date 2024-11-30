@@ -10,7 +10,8 @@ import EntityGraphs from "../entity-graphs/entity-graphs";
 import NavigationBar from "../components/global/NavigationBar";
 import GenerateOptimizedFinanceMappingBtn from "../components/button/GenerateOptimizedFinanceMappingBtn";
 import GenerateOptimizedRiskMappingBtn from "../components/button/GenerateOptimizedRiskMappingBtn";
-import OptimizedOPSRMapping from "../data-mapping/OptimizedOPSRFinanceMapping";
+import OptimizedOPSRFinanceMapping from "../data-mapping/OptimizedOPSRFinanceMapping";
+import OptimizedOPSRRiskMapping from "../data-mapping/OptimizedOPSRRiskMapping"; // Import the Risk Mapping component
 import AIPresenter from "../components/global/AIPresenter";
 import { MappingViewPopUp } from '../components/popup';
 
@@ -31,6 +32,7 @@ export default function Page() {
 		setLoading(true);
 		setShowMapping(true);
 		setIsOptimizedMapping(false);
+		setOptimizationType(""); // Reset optimization type
 		setMessage("Current Mapping In View");  // Set message for Generate Mapping
 		setBgColor("bg-blue-200");  // Set background color for current mapping
 		setShowMessage(false); // Hide message initially
@@ -45,6 +47,7 @@ export default function Page() {
 		setOptimizedLoading(true); // Set optimized loading state
 		setShowMapping(true);
 		setIsOptimizedMapping(true);
+		setOptimizationType("risk"); // Set optimization type to 'risk'
 		setMessage("Optimized-Risk Mapping In View");  // Set message for Optimized Mapping
 		setBgColor("bg-orange-200");  // Set background color for optimized mapping
 		setShowMessage(false); // Hide message initially
@@ -59,6 +62,7 @@ export default function Page() {
 		setOptimizedLoading(true); // Set optimized loading state
 		setShowMapping(true);
 		setIsOptimizedMapping(true);
+		setOptimizationType("finance"); // Set optimization type to 'finance'
 		setMessage("Optimized-Finance Mapping In View");  // Set message for Optimized Mapping
 		setBgColor("bg-green-200");  // Set background color for optimized mapping
 		setShowMessage(false); // Hide message initially
@@ -73,10 +77,9 @@ export default function Page() {
 			<NavigationBar />
 			{/* Right side - Enterprise Mapping */}
 			<div className="mx-auto p-4 h-screen w-[90%]">
-				<h2 className="text-center bg-black text-2xl font-bold mb-12 bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820] ">
+				<h2 className="text-center bg-black text-3xl font-bold mb-12 bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820] ">
 					{isOptimizedMapping
-						? `${optimizationType.charAt(0).toUpperCase() +
-						optimizationType.slice(1)
+						? `${optimizationType.toUpperCase()
 						} OPTIMIZED ENTERPRISE ARCHITECTURE`
 						: "ENTERPRISE ARCHITECTURE"}
 				</h2>
@@ -87,9 +90,8 @@ export default function Page() {
 						<GenerateMappingBtn onGenerateMapping={handleGenerateMapping} />
 					</div>
 					<div className="flex flex-row gap-4">
-						<GenerateOptimizedFinanceMappingBtn onGenerateOptimizedMapping={handleGenerateOptimizedFinanceMapping} />
-						{/* Always show the pop-up once loading or optimized loading is done */}
-						<GenerateOptimizedRiskMappingBtn onGenerateOptimizedMapping={handleGenerateOptimizedRiskMapping} />
+						<GenerateOptimizedFinanceMappingBtn onGenerateOptimizedFinanceMapping={handleGenerateOptimizedFinanceMapping} />
+						<GenerateOptimizedRiskMappingBtn onGenerateOptimizedRiskMapping={handleGenerateOptimizedRiskMapping} />
 					</div>
 					{/* Move AIPresenter to the right side */}
 					<div className="ml-auto">
@@ -124,9 +126,15 @@ export default function Page() {
 							) : optimizedLoading ? (
 								<OptimizedDataMappingLoadingState />
 							) : showMapping ? (
-								<OptimizedOPSRMapping
-									optimizationType={optimizationType}
-								/>
+								optimizationType === "risk" ? (
+									<OptimizedOPSRRiskMapping />
+								) : optimizationType === "finance" ? (
+									<OptimizedOPSRFinanceMapping />
+								) : (
+									<p className="text-center text-gray-500">
+										No optimization type selected.
+									</p>
+								)
 							) : (
 								<p className="text-center text-gray-500">
 									Click &quot;Generate Mapping&quot; to view

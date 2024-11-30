@@ -5,25 +5,20 @@ import React, {
 	useEffect,
 	useCallback,
 } from "react";
-import ReactFlow, { Node, Edge } from "reactflow";
+import ReactFlow, {
+	Node,
+	Edge,
+} from "reactflow";
 import "reactflow/dist/style.css";
 import DataMappingLoadingState from "../components/global/DataMappingLoadingState";
 import { useGlobalState } from "../context/GlobalStateContext"; // Import the global state
 
-import {
-	fetchResourceHealthStatus,
-	fetchServiceHealthStatus,
-	fetchProductHealthStatus,
-	fetchOfferingHealthStatus,
-} from "../api/dataMapping/mapping-functions";
-import { ListBucketInventoryConfigurationsOutputFilterSensitiveLog } from "@aws-sdk/client-s3";
+import { fetchResourceOptimizedProfitabilityStatus, fetchServiceOptimizedProfitabilityStatus , fetchProductOptimizedProfitabilityStatus, fetchOfferingOptimizedProfitabilityStatus } from '../api/dataMapping/mapping-functions'
 
 interface ResourceServiceMappingData {
 	service_id: string;
 	resource_id: string;
 	resource_type: string;
-	status?: string;
-	optimized_status?: string;
 }
 
 interface ProductServiceMappingData {
@@ -39,323 +34,101 @@ interface ProductOfferingMappingData {
 }
 
 interface ResourceHealthStatus {
-	resource_id: string | undefined;
-	resource_risk_status: string | undefined;
+	resource_id: string;
+	resource_optimized_finance_status: string;
 }
 
 interface ServiceHealthStatus {
 	service_id: string;
-	service_risk_status: string;
+	service_optimized_finance_status: string;
 }
 
 interface ProductHealthStatus {
 	product_id: string;
-	product_risk_status: string;
+	product_optimized_finance_status: string;
 }
 
 interface OfferingHealthStatus {
 	offering_id: string;
-	offering_risk_status: string;
-}
-
-interface OptimizedOPSRMappingProps {
-	optimizationType: string;
+	offering_optimized_finance_status: string;
 }
 
 const nodeTypes = {};
 const edgeTypes = {};
 
-export default function OptimizedOPSRMapping({
-	optimizationType,
-}: OptimizedOPSRMappingProps) {
-	console.log(optimizationType);
-	const [resourceMappingData, setResourceMappingData] =
-		useState<ResourceServiceMappingData[]>([]);
-	const [productMappingData, setProductMappingData] =
-		useState<ProductServiceMappingData[]>([]);
-	const [offeringMappingData, setOfferingMappingData] =
-		useState<ProductOfferingMappingData[]>([]);
+export default function OPSRMapping() {
+	const [resourceMappingData, setResourceMappingData] = useState<ResourceServiceMappingData[]>([]);
+	const [productMappingData, setProductMappingData] = useState<ProductServiceMappingData[]>([]);
+	const [offeringMappingData, setOfferingMappingData] = useState<ProductOfferingMappingData[]>([]);
 
-	const [healthResourceData, setResourceHealthData] =
-		useState<ResourceHealthStatus[]>([]);
-	const [healthServiceData, setServiceHealthData] =
-		useState<ServiceHealthStatus[]>([]);
-	const [healthProductData, setProductHealthData] =
-		useState<ProductHealthStatus[]>([]);
-	const [healthOfferingData, setOfferingHealthData] =
-		useState<OfferingHealthStatus[]>([]);
+	const [healthResourceData, setResourceHealthData] = useState<ResourceHealthStatus[]>([]);
+	const [healthServiceData, setServiceHealthData] = useState<ServiceHealthStatus[]>([]);
+	const [healthProductData, setProductHealthData] = useState<ProductHealthStatus[]>([]);
+	const [healthOfferingData, setOfferingHealthData] = useState<OfferingHealthStatus[]>([]);
 
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
-	const { handleSetSelectedNodeId } = useGlobalState();
-	const [highlightedNodes, setHighlightedNodes] = useState<
-		Set<string>
-	>(new Set());
+
+	const { handleSetSelectedNodeId } = useGlobalState()
+	const [highlightedNodes, setHighlightedNodes] = useState<Set<string>>(new Set());
 
 	const getHealthColor = (health: string) => {
 		switch (health) {
-			case "Green":
-				return "green";
-			case "Yellow":
-				return "yellow";
-			case "Red":
-				return "red";
+			case 'green':
+				return 'green';
+			case 'yellow':
+				return 'yellow';
+			case 'red':
+				return 'red';
 			default:
-				return "gray"; // Default color if the health status is unknown
+				return 'gray'; // Default color if the health status is unknown
 		}
-	};
-
-	const HEALTH_MAPPING: Record<string, number> = {
-		green: 1,
-		yellow: 7,
-		red: 15,
 	};
 
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const [resourceRes, productRes, offeringRes] =
-					await Promise.all([
-						fetch(
-							`https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getOptimizedResourceServiceMapping?mapping_type=${optimizationType}`,
-						),
-						fetch(
-							"https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getServiceProductMapping",
-						),
-						fetch(
-							"https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getProductOfferingMapping",
-						),
-					]);
+				// Fetch mappings with enhanced error handling
+				const [resourceRes, productRes, offeringRes, resourceHealthStatusData, serviceHealthStatusData, productHealthStatusData, offeringHealthStatusData] = await Promise.all([
+					fetch("https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getResourceServiceMapping"),
+					fetch("https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getServiceProductMapping"),
+					fetch("https://jyghjk6217.execute-api.ap-southeast-2.amazonaws.com/development/getProductOfferingMapping"),
+					fetchResourceOptimizedProfitabilityStatus(),
+					fetchServiceOptimizedProfitabilityStatus(),
+					fetchProductOptimizedProfitabilityStatus(),
+					fetchOfferingOptimizedProfitabilityStatus()
+				]);
 
-				if (
-					!resourceRes.ok ||
-					!productRes.ok ||
-					!offeringRes.ok
-				) {
-					throw new Error(
-						"Failed to fetch one or more mappings.",
-					);
+				// Ensure responses are OK before parsing JSON
+				if (!resourceRes.ok || !productRes.ok || !offeringRes.ok) {
+					throw new Error("Failed to fetch one or more mappings.");
 				}
 
-				const [resourceData, productData, offeringData] =
-					await Promise.all([
-						resourceRes.json(),
-						productRes.json(),
-						offeringRes.json(),
-					]);
+				// Parse mapping data
+				const [resourceData, productData, offeringData] = await Promise.all([
+					resourceRes.json(),
+					productRes.json(),
+					offeringRes.json()
+				]);
 
-				// No need to parse again if the API returns a JSON array
-				const parsedResourceData: ResourceServiceMappingData[] =
-					resourceData;
+				// Use fallback for JSON parsing to handle inconsistent structures
+				const parsedResourceData = Array.isArray(resourceData) ? resourceData : Object.values(resourceData);
+				const parsedProductData = Array.isArray(productData) ? productData : Object.values(productData);
+				const parsedOfferingData = Array.isArray(offeringData) ? offeringData : Object.values(offeringData);
 
-				const aggregatedResourceHealthData: ResourceHealthStatus[] =
-					parsedResourceData.map((resource) => ({
-						resource_id: resource.resource_id,
-						resource_risk_status: resource.optimized_status,
-					}));
-
-				////////// SERVICE HEALTH
-
-				const serviceHealthMap: Record<string, number[]> =
-					{};
-
-				// GROUP resource health scores by service
-				parsedResourceData.forEach((mapping) => {
-					const resourceHealth =
-						aggregatedResourceHealthData.find(
-							(health) =>
-								health.resource_id === mapping.resource_id,
-						);
-					console.log(resourceHealth);
-					if (
-						resourceHealth &&
-						resourceHealth?.resource_risk_status
-					) {
-						const healthScore =
-							HEALTH_MAPPING[
-								resourceHealth.resource_risk_status
-							] || 0;
-						console.log(healthScore);
-						if (!serviceHealthMap[mapping.service_id]) {
-							serviceHealthMap[mapping.service_id] = [];
-						}
-
-						serviceHealthMap[mapping.service_id].push(
-							healthScore,
-						);
-					}
-				});
-
-				// Calculate average health status per service
-				const derivedServiceHealthData: ServiceHealthStatus[] =
-					Object.keys(serviceHealthMap).map((serviceId) => {
-						const scores = serviceHealthMap[serviceId];
-						const avgScore =
-							scores.reduce(
-								(sum, score) => sum + score,
-								0,
-							) / scores.length;
-
-						let serviceRiskStatus: string;
-						if (avgScore <= 3) {
-							serviceRiskStatus = "Green";
-						} else if (avgScore > 3 && avgScore <= 7) {
-							serviceRiskStatus = "Yellow";
-						} else {
-							serviceRiskStatus = "Red";
-						}
-
-						return {
-							service_id: serviceId,
-							service_risk_status: serviceRiskStatus,
-						};
-					});
-
-				////////// PRODUCT HEALTH
-
-				// Step 2: Compute Product Health Status Based on Services
-				const parsedProductData: ProductServiceMappingData[] =
-					Array.isArray(productData)
-						? productData
-						: Object.values(productData);
-
-				const productHealthMap: Record<string, number[]> =
-					{};
-
-				// Group service heatlh scores by product
-				parsedProductData.forEach((mapping) => {
-					const serviceHealth =
-						derivedServiceHealthData.find(
-							(service) =>
-								service.service_id === mapping.service_id,
-						);
-
-					if (
-						serviceHealth &&
-						serviceHealth.service_risk_status
-					) {
-						const healthScore =
-							HEALTH_MAPPING[
-								serviceHealth.service_risk_status.toLowerCase()
-							] || 0;
-						console.log(healthScore);
-
-						if (!productHealthMap[mapping.product_id]) {
-							productHealthMap[mapping.product_id] = [];
-						}
-
-						productHealthMap[mapping.product_id].push(
-							healthScore,
-						);
-					}
-				});
-
-				// Calculate average health status per product
-				const derivedProductHealthData: ProductHealthStatus[] =
-					Object.keys(productHealthMap).map((productId) => {
-						const scores = productHealthMap[productId];
-						const avgScore =
-							scores.reduce(
-								(sum, score) => sum + score,
-								0,
-							) / scores.length;
-						console.log(`${productId} ${avgScore}`);
-
-						let productRiskStatus: string;
-						if (avgScore <= 3) {
-							productRiskStatus = "Green";
-						} else if (avgScore > 3 && avgScore <= 7) {
-							productRiskStatus = "Yellow";
-						} else {
-							productRiskStatus = "Red";
-						}
-
-						return {
-							product_id: productId,
-							product_risk_status: productRiskStatus,
-						};
-					});
-
-				////////// OFFERING HEALTH
-
-				// Step 3: Compute Offering Health Status Based on Products
-				const parsedOfferingData: ProductOfferingMappingData[] =
-					Array.isArray(offeringData)
-						? offeringData
-						: Object.values(offeringData);
-
-				const offeringHealthMap: Record<string, number[]> =
-					{};
-
-				// Group service heatlh scores by product
-				parsedOfferingData.forEach((mapping) => {
-					const productHealth =
-						derivedProductHealthData.find(
-							(product) =>
-								product.product_id === product.product_id,
-						);
-
-					if (
-						productHealth &&
-						productHealth.product_risk_status
-					) {
-						const healthScore =
-							HEALTH_MAPPING[
-								productHealth.product_risk_status.toLowerCase()
-							] || 0;
-						console.log(healthScore);
-
-						if (!offeringHealthMap[mapping.offering_id]) {
-							offeringHealthMap[mapping.offering_id] = [];
-						}
-
-						offeringHealthMap[mapping.offering_id].push(
-							healthScore,
-						);
-					}
-				});
-
-				// Calculate average health status per offering
-				const derivedOfferingHealthData: OfferingHealthStatus[] =
-					Object.keys(offeringHealthMap).map(
-						(offeringId) => {
-							const scores = offeringHealthMap[offeringId];
-							const avgScore =
-								scores.reduce(
-									(sum, score) => sum + score,
-									0,
-								) / scores.length;
-							console.log(`${offeringId} ${avgScore}`);
-
-							let offeringRiskStatus: string;
-							if (avgScore <= 3) {
-								offeringRiskStatus = "Green";
-							} else if (avgScore > 3 && avgScore <= 7) {
-								offeringRiskStatus = "Yellow";
-							} else {
-								offeringRiskStatus = "Red";
-							}
-
-							return {
-								offering_id: offeringId,
-								offering_risk_status: offeringRiskStatus,
-							};
-						},
-					);
-
-				// Update State
 				setResourceMappingData(parsedResourceData);
 				setProductMappingData(parsedProductData);
 				setOfferingMappingData(parsedOfferingData);
-				setResourceHealthData(aggregatedResourceHealthData);
-				setServiceHealthData(derivedServiceHealthData);
-				setProductHealthData(derivedProductHealthData);
-				setOfferingHealthData(derivedOfferingHealthData);
+				setResourceHealthData(resourceHealthStatusData);
+				setServiceHealthData(serviceHealthStatusData);
+				setProductHealthData(productHealthStatusData);
+				setOfferingHealthData(offeringHealthStatusData);
 
+				// Clear error if successful
 				setError(null);
 			} catch (err) {
-				console.error("Error fetching data:", err);
+				console.error("Error fetching data:", err);  // Log specific error details
 				setError("Error fetching mapping data.");
 			} finally {
 				setLoading(false);
@@ -365,60 +138,106 @@ export default function OptimizedOPSRMapping({
 		fetchData();
 	}, []);
 
+
 	const handleNodeClick = (event: any, node: Node) => {
 		handleSetSelectedNodeId(node.id);
 
 		const connectedNodes = new Set<string>();
 		const connectedEdges = new Set<string>();
 
-		// Highlight direct connections for product-offering layer
-		offeringMappingData.forEach((mapping) => {
-			if (node.id === mapping.product_id) {
-				connectedNodes.add(mapping.offering_id);
-				connectedEdges.add(
-					`edge-${mapping.offering_id}-${mapping.product_id}`,
-				);
-			} else if (node.id === mapping.offering_id) {
-				connectedNodes.add(mapping.product_id);
-				connectedEdges.add(
-					`edge-${mapping.offering_id}-${mapping.product_id}`,
-				);
-			}
-		});
+		const traverseConnections = (currentNodeId: string, layer: string, direction: "up" | "down") => {
+			switch (layer) {
+				case "offering":
+					if (direction === "down") {
+						offeringMappingData.forEach((mapping) => {
+							if (currentNodeId === mapping.offering_id) {
+								connectedNodes.add(mapping.product_id);
+								connectedEdges.add(`edge-${mapping.offering_id}-${mapping.product_id}`);
+								traverseConnections(mapping.product_id, "product", "down");
+							}
+						});
+					}
+					break;
 
-		// Highlight direct connections for product-service layer
-		productMappingData.forEach((mapping) => {
-			if (node.id === mapping.service_id) {
-				connectedNodes.add(mapping.product_id);
-				connectedEdges.add(
-					`edge-${mapping.product_id}-${mapping.service_id}`,
-				);
-			} else if (node.id === mapping.product_id) {
-				connectedNodes.add(mapping.service_id);
-				connectedEdges.add(
-					`edge-${mapping.product_id}-${mapping.service_id}`,
-				);
-			}
-		});
+				case "product":
+					if (direction === "down") {
+						productMappingData.forEach((mapping) => {
+							if (currentNodeId === mapping.product_id) {
+								connectedNodes.add(mapping.service_id);
+								connectedEdges.add(`edge-${mapping.product_id}-${mapping.service_id}`);
+								traverseConnections(mapping.service_id, "service", "down");
+							}
+						});
+					} else if (direction === "up") {
+						offeringMappingData.forEach((mapping) => {
+							if (currentNodeId === mapping.product_id) {
+								connectedNodes.add(mapping.offering_id);
+								connectedEdges.add(`edge-${mapping.offering_id}-${mapping.product_id}`);
+								traverseConnections(mapping.offering_id, "offering", "up");
+							}
+						});
+					}
+					break;
 
-		// Highlight direct connections for resource-service layer
-		resourceMappingData.forEach((mapping) => {
-			if (node.id === mapping.service_id) {
-				connectedNodes.add(mapping.resource_id);
-				connectedEdges.add(
-					`edge-${mapping.resource_id}-${mapping.service_id}`,
-				);
-			} else if (node.id === mapping.resource_id) {
-				connectedNodes.add(mapping.service_id);
-				connectedEdges.add(
-					`edge-${mapping.resource_id}-${mapping.service_id}`,
-				);
-			}
-		});
+				case "service":
+					if (direction === "down") {
+						resourceMappingData.forEach((mapping) => {
+							if (currentNodeId === mapping.service_id) {
+								connectedNodes.add(mapping.resource_id);
+								connectedEdges.add(`edge-${mapping.resource_id}-${mapping.service_id}`);
+							}
+						});
+					} else if (direction === "up") {
+						resourceMappingData.forEach((mapping) => {
+							if (currentNodeId === mapping.resource_id) {
+								connectedNodes.add(mapping.service_id);
+								connectedEdges.add(`edge-${mapping.resource_id}-${mapping.service_id}`);
+								traverseConnections(mapping.service_id, "service", "up");
+							}
+						});
+					}
+					break;
 
-		connectedNodes.add(node.id); // Add the clicked node itself
+				case "resource":
+					if (direction === "up") {
+						resourceMappingData.forEach((mapping) => {
+							if (currentNodeId === mapping.resource_id) {
+								connectedNodes.add(mapping.service_id);
+								connectedEdges.add(`edge-${mapping.resource_id}-${mapping.service_id}`);
+								traverseConnections(mapping.service_id, "service", "up");
+							}
+						});
+					}
+					break;
+
+				default:
+					break;
+			}
+		};
+
+
+		// Determine the layer of the clicked node and start both upward and downward traversal
+		if (offeringMappingData.some((m) => m.offering_id === node.id)) {
+			traverseConnections(node.id, "offering", "down");
+		} else if (productMappingData.some((m) => m.product_id === node.id)) {
+			traverseConnections(node.id, "product", "down");
+			traverseConnections(node.id, "product", "up");
+		} else if (resourceMappingData.some((m) => m.service_id === node.id)) {
+			traverseConnections(node.id, "service", "down");
+			traverseConnections(node.id, "service", "up");
+		} else if (resourceMappingData.some((m) => m.resource_id === node.id)) {
+			traverseConnections(node.id, "service", "up");
+		}
+
+
+
+		// Highlight the clicked node itself
+		connectedNodes.add(node.id);
+
 		setHighlightedNodes(connectedNodes);
 	};
+
+
 
 	const generateNodesAndEdges = useCallback(() => {
 		const nodes: Node[] = [];
@@ -459,18 +278,18 @@ export default function OptimizedOPSRMapping({
 				style: {
 					stroke:
 						highlightedNodes.has(offeringNodeId) &&
-						highlightedNodes.has(productNodeId)
-							? "purple"
+							highlightedNodes.has(productNodeId)
+							? "#08296C"
 							: "gray",
 					strokeWidth:
 						highlightedNodes.has(offeringNodeId) &&
-						highlightedNodes.has(productNodeId)
+							highlightedNodes.has(productNodeId)
 							? 3
 							: 1,
 					boxShadow:
 						highlightedNodes.has(offeringNodeId) &&
-						highlightedNodes.has(productNodeId)
-							? "0 0 15px purple"
+							highlightedNodes.has(productNodeId)
+							? "0 0 15px #08296C"
 							: "none",
 				},
 			});
@@ -479,30 +298,19 @@ export default function OptimizedOPSRMapping({
 		// Create offering nodes
 		Array.from(offeringNodes).forEach(
 			(offeringNodeId, index) => {
-				const healthStatus = healthOfferingData.find(
-					(h) => {
-						console.log(
-							"Checking product_id:",
-							h.offering_id,
-						); // Logs each product_id
-						return h.offering_id === offeringNodeId;
-					},
-				);
+				const healthStatus = healthOfferingData.find(h => {
+					console.log("Checking product_id:", h.offering_id); // Logs each product_id
+					return h.offering_id === offeringNodeId;
+				});
 
-				const healthColor = healthStatus
-					? healthStatus.offering_risk_status
-					: "gray";
+				const healthColor = healthStatus ? getHealthColor(healthStatus.offering_optimized_finance_status) : 'gray';
+
 
 				nodes.push({
 					id: offeringNodeId,
 					data: {
 						label: (
-							<div
-								style={{
-									display: "flex",
-									alignItems: "center",
-								}}
-							>
+							<div style={{ display: "flex", alignItems: "center" }}>
 								<span
 									style={{
 										display: "inline-block",
@@ -525,7 +333,7 @@ export default function OptimizedOPSRMapping({
 						cursor: "pointer",
 						borderColor: "black",
 						boxShadow: highlightedNodes.has(offeringNodeId)
-							? "0 0 15px 5px purple"
+							? "0 0 15px 5px #08296C"
 							: "none",
 					},
 				});
@@ -535,25 +343,18 @@ export default function OptimizedOPSRMapping({
 		// Create product nodes
 		Array.from(productNodes).forEach(
 			(productNodeId, index) => {
-				const healthStatus = healthProductData.find((h) => {
+				const healthStatus = healthProductData.find(h => {
 					console.log("Checking product_id:", h.product_id); // Logs each product_id
 					return h.product_id === productNodeId;
 				});
 
-				const healthColor = healthStatus
-					? healthStatus.product_risk_status
-					: "gray";
+				const healthColor = healthStatus ? getHealthColor(healthStatus.product_optimized_finance_status) : 'gray';
 
 				nodes.push({
 					id: productNodeId,
 					data: {
 						label: (
-							<div
-								style={{
-									display: "flex",
-									alignItems: "center",
-								}}
-							>
+							<div style={{ display: "flex", alignItems: "center" }}>
 								<span
 									style={{
 										display: "inline-block",
@@ -576,7 +377,7 @@ export default function OptimizedOPSRMapping({
 						cursor: "pointer",
 						borderColor: "black",
 						boxShadow: highlightedNodes.has(productNodeId)
-							? "0 0 15px 5px purple"
+							? "0 0 15px 5px #08296C"
 							: "none",
 					},
 				});
@@ -600,18 +401,18 @@ export default function OptimizedOPSRMapping({
 				style: {
 					stroke:
 						highlightedNodes.has(productNodeId) &&
-						highlightedNodes.has(serviceNodeId)
-							? "purple"
+							highlightedNodes.has(serviceNodeId)
+							? "#08296C"
 							: "gray",
 					strokeWidth:
 						highlightedNodes.has(productNodeId) &&
-						highlightedNodes.has(serviceNodeId)
+							highlightedNodes.has(serviceNodeId)
 							? 3
 							: 1,
 					boxShadow:
 						highlightedNodes.has(productNodeId) &&
-						highlightedNodes.has(serviceNodeId)
-							? "0 0 15px purple"
+							highlightedNodes.has(serviceNodeId)
+							? "0 0 15px #08296C"
 							: "none",
 				},
 			});
@@ -620,29 +421,23 @@ export default function OptimizedOPSRMapping({
 		// Create service nodes
 		Array.from(serviceNodes).forEach(
 			(serviceNodeId, index) => {
-				const healthStatus = healthServiceData.find((h) => {
+
+				const healthStatus = healthServiceData.find(h => {
 					console.log("Checking service_id:", h.service_id); // Logs each service_id
-					console.log(h.service_id, h.service_risk_status);
 					return h.service_id === serviceNodeId;
 				});
 
-				const healthColor = healthStatus
-					? healthStatus.service_risk_status
-					: "gray";
+				const healthColor = healthStatus ? getHealthColor(healthStatus.service_optimized_finance_status) : 'gray';
 
-				console.log("Service Ids: ", serviceNodes);
-				console.log(healthColor);
+
+				console.log('Service Ids: ', serviceNodes)
+				console.log(healthColor)
 
 				nodes.push({
 					id: serviceNodeId,
 					data: {
 						label: (
-							<div
-								style={{
-									display: "flex",
-									alignItems: "center",
-								}}
-							>
+							<div style={{ display: "flex", alignItems: "center" }}>
 								<span
 									style={{
 										display: "inline-block",
@@ -665,7 +460,7 @@ export default function OptimizedOPSRMapping({
 						cursor: "pointer",
 						borderColor: "black",
 						boxShadow: highlightedNodes.has(serviceNodeId)
-							? "0 0 15px 5px purple"
+							? "0 0 15px 5px #08296C"
 							: "none",
 					},
 				});
@@ -689,92 +484,71 @@ export default function OptimizedOPSRMapping({
 				style: {
 					stroke:
 						highlightedNodes.has(resourceNodeId) &&
-						highlightedNodes.has(serviceNodeId)
-							? "purple"
+							highlightedNodes.has(serviceNodeId)
+							? "#08296C"
 							: "gray",
 					strokeWidth:
 						highlightedNodes.has(resourceNodeId) &&
-						highlightedNodes.has(serviceNodeId)
+							highlightedNodes.has(serviceNodeId)
 							? 3
 							: 1,
 					boxShadow:
 						highlightedNodes.has(resourceNodeId) &&
-						highlightedNodes.has(serviceNodeId)
-							? "0 0 15px purple"
+							highlightedNodes.has(serviceNodeId)
+							? "0 0 15px #08296C"
 							: "none",
 				},
 			});
 		});
 
 		// Create resource nodes with health status colored dots
-		Array.from(resourceNodes).forEach(
-			(resourceNodeId, index) => {
-				const rowIndex = Math.floor(index / 10); // Every 5 items will start a new row
-				const columnIndex = index % 10; // Position within the row
+		Array.from(resourceNodes).forEach((resourceNodeId, index) => {
+			const rowIndex = Math.floor(index / 10); // Every 5 items will start a new row
+			const columnIndex = index % 10; // Position within the row
 
-				// Find the corresponding health data for the resource node
-				const healthStatus = healthResourceData.find(
-					(h) => h.resource_id === resourceNodeId,
-				);
-				const healthColor = healthStatus
-					? healthStatus.resource_risk_status
-					: "gray";
+			// Find the corresponding health data for the resource node
+			const healthStatus = healthResourceData.find(h => h.resource_id === resourceNodeId);
+			const healthColor = healthStatus ? getHealthColor(healthStatus.resource_optimized_finance_status) : 'gray';
 
-				nodes.push({
-					id: resourceNodeId,
-					data: {
-						label: (
-							<div
+			nodes.push({
+				id: resourceNodeId,
+				data: {
+					label: (
+						<div style={{ display: "flex", alignItems: "center" }}>
+							<span
 								style={{
-									display: "flex",
-									alignItems: "center",
+									display: "inline-block",
+									width: "15px",
+									height: "15px",
+									borderRadius: "50%",
+									backgroundColor: healthColor,
+									marginRight: "10px",
 								}}
-							>
-								<span
-									style={{
-										display: "inline-block",
-										width: "15px",
-										height: "15px",
-										borderRadius: "50%",
-										backgroundColor: healthColor,
-										marginRight: "10px",
-									}}
-								></span>
-								{resourceNodeId}
-							</div>
-						),
-					},
-					position: {
-						x: getXStart(10) + columnIndex * xGap,
-						y: yPositions.resource + rowIndex * yGap,
-					},
-					style: {
-						cursor: "pointer",
-						borderColor: "black",
-						boxShadow: highlightedNodes.has(resourceNodeId)
-							? `0 0 15px 5px purple`
-							: "none",
-					},
-				});
-			},
-		);
+							></span>
+							{resourceNodeId}
+						</div>
+					),
+				},
+				position: {
+					x: getXStart(10) + columnIndex * xGap,
+					y: yPositions.resource + rowIndex * yGap,
+				},
+				style: {
+					cursor: "pointer",
+					borderColor: "black",
+					boxShadow: highlightedNodes.has(resourceNodeId) ? `0 0 15px 5px #08296C` : "none",
+				},
+
+			});
+		});
 
 		return { nodes, edges };
-	}, [
-		resourceMappingData,
-		productMappingData,
-		offeringMappingData,
-		highlightedNodes,
-		healthResourceData,
-		healthServiceData,
-		healthProductData,
-		healthOfferingData,
-	]);
+	}, [resourceMappingData, productMappingData, offeringMappingData, highlightedNodes, healthResourceData, healthServiceData, healthProductData, healthOfferingData]);
 
 	const { nodes, edges } = generateNodesAndEdges();
 
 	return (
-		<div style={{ height: "77vh" }}>
+		<div style={{ height: "86vh" }}>
 			<ReactFlow
 				nodes={nodes}
 				edges={edges}
