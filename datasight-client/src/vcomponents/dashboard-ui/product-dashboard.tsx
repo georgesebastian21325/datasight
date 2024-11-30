@@ -112,7 +112,6 @@ export default function ProductLayerDashboard() {
           <Card className={`${loading ? 'skeleton bg-black' : ''} bg-black text-white`}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Product Cost</CardTitle>
-              <DollarSign className="h-4 w-4 text-white" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">₱ {loading ? '...' : totalProductCost}</div>
@@ -121,7 +120,6 @@ export default function ProductLayerDashboard() {
           <Card className={`${loading ? 'skeleton bg-brand-blue' : ' '} bg-brand-blue text-white` }>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Product Revenue</CardTitle>
-              <DollarSign className="h-4 w-4 text-white" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">₱ {loading ? '...' : totalProductRevenue}</div>
