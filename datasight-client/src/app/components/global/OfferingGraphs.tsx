@@ -15,9 +15,9 @@ import {
 // Props Interfaces
 interface ParsedMetricRecord {
 	week: string;
-	avg_usage: number;
+	monthly_usage: number;
 	month: string;
-	avg_cost: number;
+	monthly_cost: number;
 	resource_id: string;
 	usage_percentage?: number;
 	resource_cost?: number;
@@ -45,8 +45,8 @@ interface MetricRecord {
 	offering_id?: string;
 	product_cost: number;
 	week: string;
-	avg_usage: number; // Original data as string
-	avg_cost: number; // Original data as string
+	monthly_usage: number; // Original data as string
+	monthly_cost: number; // Original data as string
 	date: string;
 	usage_percentage?: number;
 	resource_cost?: number;
@@ -60,8 +60,8 @@ interface ParsedMetricRecord {
 	product_id: string;
 	resource_type: string;
 	week: string;
-	avg_usage: number; // Parsed to number
-	avg_cost: number; // Parsed to number
+	monthly_usage: number; // Parsed to number
+	monthly_cost: number; // Parsed to number
 	date: string;
 	product_cost: number;
 }

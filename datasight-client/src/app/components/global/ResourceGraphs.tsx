@@ -29,6 +29,7 @@ export function ResourceGraphs({
 	groupedData,
 	selectedNodeId,
 }: ResourceGraphsProps) {
+	console.log(groupedData);
 	return (
 		<div className="flex flex-col justify-center text-center mx-auto">
 			<h1 className="font-bold my-[1rem] text-[1.5rem]">

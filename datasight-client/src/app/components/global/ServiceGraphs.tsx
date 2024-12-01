@@ -15,9 +15,9 @@ import {
 // Props Interfaces
 interface ParsedMetricRecord {
 	week: string;
-	avg_usage: number;
+	monthly_usage: number;
 	month: string;
-	avg_cost: number;
+	monthly_cost: number;
 	resource_id: string;
 	usage_percentage?: number;
 	resource_cost?: number;
@@ -42,8 +42,8 @@ interface MetricRecord {
 	resource_id: string;
 	resource_type: string;
 	week: string;
-	avg_usage: number; // Original data as string
-	avg_cost: number; // Original data as string
+	monthly_usage: number; // Original data as string
+	monthly_cost: number; // Original data as string
 	date: string;
 	usage_percentage?: number;
 	resource_cost?: number;
@@ -56,8 +56,8 @@ interface ParsedMetricRecord {
 	resource_id: string;
 	resource_type: string;
 	week: string;
-	avg_usage: number; // Parsed to number
-	avg_cost: number; // Parsed to number
+	monthly_usage: number; // Parsed to number
+	monthly_cost: number; // Parsed to number
 	date: string;
 }
 
@@ -96,8 +96,8 @@ export default function formatDataForService(
 				service_id: record.service_id,
 				resource_id: record.resource_id,
 				resource_type: record.resource_type,
-				avg_usage: usagePercentage, // Parsed usage percentage
-				avg_cost: resourceCost, // Parsed resource cost
+				monthly_usage: usagePercentage, // Parsed usage percentage
+				monthly_cost: resourceCost, // Parsed resource cost
 				year: record.year,
 				month: record.month, // Extract the month from the date string
 				date: record.date,
@@ -109,7 +109,7 @@ export default function formatDataForService(
 	// Group data by `month` and `service_id` for the stacked bar chart
 	const aggregatedUsage = parsedData.reduce(
 		(acc, record) => {
-			const { month, resource_id, avg_usage } = record;
+			const { month, resource_id, monthly_usage } = record;
 
 			// Find or create the entry for the given month
 			let monthData = acc.find(
@@ -122,7 +122,7 @@ export default function formatDataForService(
 
 			// Add the usage for the current service_id
 			monthData[resource_id] =
-				(monthData[resource_id] || 0) + avg_usage;
+				(monthData[resource_id] || 0) + monthly_usage;
 
 			return acc;
 		},
@@ -144,7 +144,7 @@ export default function formatDataForService(
 
 	const aggregatedCost = parsedData.reduce(
 		(acc, record) => {
-			const { month, resource_id, avg_cost } = record;
+			const { month, resource_id, monthly_cost } = record;
 
 			// Find or create the entry for the given month
 			let monthData = acc.find(
@@ -157,7 +157,7 @@ export default function formatDataForService(
 
 			// Add the cost for the current service_id
 			monthData[resource_id] =
-				(monthData[resource_id] || 0) + avg_cost;
+				(monthData[resource_id] || 0) + monthly_cost;
 
 			return acc;
 		},
@@ -211,14 +211,14 @@ export function LineUsageCostChart({
 							<Line
 								yAxisId="left"
 								type="monotone"
-								dataKey="avg_usage"
+								dataKey="monthly_usage"
 								stroke="#8884d8"
 								strokeWidth={2}
 							/>
 							<Line
 								yAxisId="right"
 								type="monotone"
-								dataKey="avg_cost"
+								dataKey="monthly_cost"
 								stroke="#82ca9d"
 								strokeWidth={2}
 							/>
