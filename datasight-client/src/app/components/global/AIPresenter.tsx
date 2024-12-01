@@ -136,9 +136,10 @@ export default function AIPresenter({
 			setError(null);
 
 			const response = await fetch(
-				`https://gmmfmpar9j.execute-api.ap-southeast-2.amazonaws.com/development/getPrescription?optimization_type=risk`
+				`https://gmmfmpar9j.execute-api.ap-southeast-2.amazonaws.com/development/getPrescription?optimization_type=${optimizationType}`
 			);
 
+			console.log(response.statusText);
 			if (!response.ok) {
 				throw new Error(`Error: ${response.statusText}`);
 			}
@@ -215,7 +216,7 @@ export default function AIPresenter({
 					style={{
 						position: "absolute",
 						left: "-1250px",
-						top: 150 + scrollPosition + "px",
+						top: 60 + scrollPosition + "px",
 						width: optimizationMinimized ? "250px" : "450px",
 						maxHeight: "500px",
 						padding: "10px",
@@ -280,7 +281,7 @@ export default function AIPresenter({
 
 			{!showVideo && (
 				<button
-					className={`py-3 px-4 rounded-md bg-black text-white font-medium transition-all duration-300 hover:bg-brand-orange hover:scale-105${optimizationType ? "" : "cursor-not-allowed opacity-50"
+					className={`py-3 px-4 rounded-md bg-black text-white font-medium transition-all duration-300 hover:bg-green-800 hover:scale-105${optimizationType ? "" : "cursor-not-allowed opacity-50"
 						}`}
 					onClick={() => fetchText()}
 				>
