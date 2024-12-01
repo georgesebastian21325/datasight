@@ -72,6 +72,10 @@ export default function RiskOptimizationTable() {
 				// Format the fetched data
 				const formattedData = bodyData.map((item) => ({
 					...item,
+					predicted_resource_utilization_percentage:
+						parseFloat(
+							item.predicted_resource_utilization_percentage,
+						).toFixed(5),
 					predicted_usage_percentage: parseFloat(
 						item.predicted_usage_percentage,
 					).toFixed(5),
@@ -221,10 +225,13 @@ export default function RiskOptimizationTable() {
 								<TableHead>Service ID</TableHead>
 								<TableHead>Resource ID</TableHead>
 								<TableHead>Period</TableHead>
-								<TableHead>Predicted Usage %</TableHead>
+								<TableHead>
+									Predicted Resource Utilization Ratio
+								</TableHead>
+								<TableHead>Predicted Usage Ratio</TableHead>
 								<TableHead>Current Status</TableHead>
 								<TableHead>
-									Distributed Utilization %
+									Distributed Utilization Ratio
 								</TableHead>
 								<TableHead>Optimized Status</TableHead>
 							</TableRow>
@@ -236,7 +243,13 @@ export default function RiskOptimizationTable() {
 									<TableCell>{item.resource_id}</TableCell>
 									<TableCell>{item.period}</TableCell>
 									<TableCell>
-										{item.predicted_usage_percentage}%
+										{" "}
+										{
+											item.predicted_resource_utilization_percentage
+										}
+									</TableCell>
+									<TableCell>
+										{item.predicted_usage_percentage}
 									</TableCell>
 									<TableCell>
 										<span
@@ -252,7 +265,6 @@ export default function RiskOptimizationTable() {
 										{
 											item.distributed_utilization_percentage
 										}
-										%
 									</TableCell>
 									<TableCell>
 										<span

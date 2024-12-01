@@ -234,13 +234,15 @@ export default function ProfitabilityOptimizationTable() {
 							<TableRow>
 								<TableHead>Resource ID</TableHead>
 								<TableHead>Period</TableHead>
-								<TableHead>Predicted Usage</TableHead>
-								<TableHead>Ideal Usage</TableHead>
+								<TableHead>Predicted Usage Ratio</TableHead>
+								<TableHead>Ideal Usage Ratio</TableHead>
 								<TableHead>
-									Resource Optimized Usage
+									Resource Optimized Usage Ratio
 								</TableHead>
 								<TableHead>New Service ID</TableHead>
-								<TableHead>Predicted Demand %</TableHead>
+								<TableHead>
+									Predicted Demand Ratio
+								</TableHead>
 								<TableHead>
 									Deviation from Ideal Usage
 								</TableHead>
@@ -274,10 +276,10 @@ export default function ProfitabilityOptimizationTable() {
 										{item.new_service_id}
 									</TableCell>
 									<TableCell>
-										{item.predicted_demand_percentage}%
+										{item.predicted_demand_percentage}
 									</TableCell>
 									<TableCell>
-										{item.deviation_from_ideal_usage}%
+										{item.deviation_from_ideal_usage}
 									</TableCell>
 									<TableCell>
 										<span
