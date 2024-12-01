@@ -63,12 +63,17 @@ interface ParsedMetricRecord {
 
 interface FormattedData {
 	weeklyUsage: Record<string, ParsedMetricRecord[]>; // Add weekly usage
-	weeklyCost: Record<string, ParsedMetricRecord[]>;  // Add weekly cost
+	weeklyCost: Record<string, ParsedMetricRecord[]>; // Add weekly cost
 	lineUsageCostData: Record<string, ParsedMetricRecord[]>; // Add line ch
-	stackedUsageData: Array<{ month: string;[key: string]: number | string }>;
-	stackedCostData: Array<{ month: string;[key: string]: number | string }>;
+	stackedUsageData: Array<{
+		month: string;
+		[key: string]: number | string;
+	}>;
+	stackedCostData: Array<{
+		month: string;
+		[key: string]: number | string;
+	}>;
 }
-
 
 export default function formatDataForService(
 	data: MetricRecord[],
@@ -96,7 +101,7 @@ export default function formatDataForService(
 				year: record.year,
 				month: record.month, // Extract the month from the date string
 				date: record.date,
-				week: record.week
+				week: record.week,
 			};
 		},
 	);
@@ -234,7 +239,7 @@ export function StackedBarChart({
 	return (
 		<ResponsiveContainer
 			width="100%"
-			height={400}
+			height={700}
 		>
 			<BarChart data={data}>
 				<CartesianGrid strokeDasharray="3 3" />

@@ -128,7 +128,7 @@ export default function formatDataForProduct(
 
 			return acc;
 		},
-		[] as Array<{ month: string;[key: string]: any }>,
+		[] as Array<{ month: string; [key: string]: any }>,
 	);
 
 	// Group data by resource_id for line chart
@@ -163,7 +163,7 @@ export default function formatDataForProduct(
 
 			return acc;
 		},
-		[] as Array<{ month: string;[key: string]: any }>,
+		[] as Array<{ month: string; [key: string]: any }>,
 	);
 
 	console.log("Stacked Usage Data:", aggregatedUsage);
@@ -241,7 +241,7 @@ export function ProdStackedBarChart({
 	return (
 		<ResponsiveContainer
 			width="100%"
-			height={400}
+			height={700}
 		>
 			<BarChart data={data}>
 				<CartesianGrid strokeDasharray="3 3" />
