@@ -13,19 +13,25 @@ import GenerateOptimizedRiskMappingBtn from "../components/button/GenerateOptimi
 import OptimizedOPSRFinanceMapping from "../data-mapping/OptimizedOPSRFinanceMapping";
 import OptimizedOPSRRiskMapping from "../data-mapping/OptimizedOPSRRiskMapping"; // Import the Risk Mapping component
 import AIPresenter from "../components/global/AIPresenter";
-import { MappingViewPopUp } from '../components/popup';
+import { MappingViewPopUp } from "../components/popup";
 
 import RiskOptimizationTable from "@/vcomponents/RiskOptimizationTable";
 import ProfitabilityOptimizationTable from "@/vcomponents/ProfitabilityOptimizationTable";
 
 export default function Page() {
 	const [loading, setLoading] = useState(false);
-	const [optimizedLoading, setOptimizedLoading] = useState(false); // Separate state for optimized loading
+	const [optimizedLoading, setOptimizedLoading] =
+		useState(false); // Separate state for optimized loading
 	const [showMapping, setShowMapping] = useState(false);
-	const { selectedNodeId, setSelectedNodeId } = useGlobalState();
-	const [isOptimizedMapping, setIsOptimizedMapping] = useState(false);
-	const [optimizationType, setOptimizationType] = useState("");
-	const [message, setMessage] = useState("Current Mapping In View");
+	const { selectedNodeId, setSelectedNodeId } =
+		useGlobalState();
+	const [isOptimizedMapping, setIsOptimizedMapping] =
+		useState(false);
+	const [optimizationType, setOptimizationType] =
+		useState("");
+	const [message, setMessage] = useState(
+		"Current Mapping In View",
+	);
 	const [bgColor, setBgColor] = useState("bg-blue-200"); // Default bg color
 
 	const [showMessage, setShowMessage] = useState(false); // Control message visibility
@@ -36,8 +42,8 @@ export default function Page() {
 		setShowMapping(true);
 		setIsOptimizedMapping(false);
 		setOptimizationType(""); // Reset optimization type
-		setMessage("Current Mapping In View");  // Set message for Generate Mapping
-		setBgColor("bg-blue-200");  // Set background color for current mapping
+		setMessage("Current Mapping In View"); // Set message for Generate Mapping
+		setBgColor("bg-blue-200"); // Set background color for current mapping
 		setShowMessage(false); // Hide message initially
 		setTimeout(() => {
 			setLoading(false); // Set loading to false after 5 seconds
@@ -51,8 +57,8 @@ export default function Page() {
 		setShowMapping(true);
 		setIsOptimizedMapping(true);
 		setOptimizationType("risk"); // Set optimization type to 'risk'
-		setMessage("Optimized-Risk Mapping In View");  // Set message for Optimized Mapping
-		setBgColor("bg-orange-200");  // Set background color for optimized mapping
+		setMessage("Optimized-Risk Mapping In View"); // Set message for Optimized Mapping
+		setBgColor("bg-orange-200"); // Set background color for optimized mapping
 		setShowMessage(false); // Hide message initially
 		setTimeout(() => {
 			setOptimizedLoading(false); // Clear optimized loading state after 6 seconds
@@ -66,8 +72,8 @@ export default function Page() {
 		setShowMapping(true);
 		setIsOptimizedMapping(true);
 		setOptimizationType("finance"); // Set optimization type to 'finance'
-		setMessage("Optimized-Finance Mapping In View");  // Set message for Optimized Mapping
-		setBgColor("bg-green-200");  // Set background color for optimized mapping
+		setMessage("Optimized-Finance Mapping In View"); // Set message for Optimized Mapping
+		setBgColor("bg-green-200"); // Set background color for optimized mapping
 		setShowMessage(false); // Hide message initially
 		setTimeout(() => {
 			setOptimizedLoading(false); // Clear optimized loading state after 6 seconds
@@ -82,23 +88,34 @@ export default function Page() {
 			<div className="mx-auto p-4 h-screen w-[90%]">
 				<h2 className="text-center bg-black text-3xl font-bold mb-12 bg-clip-text text-transparent bg-gradient-to-r from-[#1050d2] to-[#f47820] ">
 					{isOptimizedMapping
-						? `${optimizationType.toUpperCase()
-						} OPTIMIZED ENTERPRISE ARCHITECTURE`
+						? `${optimizationType.toUpperCase()} OPTIMIZED ENTERPRISE ARCHITECTURE`
 						: "ENTERPRISE ARCHITECTURE"}
 				</h2>
 
 				{/* Generate Mapping Buttons */}
 				<div className="flex flex-row gap-4 mb-4 w-full justify-between">
 					<div>
-						<GenerateMappingBtn onGenerateMapping={handleGenerateMapping} />
+						<GenerateMappingBtn
+							onGenerateMapping={handleGenerateMapping}
+						/>
 					</div>
 					<div className="flex flex-row gap-4">
-						<GenerateOptimizedFinanceMappingBtn onGenerateOptimizedFinanceMapping={handleGenerateOptimizedFinanceMapping} />
-						<GenerateOptimizedRiskMappingBtn onGenerateOptimizedRiskMapping={handleGenerateOptimizedRiskMapping} />
+						<GenerateOptimizedFinanceMappingBtn
+							onGenerateOptimizedFinanceMapping={
+								handleGenerateOptimizedFinanceMapping
+							}
+						/>
+						<GenerateOptimizedRiskMappingBtn
+							onGenerateOptimizedRiskMapping={
+								handleGenerateOptimizedRiskMapping
+							}
+						/>
 					</div>
 					{/* Move AIPresenter to the right side */}
 					<div className="ml-auto">
-						<AIPresenter optimizationType={optimizationType} />
+						<AIPresenter
+							optimizationType={optimizationType}
+						/>
 					</div>
 				</div>
 
@@ -154,12 +171,10 @@ export default function Page() {
 						loading={loading || optimizedLoading}
 					/>
 				)}
-				{( optimizationType === "" &&
-						<EntityGraphs />
-				)}
+				{optimizationType === "" && <EntityGraphs />}
 
 				{optimizationType === "risk" && (
-									<RiskOptimizationTable />
+					<RiskOptimizationTable />
 				)}
 
 				{optimizationType === "finance" && (
