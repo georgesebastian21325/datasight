@@ -80,6 +80,9 @@ export default function ProfitabilityOptimizationTable() {
 					ideal_usage: parseFloat(item.ideal_usage).toFixed(
 						5,
 					),
+					demand_ratio_to_resource: parseFloat(
+						item.demand_ratio_to_resource,
+					).toFixed(5),
 					resource_optimized_usage: parseFloat(
 						item.resource_optimized_usage,
 					).toFixed(5),
@@ -241,6 +244,10 @@ export default function ProfitabilityOptimizationTable() {
 								</TableHead>
 								<TableHead>New Service ID</TableHead>
 								<TableHead>
+									{" "}
+									Demand Ratio To Resource
+								</TableHead>
+								<TableHead>
 									Predicted Demand Ratio
 								</TableHead>
 								<TableHead>
@@ -274,6 +281,9 @@ export default function ProfitabilityOptimizationTable() {
 									</TableCell>
 									<TableCell>
 										{item.new_service_id}
+									</TableCell>
+									<TableCell>
+										{item.demand_ratio_to_resource}
 									</TableCell>
 									<TableCell>
 										{item.predicted_demand_percentage}
