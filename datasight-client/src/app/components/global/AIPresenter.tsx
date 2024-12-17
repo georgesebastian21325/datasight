@@ -22,7 +22,7 @@ export default function AIPresenter({
 	const [scrollPosition, setScrollPosition] = useState(0); // Track scroll position
 
 	const API_KEY =
-		"ZGVuaWNlbWFyaWUuZGFkdWxsYS5jaWNzQHVzdC5lZHUucGg:-vvKwRgDKdXBGLqaUqk9v"; // Replace with your actual API key
+		"YWRvbGY5Mzg4QGdtYWlsLmNvbQ:z3O0BALE5d55d8n8yXN4P"; // Replace with your actual API key
 
 	useEffect(() => {
 		// Set up a scroll event listener
