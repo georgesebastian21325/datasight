@@ -22,7 +22,7 @@ export default function AIPresenter({
 	const [scrollPosition, setScrollPosition] = useState(0); // Track scroll position
 
 	const API_KEY =
-		"YWRvbGY5Mzg4QGdtYWlsLmNvbQ:z3O0BALE5d55d8n8yXN4P"; // Replace with your actual API key
+		"ZWFybGpvc2h1YS5vZGlhbWFyLmNpY3NAdXN0LmVkdS5waA:vMCuR5Ls6vOkOOIdKFpH-"; // Replace with your actual API key
 
 	useEffect(() => {
 		// Set up a scroll event listener
@@ -91,8 +91,7 @@ export default function AIPresenter({
 			if (!createResponse.ok) {
 				const errorData = await createResponse.json();
 				throw new Error(
-					`Failed to create talk: ${
-						errorData.message || createResponse.statusText
+					`Failed to create talk: ${errorData.message || createResponse.statusText
 					}`,
 				);
 			}
@@ -231,9 +230,8 @@ export default function AIPresenter({
 
 			<button
 				onClick={toggleModal}
-				className={`py-3 px-4 rounded-md bg-black text-white font-medium transition-all duration-300 hover:bg-brand-orange hover:scale-105 ${
-					text ? "" : "cursor-not-allowed opacity-50"
-				}`}
+				className={`py-3 px-4 rounded-md bg-black text-white font-medium transition-all duration-300 hover:bg-brand-orange hover:scale-105 ${text ? "" : "cursor-not-allowed opacity-50"
+					}`}
 			>
 				View Results
 			</button>
@@ -243,11 +241,11 @@ export default function AIPresenter({
 					style={{
 						position: "absolute",
 						left: "-1250px",
-						top: 60 + scrollPosition + "px",
+						top: 40 + scrollPosition + "px",
 						width: optimizationMinimized
 							? "250px"
 							: "450px",
-						maxHeight: "500px",
+						maxHeight: "600px",
 						padding: "10px",
 						backgroundColor: "white",
 						borderRadius: "8px",
@@ -313,12 +311,11 @@ export default function AIPresenter({
 
 			{!showVideo && (
 				<button
-					className={`py-3 px-4 rounded-md bg-black text-white font-medium transition-all duration-300 hover:bg-green-800 hover:scale-105 ${
-						optimizationType === "risk" ||
+					className={`py-3 px-4 rounded-md bg-black text-white font-medium transition-all duration-300 hover:bg-green-800 hover:scale-105 ${optimizationType === "risk" ||
 						optimizationType === "finance"
-							? ""
-							: "cursor-not-allowed opacity-50"
-					}`}
+						? ""
+						: "cursor-not-allowed opacity-50"
+						}`}
 					onClick={() => fetchText()}
 					disabled={
 						!(
@@ -344,7 +341,7 @@ export default function AIPresenter({
 					style={{
 						position: "absolute",
 						right: "-30px",
-						top: 150 + scrollPosition + "px",
+						top: 40 + scrollPosition + "px",
 						width: videoMinimized ? "250px" : "450px",
 						maxHeight: "500px",
 						padding: "10px",
@@ -417,11 +414,10 @@ export default function AIPresenter({
 
 			{showVideo && (
 				<button
-					className={`py-3 px-4 rounded-md bg-red-500 text-white font-bold transition-all duration-300 hover:bg-red-900 hover:scale-105${
-						optimizationType
-							? ""
-							: "cursor-not-allowed opacity-50"
-					}`}
+					className={`py-3 px-4 rounded-md bg-red-500 text-white font-bold transition-all duration-300 hover:bg-red-900 hover:scale-105${optimizationType
+						? ""
+						: "cursor-not-allowed opacity-50"
+						}`}
 					onClick={() => setShowVideo(!showVideo)}
 				>
 					Hide Video
